@@ -30,6 +30,12 @@ def capture(session: Session, order_id: str) -> schemas.DonationCaptureResponse:
     if d.status == "CAPTURED":
         return _captured(d)
     capture_id = get_paypal().capture_order(order_id, request_id=f"cap-{d.id}")  # same request id -> PayPal dedupes
+    mark_captured(session, d, capture_id)
+    return _captured(d)
+
+
+def mark_captured(session: Session, d: Donation, capture_id: str) -> None:
+    """CREATED -> CAPTURED once; only the request that flips the row writes the DONATION ledger entry."""
     done = session.execute(
         update(Donation).where(Donation.id == d.id, Donation.status == "CREATED")
         .values(status="CAPTURED", capture_id=capture_id, updated_at=utcnow())
@@ -39,7 +45,14 @@ def capture(session: Session, order_id: str) -> schemas.DonationCaptureResponse:
         session.add(LedgerEntry(kind="DONATION", ref_type="donation", ref_id=d.id, amount_cents=d.amount_cents))
     session.commit()
     session.refresh(d)
-    return _captured(d)
+
+
+def apply_capture_webhook(session: Session, resource: dict) -> None:
+    """PAYMENT.CAPTURE.COMPLETED: records a capture the browser never reported back to us."""
+    order_id = ((resource.get("supplementary_data") or {}).get("related_ids") or {}).get("order_id")
+    d = session.scalar(select(Donation).where(Donation.paypal_order_id == order_id)) if order_id else None
+    if d is not None and d.status == "CREATED" and resource.get("status") == "COMPLETED" and resource.get("id"):
+        mark_captured(session, d, str(resource["id"])[:64])
 
 
 def list_donations(session: Session, limit: int) -> schemas.DonationsResponse:

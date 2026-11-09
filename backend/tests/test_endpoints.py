@@ -70,8 +70,16 @@ def test_reset_needs_council(client):
 def test_diary(client):
     err(client.get(f"{API}/diary/latest"), 404, "NOT_FOUND")
     client.post(f"{API}/demo/reset", headers=COUNCIL)
-    d = client.get(f"{API}/diary/latest").json()
-    assert d["model_version"] == "seed" and d["mood"] == "hopeful"
+    assert client.get(f"{API}/diary/latest").json()["model_version"] == "standin-mock"  # written on reset
+
+
+def test_diary_falls_back_to_seed_when_ai_down(client, monkeypatch):
+    def boom(*a):
+        raise ai_standin.AIUnavailable()
+
+    monkeypatch.setattr(ai_standin.StandInMockAI, "write_diary", boom)
+    client.post(f"{API}/demo/reset", headers=COUNCIL)
+    assert client.get(f"{API}/diary/latest").json()["model_version"] == "seed"
 
 
 # --- 2-3 readings ---

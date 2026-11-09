@@ -29,4 +29,5 @@ def diary_latest(db: Db) -> schemas.DiaryResponse:
              responses=error_responses("UNAUTHORIZED"))
 def demo_reset(db: Db) -> schemas.ResetResponse:
     reset_demo(db, get_settings())
+    river.write_diary(db)  # the seed diary stays as a fallback if the AI is down
     return schemas.ResetResponse(reset=True)

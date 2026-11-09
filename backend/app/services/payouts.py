@@ -12,11 +12,14 @@ from app.adapters.paypal_client import get_paypal
 from app.config import get_settings
 from app.errors import ApiError
 from app.models import Bounty, LedgerEntry, Payout, aware, utcnow
-from app.services import bounty_fsm
+from app.services import bounty_fsm, river
 
 log = logging.getLogger("rivermind")
 FAILED_ITEM = {"UNCLAIMED", "RETURNED", "BLOCKED", "FAILED"}
 FINAL_ITEM = FAILED_ITEM | {"SUCCESS"}
+WEBHOOK_ITEM_STATUS = {f"PAYMENT.PAYOUTS-ITEM.{k}": v for k, v in {
+    "SUCCEEDED": "SUCCESS", "FAILED": "FAILED", "BLOCKED": "BLOCKED", "RETURNED": "RETURNED", "UNCLAIMED": "UNCLAIMED",
+}.items()}
 POLL_TRIES, POLL_INTERVAL_S = 3, 2.0
 STALE = timedelta(seconds=15)
 PENDING = ("PENDING_APPROVAL", "QUEUED", "SENDING", "SENT")
@@ -93,8 +96,7 @@ def _post_batch(session: Session, p: Payout) -> Payout:
         status = batch["item_status"]
         if batch.get("item_id") and not p.paypal_item_id:
             p.paypal_item_id = batch["item_id"]
-    apply_item_status(session, p, status)
-    session.commit()
+    _settle(session, p, status)
     return p
 
 
@@ -122,23 +124,54 @@ def refresh_stale(session: Session, items: list[Payout]) -> None:
                 batch = get_paypal().get_payout_batch(p.paypal_batch_id)
                 if batch.get("item_id") and not p.paypal_item_id:
                     p.paypal_item_id = batch["item_id"]
-                apply_item_status(session, p, batch["item_status"])
-                session.commit()
+                _settle(session, p, batch["item_status"])
         except ApiError as exc:
             session.rollback()
             log.warning("payout re-poll failed", extra={"fields": {"payout_id": p.id, "code": exc.code}})
 
 
-def apply_item_status(session: Session, p: Payout, item_status: str | None) -> None:
-    """Map a PayPal payout item status onto payout + bounty. PENDING/ONHOLD/unknown: stay SENT. Caller commits."""
+def apply_item_status(session: Session, p: Payout, item_status: str | None) -> bool:
+    """Map a PayPal payout item status onto payout + bounty. PENDING/ONHOLD/unknown: stay SENT.
+    Only a SENT payout moves, so a final status is never moved backwards. Caller commits; returns True if now paid."""
+    if p.status != "SENT":
+        return False
     bounty = session.get(Bounty, p.bounty_id)
     if item_status == "SUCCESS":
         _cas(session, p, "SENT", status="SUCCEEDED")
         bounty_fsm.transition(session, bounty, "paid")
         session.add(LedgerEntry(kind="PAYOUT", ref_type="bounty", ref_id=bounty.id, amount_cents=p.amount_cents))
-    elif item_status in FAILED_ITEM:
+        return True
+    if item_status in FAILED_ITEM:
         _cas(session, p, "SENT", status="FAILED")
         bounty_fsm.transition(session, bounty, "payout_failed")
+    return False
+
+
+def _settle(session: Session, p: Payout, item_status: str | None) -> None:
+    """apply_item_status + commit; a fresh PAID also gets a diary entry (after the money is committed)."""
+    paid = apply_item_status(session, p, item_status)
+    session.commit()
+    if paid:
+        river.write_diary(session)
+
+
+def apply_webhook(session: Session, event_type: str, resource: dict) -> None:
+    """PAYMENT.PAYOUTS-ITEM.* -> same mapping as polling. Matches our payout by sender_item_id (= our
+    sender_batch_id) or PayPal's batch id."""
+    status = WEBHOOK_ITEM_STATUS.get(event_type)
+    sender_id = (resource.get("payout_item") or {}).get("sender_item_id")
+    batch_id = resource.get("payout_batch_id")
+    if status is None or not (sender_id or batch_id):
+        return
+    p = session.scalar(select(Payout).where(
+        or_(Payout.sender_batch_id == sender_id, Payout.paypal_batch_id == batch_id)))
+    if p is None:
+        return
+    if p.status == "SENDING" and batch_id:  # webhook beat our own response: record the batch first
+        _cas(session, p, "SENDING", status="SENT", paypal_batch_id=batch_id)
+    if resource.get("payout_item_id") and not p.paypal_item_id:
+        p.paypal_item_id = resource["payout_item_id"]
+    _settle(session, p, status)
 
 
 def approve(session: Session, payout_id: str) -> schemas.PayoutActionResponse:

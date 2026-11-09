@@ -1,4 +1,5 @@
 """River status, diary and the agent's fundraising invoice."""
+import logging
 from datetime import timedelta
 
 from sqlalchemy import func, select
@@ -9,8 +10,10 @@ from app.adapters.ai_adapter import call_ai, types
 from app.adapters.paypal_client import get_paypal
 from app.config import get_settings
 from app.errors import ApiError
-from app.models import Bounty, DiaryEntry, Event, Reading, utcnow
+from app.models import Bounty, DiaryEntry, Event, Reading, aware, utcnow
 from app.services import bounty_fsm, budget
+
+log = logging.getLogger("rivermind")
 
 
 def _severity_sum(session: Session, start, end) -> int:
@@ -58,6 +61,23 @@ def status_ctx(session: Session):
         cleanups_7d=session.scalar(select(func.count()).select_from(Bounty)
                                    .where(Bounty.status == "PAID", Bounty.updated_at >= week)) or 0,
     )
+
+
+def write_diary(session: Session) -> None:
+    """After each PAID and on reset (F10). Best effort: an AI failure or unvalidated numbers store nothing."""
+    try:
+        recent = [types.EventCtx(event_id=e.id, type=e.type, severity=e.severity, waste_score=e.waste_score,
+                                 summary=e.summary, lat=e.lat, lon=e.lon, created_at=aware(e.created_at).isoformat())
+                  for e in session.scalars(select(Event).order_by(Event.created_at.desc()).limit(10))]
+        entry = call_ai("write_diary", status_ctx(session), recent)
+    except ApiError as exc:
+        log.warning("diary not written", extra={"fields": {"code": exc.code}})
+        return
+    if not entry.numbers_validated:  # the diary may only cite numbers from its inputs
+        log.warning("diary rejected: numbers not validated", extra={"fields": {"model": entry.model_version}})
+        return
+    session.add(DiaryEntry(text=entry.text[:2000], mood=entry.mood, model_version=entry.model_version))
+    session.commit()
 
 
 def fundraise(session: Session, body: schemas.FundraiseIn) -> schemas.FundraiseResponse:

@@ -74,7 +74,7 @@ class Media(Base):
     __tablename__ = "media"
     __table_args__ = (CheckConstraint("length(data) <= 1048576", name="media_max_1mb"),)
     id: Mapped[str] = _id()
-    source: Mapped[str] = mapped_column(String(16), nullable=False)  # camera | upload | proof
+    source: Mapped[str] = mapped_column(String(16), nullable=False, index=True)  # camera | upload | proof
     mime: Mapped[str] = mapped_column(String(32), nullable=False)
     data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)  # re-encoded, EXIF stripped
     phash: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
@@ -154,7 +154,7 @@ class Payout(Base):
     receiver_email: Mapped[str] = mapped_column(String(254), nullable=False)
     attempt: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     sender_batch_id: Mapped[str | None] = mapped_column(String(64), unique=True)  # rm-{payout_id}-a{attempt}
-    paypal_batch_id: Mapped[str | None] = mapped_column(String(64))
+    paypal_batch_id: Mapped[str | None] = mapped_column(String(64), index=True)  # webhook lookup
     paypal_item_id: Mapped[str | None] = mapped_column(String(64))
     last_polled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

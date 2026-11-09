@@ -88,7 +88,15 @@ async def paypal_webhook(request: Request, db: Db):
     except IntegrityError:  # already seen: acknowledge, do nothing
         db.rollback()
         return JSONResponse({"received": True})
-    # shortcut: payout/capture status updates from webhooks arrive in S3.5; polling covers them until then.
+    resource = body.get("resource") if isinstance(body.get("resource"), dict) else {}
+    try:
+        if event_type.startswith("PAYMENT.PAYOUTS-ITEM."):
+            payouts.apply_webhook(db, event_type, resource)
+        elif event_type == "PAYMENT.CAPTURE.COMPLETED":
+            donations.apply_capture_webhook(db, resource)
+    except ApiError as exc:  # already stored: PayPal must not retry; polling still converges the status
+        db.rollback()
+        log.warning("webhook not applied", extra={"fields": {"event_type": event_type, "code": exc.code}})
     log.info("webhook stored", extra={"fields": {"event_type": event_type}})
     return JSONResponse({"received": True})
 
