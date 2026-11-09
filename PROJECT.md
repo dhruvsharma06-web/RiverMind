@@ -1,4 +1,4 @@
-# RiverMind — PROJECT.md   (updated Mon 9 Nov 2026, IST, by the Coordinator; Dhruv maintains it from Sync 0)
+# RiverMind — PROJECT.md   (team-maintained; updated Mon 9 Nov 2026, IST)
 
 ## Brief
 - User: cleanup workers (waste pickers, student volunteers, residents) and the donors/council who fund a river.
@@ -16,7 +16,7 @@
 - Event: PayPal AI Hackathon (Devpost). Official deadline Thu 12 Nov 2026, 12:00 PST = Fri 13 Nov, 01:30 IST. **Our deadline: Thu 12 Nov, 22:00 IST.**
 
 ## Requirements
-Dhruv: replace the paraphrases below with the exact wording from https://paypalaihackathon.devpost.com/rules in S0.2.
+Team task: verify the paraphrased requirements against https://paypalaihackathon.devpost.com/rules and update this section together.
 
 | ID | Wording (paraphrased) | MUST/SHOULD | Covered by |
 |---|---|---|---|
@@ -30,7 +30,7 @@ Dhruv: replace the paraphrases below with the exact wording from https://paypala
 | R8 | Project significantly built during the submission period; English; free judge access | MUST | repo history |
 
 ## Features
-| ID | Feature | P | Owner | Acceptance check |
+| ID | Feature | P | Assigned contributor(s) | Acceptance check |
 |---|---|---|---|---|
 | F1 | Sensor ingest + live chart | P0 | P1, P3, P4 | Reading appears on the dashboard within 5 s; simulated readings labelled |
 | F2 | Waste detection on images | P0 | P2 | Demo frame → counts + boxes within 30 s |
@@ -58,13 +58,26 @@ Dhruv: replace the paraphrases below with the exact wording from https://paypala
 - AI: vision LLM (Claude API or Gemini, via `LLM_PROVIDER`) + YOLO detector (ONNX), with YOLO-World zero-shot as the baseline/fallback. The LLM handles flexible judgement; YOLO gives fast, countable boxes.
 - DB: Postgres, because payouts, donations and the ledger must survive restarts.
 
-## Team
-| Person | Role | Folders | Branch |
-|---|---|---|---|
-| P1 Dhruv (Claude Code) | Integration lead, DevOps, QA, IoT, Pitch, Security sign-off | root, docs/, fixtures/, scripts/, firmware/, e2e/, .github/ | feat/int-dhruv |
-| P2 (Claude Code) | AI/Core, CV, eval | ai/, eval/ | feat/ai-core |
-| P3 (Claude Code) | Backend, DB, PayPal, security | backend/ | feat/be-api |
-| P4 (Codex) | Frontend | frontend/ | feat/fe-app |
+## Team and workstream responsibilities
+
+P1–P4 are identifiers for parallel workstreams, not ranks or a hierarchy. No project lead, manager or superior is established by these labels. Each contributor has responsibility for their assigned workstream only; all project-wide decisions are collaborative.
+
+| Workstream | Contributor / AI tool | Assigned responsibilities | Main working area | Branch prefix |
+|---|---|---|---|---|
+| P1 | Dhruv (Claude Code) | DevOps, QA, IoT, pitch/demo coordination | deployment/QA/IoT work; shared repo areas coordinated with the team | feat/int-*, feat/iot-* |
+| P2 | (Claude Code) | AI/Core, computer vision, evaluation | ai/, eval/ | feat/ai-* |
+| P3 | Arnav (Claude Code) | Backend, database, PayPal, backend security | backend/ | feat/be-* |
+| P4 | (Codex) | Frontend and UI | frontend/ | feat/fe-* |
+
+Folder boundaries are coordination aids, not exclusive authority over shared project decisions or reviews. Shared files (including CONTRACT.md, PROJECT.md, PRD.md, environment examples, CI, scripts and root configuration) may be updated by contributors through visible repository changes and collaborative review. Coordinate overlapping edits to avoid conflicts; no individual has sole edit, approval, merge or sign-off authority.
+
+### Collaboration and decisions
+- Team-wide matters—including requirements, contract changes, architecture, interfaces, priorities, timeline changes and release decisions—are discussed by the team and recorded in the repository.
+- Contributors may make decisions within their assigned implementation scope as long as they preserve agreed interfaces, requirements and safety constraints.
+- For cross-workstream changes, notify and involve the affected contributors. Aim for agreement, document the chosen option and rationale, and avoid treating any one person's approval as a prerequisite for all work.
+- If a non-critical decision is unresolved or a teammate is unavailable, the implementer records a reasonable, reversible assumption, keeps it isolated where practical, and continues with independent work. Revisit the assumption when the team can review it.
+- Pause only work that presents a concrete risk of data loss, security exposure, contract incompatibility or incorrect/duplicate financial activity. Other work should continue in parallel.
+- Pull requests are open to review by all teammates. Authors address actionable feedback and ensure checks pass. Merge responsibility is shared; no single person has exclusive merge rights or a unilateral veto.
 
 ## Timeline (IST)
 | Stage | Window | Sync |
@@ -76,16 +89,16 @@ Dhruv: replace the paraphrases below with the exact wording from https://paypala
 | S4 Harden, Secure, Polish | Thu 08:00–15:00 | Sync 4 FREEZE Thu 15:00 |
 | S5 Demo & Submit | Thu 15:00–22:00 | Final Thu 22:00 |
 
-## Status   (Dhruv updates at every sync)
-main: Stage 0 skeleton (Coordinator)   Last sync passed: —
+## Status   (updated collaboratively by the team at each sync)
+main: (none yet)   Last sync passed: —
 Works for real: —   Still mocked: everything   Known bugs/limits: —
 Next: everyone S0.
 
 ## Decisions and assumptions
-- A1: P1 Dhruv; P2–P4 put their own names in their prompt headers.
+- A1: P1–P4 are workstream identifiers; contributors identify themselves in their own task prompts.
 - A2: P4 uses Codex; P1–P3 use Claude Code.
 - A3: everyone works about 07:30–01:00 IST.
-- A4: Dhruv is the Integration lead and the presenter.
+- A4: No project-wide lead or hierarchy is assigned. Presentation, integration and coordination tasks are shared or agreed by the team for each milestone.
 - A5: each AI teammate has a vision-capable LLM API key.
 - A6: everyone has PayPal Developer accounts.
 - A7: ESP32 is available; sensors are optional (simulator, labelled).

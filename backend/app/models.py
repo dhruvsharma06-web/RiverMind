@@ -29,6 +29,11 @@ def utcnow() -> datetime:
     return datetime.now(UTC)
 
 
+def aware(dt: datetime | None) -> datetime | None:
+    """SQLite hands back naive datetimes; everything we store is UTC."""
+    return dt.replace(tzinfo=UTC) if dt is not None and dt.tzinfo is None else dt
+
+
 def _id() -> Mapped[str]:
     return mapped_column(String(36), primary_key=True, default=new_id)
 
@@ -69,7 +74,7 @@ class Media(Base):
     __tablename__ = "media"
     __table_args__ = (CheckConstraint("length(data) <= 1048576", name="media_max_1mb"),)
     id: Mapped[str] = _id()
-    source: Mapped[str] = mapped_column(String(16), nullable=False)  # camera | upload | proof
+    source: Mapped[str] = mapped_column(String(16), nullable=False, index=True)  # camera | upload | proof
     mime: Mapped[str] = mapped_column(String(32), nullable=False)
     data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)  # re-encoded, EXIF stripped
     phash: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
@@ -110,7 +115,7 @@ class Bounty(Base):
     lat: Mapped[float] = mapped_column(Float, nullable=False)
     lon: Mapped[float] = mapped_column(Float, nullable=False)
     radius_m: Mapped[int] = mapped_column(Integer, nullable=False)
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # null = never expires
     urgency: Mapped[str] = mapped_column(String(8), nullable=False)  # low | med | high
     agent_rationale: Mapped[str] = mapped_column(Text, nullable=False)
     worker_name: Mapped[str | None] = mapped_column(String(100))
@@ -149,7 +154,7 @@ class Payout(Base):
     receiver_email: Mapped[str] = mapped_column(String(254), nullable=False)
     attempt: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     sender_batch_id: Mapped[str | None] = mapped_column(String(64), unique=True)  # rm-{payout_id}-a{attempt}
-    paypal_batch_id: Mapped[str | None] = mapped_column(String(64))
+    paypal_batch_id: Mapped[str | None] = mapped_column(String(64), index=True)  # webhook lookup
     paypal_item_id: Mapped[str | None] = mapped_column(String(64))
     last_polled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

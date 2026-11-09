@@ -9,7 +9,8 @@ from app.config import Settings, get_settings
 from app.db import Base
 from app.geo import haversine_m
 from app.models import Bounty, Device, DiaryEntry, Event, LedgerEntry
-from app.seed import DEVICE_REF, reset_demo, sha256_hex
+from app.security import sha256_hex
+from app.seed import DEVICE_REF, reset_demo
 from sqlalchemy import create_engine, inspect, select
 
 
@@ -85,6 +86,8 @@ def test_cors_allows_only_configured_origin(client):
 def test_bad_settings_rejected(monkeypatch, env, msg):
     monkeypatch.delenv("PAYPAL_CLIENT_ID", raising=False)
     monkeypatch.delenv("PAYPAL_CLIENT_SECRET", raising=False)
+    monkeypatch.delenv("CAMERA_LAT", raising=False)
+    monkeypatch.delenv("CAMERA_LON", raising=False)
     for k, v in env.items():
         monkeypatch.setenv(k, v)
     with pytest.raises(ValueError, match=msg):
@@ -117,4 +120,5 @@ def test_alembic_migration_matches_models():
     command.upgrade(cfg, "head")
     insp = inspect(create_engine(url))
     assert set(insp.get_table_names()) - {"alembic_version"} == set(Base.metadata.tables)
+    command.check(cfg)  # raises if the models and the migrations disagree
     assert os.path.exists(db_path)

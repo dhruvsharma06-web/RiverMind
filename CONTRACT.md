@@ -1,4 +1,4 @@
-# CONTRACT v1.0 — RiverMind
+# CONTRACT v2.0 — RiverMind
 Owner: Dhruv (Integration lead). Changed only through a CONTRACT CHANGE REQUEST.
 Issued: Mon 9 Nov 2026, IST. Adding an optional field = v1.1. Renaming, removing, or changing a field's type/unit/meaning = v2.0 and every consumer is updated in the same merge.
 
@@ -42,7 +42,7 @@ Issued: Mon 9 Nov 2026, IST. Adding an optional field = v1.1. Renaming, removing
 {"id":"uuid","event_id":"uuid","title":"Plastic build-up at Kalindi Kunj ghat","description":"string",
  "amount_cents":1500,"currency":"USD",
  "status":"OPEN|CLAIMED|PROOF_SUBMITTED|VERIFIED|REJECTED|PAYOUT_PENDING_APPROVAL|PAID|PAYOUT_FAILED",
- "lat":28.5355,"lon":77.3100,"radius_m":150,"expires_at":"iso","urgency":"low|med|high",
+ "lat":28.5355,"lon":77.3100,"radius_m":150,"expires_at":"iso|null","urgency":"low|med|high",
  "agent_rationale":"string","worker_name":"string|null","claimed_at":"iso|null",
  "rejection_reason":"string|null","verification":"Verification|null","payout":"Payout|null",
  "created_at":"iso","updated_at":"iso"}
@@ -138,7 +138,7 @@ Errors: PAYLOAD_TOO_LARGE, VALIDATION_ERROR, AI_UNAVAILABLE.
 
 ### 9. POST /bounties/{id}/claim
 Request: `{"worker_name":"Asha","paypal_email":"asha-personal@example.com"}`
-200: `{"bounty":Bounty,"claim_token":"ct_..."}`. The token is shown once and the claim expires after 2 h.
+200: `{"bounty":Bounty,"claim_token":"ct_..."}`. The token is shown once. Claims never expire: the bounty stays with that worker until proof is submitted.
 Errors: NOT_FOUND; INVALID_STATE if not OPEN; VALIDATION_ERROR.
 
 ### 10. POST /bounties/{id}/proof
@@ -213,8 +213,7 @@ Wipes demo tables and re-seeds:
 ## Bounty state machine (backend `services/bounty_fsm.py`, one `transition()` function)
 | from | event | to |
 |---|---|---|
-| OPEN | claim (not expired) | CLAIMED |
-| CLAIMED | claim older than 2 h (checked lazily) | OPEN (worker fields cleared) |
+| OPEN | claim | CLAIMED |
 | CLAIMED | proof with a valid token | PROOF_SUBMITTED |
 | PROOF_SUBMITTED | policy pass | VERIFIED |
 | PROOF_SUBMITTED | policy fail | REJECTED (reserve released) |
@@ -236,7 +235,7 @@ Who computes what:
   - `manipulation`: `flagged` when the vision model sees editing or a screen photo
 - **Backend** computes `geo`, `time` and `duplicate` itself:
   - `geo`: distance from the bounty ≤ `radius_m` + 150 m, using browser lat/lon
-  - `time`: before < after, and both lie inside the claim window
+  - `time`: claimed_at ≤ before < after (no upper time limit)
   - `duplicate`: Hamming(before, after) ≥ 3 AND Hamming(before or after, every earlier PROOF image) ≥ 6. Camera frames are not compared.
 - **Backend only** computes the overall result:
   - overall `passed` = geo AND time AND duplicate AND scene_match AND count_drop AND llm AND NOT manipulation.flagged
@@ -330,3 +329,4 @@ The backend computes the `geo`, `time` and `duplicate` checks itself. The AI nev
 
 ## Changelog
 v1.0 Mon 9 Nov 2026 — initial.
+v2.0 Tue 10 Nov 2026 — bounties and claims have no time limits (P3, Arnav). `Bounty.expires_at` is now `iso|null` and is `null` for bounties that never expire (frontend: show "no expiry"). Removed the CLAIMED → OPEN "claim older than 2 h" transition. `time` check is now claimed_at ≤ before < after. Backend: `backend/` on branch `arnav`, migration a1b2c3d4e5f6.
