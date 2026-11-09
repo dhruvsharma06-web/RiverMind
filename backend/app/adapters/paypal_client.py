@@ -132,15 +132,34 @@ class PayPalClient:
 
     # --- Payouts ---
     def send_payout(self, sender_batch_id: str, amount_cents: int, receiver: str) -> dict:
-        """sender_batch_id doubles as PayPal-Request-Id, so a repeat returns the original batch, never a new one."""
+        """A repeat with the same sender_batch_id never pays twice: PayPal answers 400 "already exists" with a link to
+        the original batch (verified on sandbox), and we return that batch so crash recovery can carry on."""
         r = self._send("POST", "/v1/payments/payouts", idempotent=True, headers={"PayPal-Request-Id": sender_batch_id},
                        json={"sender_batch_header": {"sender_batch_id": sender_batch_id,
                                                      "email_subject": "RiverMind cleanup payment"},
                              "items": [{"recipient_type": "EMAIL", "receiver": receiver,
                                         "amount": {"value": cents_to_value(amount_cents), "currency": "USD"},
                                         "note": "Thank you for cleaning the river", "sender_item_id": sender_batch_id}]})
+        if r.status_code == 400:
+            existing = self._existing_batch(r)
+            if existing:
+                log.info("payout batch already exists; using it", extra={"fields": {"batch_id": existing}})
+                return {"batch_id": existing, "item_id": None, "item_status": None}
         header = self._ok(r, "send_payout")["batch_header"]
         return {"batch_id": header["payout_batch_id"], "item_id": None, "item_status": None}
+
+    @staticmethod
+    def _existing_batch(r: httpx.Response) -> str | None:
+        try:
+            details = r.json().get("details") or []
+        except ValueError:
+            return None
+        for d in details:
+            if d.get("field") == "SENDER_BATCH_ID" and "already exists" in str(d.get("issue")):
+                for link in d.get("link") or []:
+                    if link.get("rel") == "self" and "/v1/payments/payouts/" in link.get("href", ""):
+                        return link["href"].rstrip("/").rsplit("/", 1)[-1]
+        return None
 
     def get_payout_batch(self, batch_id: str) -> dict:
         body = self._ok(self._send("GET", f"/v1/payments/payouts/{batch_id}", idempotent=True), "get_payout_batch")

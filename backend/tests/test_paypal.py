@@ -112,6 +112,21 @@ def test_payout_uses_sender_batch_id_as_request_id(pp):
     assert body["items"][0]["amount"] == {"value": "15.00", "currency": "USD"}
 
 
+def test_payout_resend_returns_the_original_batch(pp):
+    """Exact sandbox reply to a repeated sender_batch_id (captured 10 Nov): no new payment, link to the original."""
+    server, client = pp
+    dup = {"name": "USER_BUSINESS_ERROR", "details": [{
+        "field": "SENDER_BATCH_ID", "location": "body", "issue": "Batch with given sender_batch_id already exists",
+        "link": [{"href": "https://api.sandbox.paypal.com/v1/payments/payouts/UE75CJXBPNDWG", "rel": "self",
+                  "method": "GET", "encType": "application/json"}]}]}
+    server.on("POST", "/v1/payments/payouts", httpx.Response(400, json=dup))
+    assert client.send_payout("rm-x-a1", 1500, "w@example.com")["batch_id"] == "UE75CJXBPNDWG"
+
+    server.on("POST", "/v1/payments/payouts", httpx.Response(400, json={"name": "VALIDATION_ERROR", "details": []}))
+    with pytest.raises(ApiError):  # any other 400 is still an error
+        client.send_payout("rm-x-a2", 1500, "w@example.com")
+
+
 def test_webhook_event_forwarded_byte_for_byte(pp):
     server, client = pp
     server.on("POST", "/v1/notifications/verify-webhook-signature",
