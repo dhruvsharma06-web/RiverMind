@@ -26,8 +26,6 @@ from app.services import bounty_fsm, budget, payouts, verify_policy
 log = logging.getLogger("rivermind")
 DEDUPE_RADIUS_M = 500
 DEDUPE_WINDOW = timedelta(hours=6)
-BOUNTY_LIFETIME = timedelta(hours=24)  # shortcut: contract sets no bounty expiry; 24 h until it does
-CLAIM_TTL = timedelta(hours=2)
 
 
 def _dump(obj) -> dict:
@@ -65,27 +63,13 @@ def verification_out(v: Verification) -> schemas.Verification:
 
 
 # --- reads ---
-def expire_stale_claims(session: Session) -> None:
-    """CLAIMED for more than 2 h -> OPEN with worker fields cleared (checked lazily on every bounty read/write)."""
-    cutoff = utcnow() - CLAIM_TTL
-    for b in session.scalars(select(Bounty).where(Bounty.status == "CLAIMED", Bounty.claimed_at < cutoff)).all():
-        try:
-            bounty_fsm.transition(session, b, "claim_expired", worker_name=None, worker_email=None,
-                                  claim_token_hash=None, claimed_at=None)
-        except ApiError:
-            continue  # another request moved it first
-    session.commit()
-
-
 def get_bounty(session: Session, bounty_id: str) -> Bounty:
-    expire_stale_claims(session)
     if (b := session.get(Bounty, bounty_id)) is None:
         raise ApiError("NOT_FOUND", "Bounty not found")
     return b
 
 
 def list_bounties(session: Session, status: str | None, limit: int) -> list[schemas.Bounty]:
-    expire_stale_claims(session)
     q = select(Bounty).order_by(Bounty.created_at.desc()).limit(limit)
     if status:
         q = q.where(Bounty.status == status)
@@ -125,7 +109,7 @@ def maybe_create_for_event(session: Session, event: Event) -> Bounty | None:
         event_id=event.id, title=proposal.title[:200], description=proposal.description, amount_cents=amount,
         currency="USD", status="OPEN", lat=event.lat, lon=event.lon,
         radius_m=max(25, min(1000, proposal.radius_m)),  # AI output is bounded, never trusted
-        expires_at=now + BOUNTY_LIFETIME, urgency=proposal.urgency, agent_rationale=proposal.rationale,
+        expires_at=None, urgency=proposal.urgency, agent_rationale=proposal.rationale,
     )
     session.add(bounty)
     session.flush()
@@ -136,8 +120,6 @@ def maybe_create_for_event(session: Session, event: Event) -> Bounty | None:
 # --- worker actions ---
 def claim(session: Session, bounty_id: str, body: schemas.ClaimIn) -> schemas.ClaimResponse:
     b = get_bounty(session, bounty_id)
-    if b.status == "OPEN" and aware(b.expires_at) <= utcnow():
-        raise ApiError("INVALID_STATE", "Bounty has expired")
     token = new_claim_token()
     bounty_fsm.transition(session, b, "claim", worker_name=body.worker_name.strip(), worker_email=body.paypal_email,
                           claim_token_hash=sha256_hex(token), claimed_at=utcnow())

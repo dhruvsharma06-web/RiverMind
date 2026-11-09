@@ -120,4 +120,5 @@ def test_alembic_migration_matches_models():
     command.upgrade(cfg, "head")
     insp = inspect(create_engine(url))
     assert set(insp.get_table_names()) - {"alembic_version"} == set(Base.metadata.tables)
+    command.check(cfg)  # raises if the models and the migrations disagree
     assert os.path.exists(db_path)

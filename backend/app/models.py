@@ -115,7 +115,7 @@ class Bounty(Base):
     lat: Mapped[float] = mapped_column(Float, nullable=False)
     lon: Mapped[float] = mapped_column(Float, nullable=False)
     radius_m: Mapped[int] = mapped_column(Integer, nullable=False)
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # null = never expires
     urgency: Mapped[str] = mapped_column(String(8), nullable=False)  # low | med | high
     agent_rationale: Mapped[str] = mapped_column(Text, nullable=False)
     worker_name: Mapped[str | None] = mapped_column(String(100))

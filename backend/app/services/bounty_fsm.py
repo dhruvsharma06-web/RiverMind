@@ -7,7 +7,6 @@ from app.models import Bounty, utcnow
 
 TRANSITIONS: dict[tuple[str, str], str] = {
     ("OPEN", "claim"): "CLAIMED",
-    ("CLAIMED", "claim_expired"): "OPEN",
     ("CLAIMED", "proof"): "PROOF_SUBMITTED",
     ("PROOF_SUBMITTED", "policy_pass"): "VERIFIED",
     ("PROOF_SUBMITTED", "policy_fail"): "REJECTED",

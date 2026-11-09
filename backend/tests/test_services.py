@@ -11,7 +11,6 @@ STATUSES = ["OPEN", "CLAIMED", "PROOF_SUBMITTED", "VERIFIED", "REJECTED", "PAYOU
 EVENTS = sorted({e for _, e in bounty_fsm.TRANSITIONS})
 ALLOWED = {
     ("OPEN", "claim"): "CLAIMED",
-    ("CLAIMED", "claim_expired"): "OPEN",
     ("CLAIMED", "proof"): "PROOF_SUBMITTED",
     ("PROOF_SUBMITTED", "policy_pass"): "VERIFIED",
     ("PROOF_SUBMITTED", "policy_fail"): "REJECTED",
@@ -88,7 +87,7 @@ def test_geo_limit_is_radius_plus_150():
     (T0 + timedelta(minutes=1), T0 + timedelta(minutes=30), True),
     (T0 + timedelta(minutes=30), T0 + timedelta(minutes=1), False),   # after before before
     (T0 - timedelta(minutes=1), T0 + timedelta(minutes=30), False),   # before the claim
-    (T0 + timedelta(minutes=1), T0 + timedelta(hours=2, seconds=1), False),  # after the 2 h window
+    (T0 + timedelta(minutes=1), T0 + timedelta(days=3), True),  # no upper time limit
 ])
 def test_time_window(before, after, ok):
     assert verify_policy.time_check(before, after, T0)["passed"] is ok
@@ -115,7 +114,7 @@ def test_decide_all_pass_and_score():
 
 @pytest.mark.parametrize("override, label", [
     ({"geo": {**GEO_OK, "passed": False}}, "photos taken too far from the bounty"),
-    ({"time": {"passed": False}}, "photo times are outside the claim window"),
+    ({"time": {"passed": False}}, "photos were not taken after the claim, before photo first"),
     ({"duplicate": {"passed": False, "nearest_hamming": 0}}, "duplicate photo"),
     ({"ai": {**AI_OK, "manipulation": {"flagged": True}}}, "photo looks edited or is a photo of a screen"),
     ({"ai": {**AI_OK, "llm": {"passed": False, "vote": 0.2, "notes": ""}}}, "AI reviewer was not convinced"),

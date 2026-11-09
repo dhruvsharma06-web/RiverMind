@@ -124,6 +124,7 @@ def test_media_waste_creates_event_and_bounty_once(seeded):
     r2 = upload_waste(seeded, lat=SPOT[0] + 0.001, seed=2).json()  # ~110 m away, same 6 h window
     assert r2["event_id"] and r2["bounty_id"] is None
     b = seeded.get(f"{API}/bounties/{r['bounty_id']}").json()
+    assert b["expires_at"] is None  # bounties never expire
     assert b["status"] == "OPEN" and get_settings().MIN_BOUNTY_CENTS <= b["amount_cents"] <= get_settings().MAX_BOUNTY_CENTS
 
 
@@ -199,12 +200,12 @@ def test_claim_rules(seeded, db):
     err(seeded.post(f"{API}/bounties/{bid}/claim", json={"worker_name": "B", "paypal_email": "b@b.co"}),
         409, "INVALID_STATE")
 
-    # a claim older than 2 h lapses back to OPEN on the next read
+    # claims never lapse: a day-old claim is still held by the same worker
     row = db.get(Bounty, bid)
-    row.claimed_at = utcnow() - timedelta(hours=2, minutes=1)
+    row.claimed_at = utcnow() - timedelta(days=1)
     db.commit()
     b = seeded.get(f"{API}/bounties/{bid}").json()
-    assert b["status"] == "OPEN" and b["worker_name"] is None and b["claimed_at"] is None
+    assert b["status"] == "CLAIMED" and b["worker_name"] == "Asha"
 
 
 def test_proof_auth(seeded, monkeypatch):

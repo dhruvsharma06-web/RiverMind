@@ -118,7 +118,7 @@ class Bounty(Strict):
     lat: Lat
     lon: Lon
     radius_m: int
-    expires_at: UtcDatetime
+    expires_at: UtcDatetime | None  # null = never expires
     urgency: Literal["low", "med", "high"]
     agent_rationale: str
     worker_name: str | None

@@ -1,6 +1,4 @@
 """Demo seed, exactly as CONTRACT /demo/reset. Run by hand with: python -m app.seed"""
-from datetime import timedelta
-
 from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
@@ -54,7 +52,7 @@ def reset_demo(session: Session, settings: Settings) -> None:
         id=new_id(), event_id=waste.id, title=f"Seed data: clear floating plastic at {waste_name}",
         description="Demo bounty from the seed. Remove floating waste within 150 m and photograph before and after.",
         amount_cents=amount, currency="USD", status="OPEN", lat=wlat, lon=wlon, radius_m=150,
-        expires_at=now + timedelta(hours=24), urgency="med",
+        expires_at=None, urgency="med",
         agent_rationale="Seed data: created by /demo/reset, not by the agent.",
     )
     session.add(bounty)

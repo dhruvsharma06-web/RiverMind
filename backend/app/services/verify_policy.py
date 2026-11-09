@@ -1,11 +1,10 @@
 """Verification policy (CONTRACT "Verification policy"). Pure functions: no DB, no AI calls.
 The AI's per-check `passed` values are used as given; geo, time, duplicate and the overall result are ours."""
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from app.geo import haversine_m
 
 GEO_SLACK_M = 150
-CLAIM_WINDOW = timedelta(hours=2)
 MIN_HAMMING_PAIR = 3     # before vs after
 MIN_HAMMING_PRIOR = 6    # before/after vs every earlier proof image
 
@@ -14,7 +13,7 @@ LABELS = {
     "duplicate": "duplicate photo",
     "manipulation": "photo looks edited or is a photo of a screen",
     "geo": "photos taken too far from the bounty",
-    "time": "photo times are outside the claim window",
+    "time": "photos were not taken after the claim, before photo first",
     "scene_match": "before and after do not show the same place",
     "count_drop": "waste count did not drop",
     "llm": "AI reviewer was not convinced",
@@ -31,8 +30,8 @@ def geo_check(bounty_lat: float, bounty_lon: float, radius_m: int, lat: float, l
 
 
 def time_check(before_at: datetime, after_at: datetime, claimed_at: datetime) -> dict:
-    end = claimed_at + CLAIM_WINDOW
-    return {"passed": before_at < after_at and claimed_at <= before_at and after_at <= end}
+    """Both photos taken after the claim, before photo first. No upper time limit: claims never lapse."""
+    return {"passed": claimed_at <= before_at < after_at}
 
 
 def duplicate_check(before: str, after: str, prior: list[str]) -> dict:
