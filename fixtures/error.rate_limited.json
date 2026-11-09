@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many requests. Try again in a minute.",
+    "details": {}
+  }
+}

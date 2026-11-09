@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "PAYPAL_ERROR",
+    "message": "PayPal could not complete the request. Please try again.",
+    "details": {}
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "media_id": "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c01",
+  "analysis": {
+    "waste_detected": true,
+    "waste_score": 0.78,
+    "counts": {
+      "bottle": 6,
+      "bag": 3,
+      "foam": 1,
+      "other": 4
+    },
+    "boxes": [
+      {
+        "xyxy": [
+          0.12,
+          0.4,
+          0.18,
+          0.47
+        ],
+        "cls": "bottle",
+        "conf": 0.81
+      },
+      {
+        "xyxy": [
+          0.33,
+          0.52,
+          0.41,
+          0.6
+        ],
+        "cls": "bag",
+        "conf": 0.74
+      },
+      {
+        "xyxy": [
+          0.58,
+          0.45,
+          0.63,
+          0.5
+        ],
+        "cls": "other",
+        "conf": 0.66
+      }
+    ],
+    "foam_ratio": 0.07,
+    "summary": "Floating bottles and bags near the ghat steps, some foam",
+    "confidence": 0.8,
+    "model_version": "mock-1"
+  },
+  "event_id": "9b2f5e3a-1c4d-4e8f-a1b2-0c3d4e5f6a71",
+  "bounty_id": "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e61"
+}

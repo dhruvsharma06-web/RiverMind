@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "INVALID_STATE",
+    "message": "Bounty is not OPEN",
+    "details": {}
+  }
+}

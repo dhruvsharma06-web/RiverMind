@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "2e3f4a5b-6c7d-4e8f-9a0b-1c2d3e4f5a61",
+      "amount_cents": 500,
+      "currency": "USD",
+      "donor_name": "Meera",
+      "created_at": "2026-11-10T08:00:00Z"
+    },
+    {
+      "id": "2e3f4a5b-6c7d-4e8f-9a0b-1c2d3e4f5a62",
+      "amount_cents": 2000,
+      "currency": "USD",
+      "donor_name": null,
+      "created_at": "2026-11-10T08:00:00Z"
+    }
+  ],
+  "total_cents": 2500
+}

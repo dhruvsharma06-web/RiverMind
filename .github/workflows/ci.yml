@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures-and-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Detect scaffolded packages
+        id: has
+        run: |
+          echo "ai=$([ -f ai/pyproject.toml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "backend=$([ -f backend/requirements.txt ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - name: Install tools
+        run: pip install pytest ruff
+      - name: Install ai package
+        if: steps.has.outputs.ai == 'true'
+        run: pip install -e "ai[real]"
+      - name: Install backend
+        if: steps.has.outputs.backend == 'true'
+        run: pip install -r backend/requirements.txt
+      - name: Lint (ruff)
+        run: ruff check ai backend scripts e2e
+      - name: Contract fixtures parse
+        run: cd e2e && python -m pytest -q
+      - name: AI tests
+        if: steps.has.outputs.ai == 'true'
+        run: cd ai && (python -m pytest -q || [ $? -eq 5 ])
+      - name: Backend tests
+        if: steps.has.outputs.backend == 'true'
+        env:
+          USE_MOCK_AI: "true"
+          PAYPAL_MODE: mock
+          DATABASE_URL: sqlite:///./ci.db
+        run: cd backend && (python -m pytest -q || [ $? -eq 5 ])
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect frontend
+        id: has
+        run: echo "fe=$([ -f frontend/package.json ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: steps.has.outputs.fe == 'true'
+        with:
+          node-version: "20"
+      - name: Install
+        if: steps.has.outputs.fe == 'true'
+        run: npm --prefix frontend ci
+      - name: Lint, typecheck, build
+        if: steps.has.outputs.fe == 'true'
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_USE_MOCK: "true"
+        run: |
+          npm --prefix frontend run lint
+          npm --prefix frontend run typecheck
+          npm --prefix frontend run build
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Added by Dhruv in Stage 1 (P1 S1.5):
+  #  - api-types freshness: make types && git diff --exit-code frontend/openapi.json frontend/lib/api-types.ts
+  #  - e2e smoke: start backend in mock mode, run scripts/e2e_smoke.py

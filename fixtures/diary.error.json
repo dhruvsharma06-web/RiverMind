@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "No diary entry yet",
+    "details": {}
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "media_id": "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c01",
+  "analysis": {
+    "waste_detected": false,
+    "waste_score": 0.12,
+    "counts": {
+      "bottle": 0,
+      "bag": 0,
+      "foam": 0,
+      "other": 1
+    },
+    "boxes": [
+      {
+        "xyxy": [
+          0.7,
+          0.6,
+          0.73,
+          0.63
+        ],
+        "cls": "other",
+        "conf": 0.41
+      }
+    ],
+    "foam_ratio": 0.01,
+    "summary": "Water surface mostly clear",
+    "confidence": 0.7,
+    "model_version": "mock-1"
+  },
+  "event_id": null,
+  "bounty_id": null
+}

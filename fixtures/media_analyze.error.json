@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "AI_UNAVAILABLE",
+    "message": "The AI service is not responding. Please try again.",
+    "details": {}
+  }
+}

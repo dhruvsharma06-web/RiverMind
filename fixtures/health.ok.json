@@ -1,0 +1,7 @@
+{
+  "status": "ok",
+  "version": "1.0",
+  "mock_ai": true,
+  "paypal_mode": "mock",
+  "db": "ok"
+}

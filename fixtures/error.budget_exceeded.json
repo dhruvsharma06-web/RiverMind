@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "BUDGET_EXCEEDED",
+    "message": "The river's treasury cannot cover this amount today",
+    "details": {}
+  }
+}

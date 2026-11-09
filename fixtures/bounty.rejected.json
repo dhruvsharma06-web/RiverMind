@@ -1,0 +1,69 @@
+{
+  "id": "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e63",
+  "event_id": "9b2f5e3a-1c4d-4e8f-a1b2-0c3d4e5f6a72",
+  "title": "Plastic build-up at Kalindi Kunj ghat",
+  "description": "Bottles and bags caught along the ghat steps. Remove floating waste within 150 m and photograph before and after.",
+  "amount_cents": 1000,
+  "currency": "USD",
+  "status": "REJECTED",
+  "lat": 28.544,
+  "lon": 77.307,
+  "radius_m": 150,
+  "expires_at": "2026-11-11T07:30:00Z",
+  "urgency": "med",
+  "agent_rationale": "Severity 4 waste event near a busy ghat; amount set inside the allowed range of $5–$20.",
+  "worker_name": "Ravi",
+  "claimed_at": "2026-11-10T08:40:00Z",
+  "rejection_reason": "duplicate photo",
+  "verification": {
+    "id": "3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e72",
+    "bounty_id": "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e63",
+    "passed": false,
+    "score": 0.31,
+    "checks": {
+      "geo": {
+        "passed": true,
+        "distance_m": 18.0,
+        "source": "browser"
+      },
+      "time": {
+        "passed": true
+      },
+      "duplicate": {
+        "passed": false,
+        "nearest_hamming": 0
+      },
+      "scene_match": {
+        "passed": true,
+        "inliers": 400
+      },
+      "count_drop": {
+        "passed": false,
+        "before_count": 9,
+        "after_count": 9
+      },
+      "llm": {
+        "passed": false,
+        "vote": 0.1,
+        "notes": "Before and after look identical"
+      },
+      "manipulation": {
+        "flagged": false
+      },
+      "sensor": {
+        "passed": null,
+        "turbidity_delta": null
+      }
+    },
+    "reasons": [
+      "duplicate photo: before and after are the same image",
+      "waste count did not drop"
+    ],
+    "explanation": "The after photo is the same image as the before photo.",
+    "model_version": "mock-1",
+    "created_at": "2026-11-10T10:05:00Z"
+  },
+  "payout": null,
+  "created_at": "2026-11-10T07:30:00Z",
+  "updated_at": "2026-11-10T09:12:20Z"
+}

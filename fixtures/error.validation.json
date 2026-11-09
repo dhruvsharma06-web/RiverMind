@@ -1,0 +1,14 @@
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Some fields are invalid",
+    "details": {
+      "fields": [
+        {
+          "field": "amount_cents",
+          "reason": "must be between 100 and 100000"
+        }
+      ]
+    }
+  }
+}

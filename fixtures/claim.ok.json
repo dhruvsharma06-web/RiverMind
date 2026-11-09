@@ -1,0 +1,25 @@
+{
+  "bounty": {
+    "id": "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e61",
+    "event_id": "9b2f5e3a-1c4d-4e8f-a1b2-0c3d4e5f6a71",
+    "title": "Plastic build-up at Kalindi Kunj ghat",
+    "description": "Bottles and bags caught along the ghat steps. Remove floating waste within 150 m and photograph before and after.",
+    "amount_cents": 1500,
+    "currency": "USD",
+    "status": "CLAIMED",
+    "lat": 28.544,
+    "lon": 77.307,
+    "radius_m": 150,
+    "expires_at": "2026-11-11T07:30:00Z",
+    "urgency": "med",
+    "agent_rationale": "Severity 4 waste event near a busy ghat; amount set inside the allowed range of $5–$20.",
+    "worker_name": "Asha",
+    "claimed_at": "2026-11-10T08:40:00Z",
+    "rejection_reason": null,
+    "verification": null,
+    "payout": null,
+    "created_at": "2026-11-10T07:30:00Z",
+    "updated_at": "2026-11-10T09:12:20Z"
+  },
+  "claim_token": "ct_demo_9f8e7d6c5b4a"
+}

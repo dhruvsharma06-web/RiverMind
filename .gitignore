@@ -1,0 +1,39 @@
+# secrets
+.env
+.env.*
+!.env.example
+!**/.env.local.example
+firmware/**/config.h
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.db
+*.sqlite
+*.sqlite3
+
+# node
+node_modules/
+.next/
+out/
+frontend/public/fixtures/
+*.tsbuildinfo
+
+# data and models (raw data never goes in git)
+data/
+eval/raw/
+*.pt
+*.onnx
+!ai/rivermind_ai/models/*.onnx
+runs/
+
+# misc
+.DS_Store
+.idea/
+.vscode/
+*.log
