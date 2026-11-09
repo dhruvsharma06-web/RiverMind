@@ -1,19 +1,24 @@
 """Payout lifecycle (CONTRACT "Payout safety"). One payout per bounty; only the request that wins the
 QUEUED -> SENDING compare-and-set (committed before the HTTP call) talks to PayPal."""
 import logging
+import time
+from datetime import timedelta
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.orm import Session
 
 from app import schemas
 from app.adapters.paypal_client import get_paypal
 from app.config import get_settings
 from app.errors import ApiError
-from app.models import Bounty, LedgerEntry, Payout, utcnow
+from app.models import Bounty, LedgerEntry, Payout, aware, utcnow
 from app.services import bounty_fsm
 
 log = logging.getLogger("rivermind")
 FAILED_ITEM = {"UNCLAIMED", "RETURNED", "BLOCKED", "FAILED"}
+FINAL_ITEM = FAILED_ITEM | {"SUCCESS"}
+POLL_TRIES, POLL_INTERVAL_S = 3, 2.0
+STALE = timedelta(seconds=15)
 PENDING = ("PENDING_APPROVAL", "QUEUED", "SENDING", "SENT")
 
 
@@ -64,19 +69,64 @@ def start_for_verified(session: Session, bounty: Bounty) -> Payout:
 
 
 def send(session: Session, p: Payout) -> Payout:
-    sender_batch_id = f"rm-{p.id}-a{p.attempt}"
-    _cas(session, p, "QUEUED", status="SENDING", sender_batch_id=sender_batch_id)
-    session.commit()  # the claim on this payout is durable before PayPal is called
+    _cas(session, p, "QUEUED", status="SENDING", sender_batch_id=f"rm-{p.id}-a{p.attempt}")
+    session.commit()  # only the request that won QUEUED -> SENDING reaches PayPal
+    return _post_batch(session, p)
+
+
+def _post_batch(session: Session, p: Payout) -> Payout:
+    """POST the batch (sender_batch_id is also the PayPal-Request-Id, so a repeat returns the same batch),
+    then poll it. On a PayPal error the payout stays SENDING and is recovered later with the same ids."""
     try:
-        result = get_paypal().send_payout(sender_batch_id, p.amount_cents, p.receiver_email)
+        result = get_paypal().send_payout(p.sender_batch_id, p.amount_cents, p.receiver_email)
     except ApiError:
-        # Stay SENDING: PayPal may have accepted the batch. Recovery is a lookup by sender_batch_id (S2.3), never a resend.
-        log.error("payout send failed", extra={"fields": {"payout_id": p.id}})
+        log.error("payout send failed; stays SENDING for recovery", extra={"fields": {"payout_id": p.id}})
         raise
     _cas(session, p, "SENDING", status="SENT", paypal_batch_id=result["batch_id"], paypal_item_id=result.get("item_id"))
-    apply_item_status(session, p, result.get("item_status"))
+    session.commit()
+    status = result.get("item_status")
+    for _ in range(POLL_TRIES):
+        if status in FINAL_ITEM:
+            break
+        time.sleep(POLL_INTERVAL_S)
+        batch = get_paypal().get_payout_batch(p.paypal_batch_id)
+        status = batch["item_status"]
+        if batch.get("item_id") and not p.paypal_item_id:
+            p.paypal_item_id = batch["item_id"]
+    apply_item_status(session, p, status)
     session.commit()
     return p
+
+
+def refresh_stale(session: Session, items: list[Payout]) -> None:
+    """Lazy re-poll inside reads: SENT payouts older than 15 s are polled, and SENDING ones (a crash or PayPal error
+    between our claim and PayPal's answer) are re-posted with the SAME ids, which PayPal de-duplicates. Each payout
+    is touched at most once per 15 s; errors are logged and never fail the read."""
+    now = utcnow()
+    for p in items:
+        if p.status not in ("SENDING", "SENT") or aware(p.updated_at) > now - STALE:
+            continue
+        won = session.execute(
+            update(Payout).where(Payout.id == p.id, or_(Payout.last_polled_at.is_(None),
+                                                        Payout.last_polled_at < now - STALE))
+            .values(last_polled_at=now).execution_options(synchronize_session=False)
+        ).rowcount == 1
+        session.commit()
+        if not won:
+            continue
+        session.refresh(p)
+        try:
+            if p.status == "SENDING":
+                _post_batch(session, p)
+            else:
+                batch = get_paypal().get_payout_batch(p.paypal_batch_id)
+                if batch.get("item_id") and not p.paypal_item_id:
+                    p.paypal_item_id = batch["item_id"]
+                apply_item_status(session, p, batch["item_status"])
+                session.commit()
+        except ApiError as exc:
+            session.rollback()
+            log.warning("payout re-poll failed", extra={"fields": {"payout_id": p.id, "code": exc.code}})
 
 
 def apply_item_status(session: Session, p: Payout, item_status: str | None) -> None:
@@ -122,6 +172,7 @@ def retry(session: Session, payout_id: str) -> schemas.PayoutActionResponse:
 
 
 def list_payouts(session: Session, status: str | None, limit: int) -> schemas.PayoutsResponse:
+    refresh_stale(session, list(session.scalars(select(Payout).where(Payout.status.in_(("SENDING", "SENT"))).limit(50))))
     q = select(Payout).order_by(Payout.created_at.desc()).limit(limit)
     if status:
         q = q.where(Payout.status == status)

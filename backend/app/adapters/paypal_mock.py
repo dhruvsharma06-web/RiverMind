@@ -24,7 +24,7 @@ class MockPayPal:
     def get_payout_batch(self, batch_id: str) -> dict:
         return {"batch_id": batch_id, "item_id": f"{batch_id}-ITEM", "item_status": "SUCCESS"}
 
-    def verify_webhook(self, headers: dict, body: dict) -> bool:
+    def verify_webhook(self, headers: dict, raw_body: bytes) -> bool:
         return True  # contract: verification is skipped only in mock mode
 
     def send_invoice(self, amount_cents: int, sponsor_email: str, description: str) -> str:

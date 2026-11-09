@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Annotated
 
@@ -69,13 +70,14 @@ def list_donations(db: Db, limit: Annotated[int, Query(ge=1, le=100)] = 20) -> s
 
 @router.post("/webhooks/paypal", response_model=schemas.WebhookAck, responses=error_responses("VALIDATION_ERROR"))
 async def paypal_webhook(request: Request, db: Db):
+    raw = await request.body()
     try:
-        body = await request.json()
+        body = json.loads(raw)
         event_id, event_type = str(body["id"])[:64], str(body.get("event_type", ""))[:64]
     except (ValueError, KeyError, TypeError):
         return error_json("VALIDATION_ERROR", "Not a PayPal webhook event", status=400)
     try:
-        verified = get_paypal().verify_webhook(dict(request.headers), body)
+        verified = get_paypal().verify_webhook(dict(request.headers), raw)
     except ApiError:
         verified = False
     if not verified:

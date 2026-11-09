@@ -69,6 +69,15 @@ def get_bounty(session: Session, bounty_id: str) -> Bounty:
     return b
 
 
+def get_bounty_fresh(session: Session, bounty_id: str) -> Bounty:
+    """GET /bounties/{id}: re-polls this bounty's payout if it is stuck in SENDING/SENT (CONTRACT "Payout safety")."""
+    b = get_bounty(session, bounty_id)
+    if (p := session.scalar(select(Payout).where(Payout.bounty_id == b.id))) is not None:
+        payouts.refresh_stale(session, [p])
+        session.refresh(b)
+    return b
+
+
 def list_bounties(session: Session, status: str | None, limit: int) -> list[schemas.Bounty]:
     q = select(Bounty).order_by(Bounty.created_at.desc()).limit(limit)
     if status:

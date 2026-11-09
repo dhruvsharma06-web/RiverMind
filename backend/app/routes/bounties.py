@@ -21,7 +21,7 @@ def list_bounties(db: Db, status: Annotated[schemas.BountyStatus | None, Query()
 
 @router.get("/bounties/{bounty_id}", response_model=schemas.Bounty, responses=error_responses("NOT_FOUND"))
 def get_bounty(bounty_id: str, db: Db) -> schemas.Bounty:
-    return bounties.bounty_out(db, bounties.get_bounty(db, bounty_id))
+    return bounties.bounty_out(db, bounties.get_bounty_fresh(db, bounty_id))
 
 
 @router.post("/bounties/{bounty_id}/claim", response_model=schemas.ClaimResponse,
