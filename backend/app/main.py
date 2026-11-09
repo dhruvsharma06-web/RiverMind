@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.errors import install_error_handlers
 from app.observability import RequestLogMiddleware, setup_logging
-from app.routes import health
+from app.routes import bounties, health, money, river, sensing
 
 
 def create_app() -> FastAPI:
@@ -20,7 +20,8 @@ def create_app() -> FastAPI:
         allow_credentials=False,
     )
     app.add_middleware(RequestLogMiddleware)  # added last = outermost, so it sees every response
-    app.include_router(health.router)
+    for module in (health, sensing, bounties, money, river):
+        app.include_router(module.router)
     return app
 
 

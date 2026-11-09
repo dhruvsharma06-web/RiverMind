@@ -313,3 +313,43 @@ class FundraiseResponse(Strict):
 
 class ResetResponse(Strict):
     reset: Literal[True]
+
+
+# --- requests (unknown fields rejected) ---
+EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+
+
+class ReadingIn(Strict):
+    device_id: Annotated[str, Field(min_length=1, max_length=64)]
+    seq: Annotated[int, Field(ge=0)]
+    ts: UtcDatetime
+    lat: Lat
+    lon: Lon
+    turbidity_ntu: Annotated[float, Field(ge=0, le=4000)]
+    ph: Annotated[float, Field(ge=0, le=14)]
+    tds_ppm: Annotated[float, Field(ge=0, le=100000)]
+    temp_c: Annotated[float, Field(ge=-10, le=60)]
+    simulated: bool
+
+
+class ClaimIn(Strict):
+    worker_name: Annotated[str, Field(min_length=1, max_length=60)]
+    paypal_email: Annotated[str, Field(max_length=254, pattern=EMAIL_PATTERN)]
+
+
+class ApproveIn(Strict):
+    note: Annotated[str | None, Field(max_length=500)] = None
+
+
+class VetoIn(Strict):
+    reason: Annotated[str, Field(min_length=1, max_length=500)]
+
+
+class DonationOrderIn(Strict):
+    amount_cents: Annotated[int, Field(ge=100, le=100000)]
+    donor_name: Annotated[str | None, Field(max_length=60)] = None
+
+
+class FundraiseIn(Strict):
+    sponsor_email: Annotated[str, Field(max_length=254, pattern=EMAIL_PATTERN)]
+    reason: Annotated[str | None, Field(max_length=500)] = None

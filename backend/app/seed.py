@@ -1,5 +1,4 @@
 """Demo seed, exactly as CONTRACT /demo/reset. Run by hand with: python -m app.seed"""
-import hashlib
 from datetime import timedelta
 
 from sqlalchemy.orm import Session
@@ -8,6 +7,7 @@ from app.config import Settings, get_settings
 from app.db import Base
 from app.geo import haversine_m
 from app.models import Bounty, Device, DiaryEntry, Event, LedgerEntry, new_id, utcnow
+from app.security import sha256_hex
 
 # Position of DEVICE_ID as used in CONTRACT.md's reading example (Okhla). Readings are wiped by reset,
 # so this is the only device position known at seed time.
@@ -20,10 +20,6 @@ CANDIDATES = [
     ("Nizamuddin bridge", 28.5900, 77.2650),
     ("Palla", 28.8250, 77.2200),
 ]
-
-
-def sha256_hex(value: str) -> str:
-    return hashlib.sha256(value.encode()).hexdigest()
 
 
 def pick_points(settings: Settings) -> list[tuple[str, float, float]]:

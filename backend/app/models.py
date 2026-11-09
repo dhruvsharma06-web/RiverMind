@@ -29,6 +29,11 @@ def utcnow() -> datetime:
     return datetime.now(UTC)
 
 
+def aware(dt: datetime | None) -> datetime | None:
+    """SQLite hands back naive datetimes; everything we store is UTC."""
+    return dt.replace(tzinfo=UTC) if dt is not None and dt.tzinfo is None else dt
+
+
 def _id() -> Mapped[str]:
     return mapped_column(String(36), primary_key=True, default=new_id)
 
