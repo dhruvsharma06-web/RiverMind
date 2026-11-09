@@ -62,3 +62,14 @@ def jpeg(seed: int, size: int = 64) -> bytes:
 def seeded(client):
     assert client.post("/api/v1/demo/reset", headers=COUNCIL).json() == {"reset": True}
     return client
+
+
+@pytest.fixture(autouse=True)
+def _fresh_rate_limits():
+    from app.hardening import reset_rate_limits
+
+    reset_rate_limits()
+    from app.adapters import ai_adapter
+
+    ai_adapter._usage.update(day=None, calls=0)
+    yield
