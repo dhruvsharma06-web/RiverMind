@@ -8,6 +8,7 @@ import json
 import logging
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 
 import httpx
@@ -21,6 +22,7 @@ SANDBOX = "https://api-m.sandbox.paypal.com"
 TIMEOUT_S = 15
 RETRIES = 3
 RETRY_STATUSES = {429, 500, 502, 503, 504}
+_toolkit_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="pp-toolkit")
 
 
 def cents_to_value(cents: int) -> str:
@@ -165,9 +167,40 @@ class PayPalClient:
         except ApiError:
             return False
 
-    # --- Invoices (F14) ---
+    # --- Invoices (F14): through the PayPal Agent Toolkit's invoice tools ---
     def send_invoice(self, amount_cents: int, sponsor_email: str, description: str) -> str:
-        raise _fail("Agent fundraising invoices are not enabled yet")  # S4.4: PayPal Agent Toolkit
+        """create_invoice + send_invoice tools. The amount is already capped by the caller (MAX_INVOICE_CENTS)."""
+        try:  # installed separately: pip install --no-deps -r backend/requirements-toolkit.txt
+            from paypal_agent_toolkit.shared.api import PayPalAPI
+            from paypal_agent_toolkit.shared.configuration import Context
+        except ImportError as exc:
+            log.error("paypal-agent-toolkit is not installed")
+            raise _fail("Agent fundraising invoices are not available on this server") from exc
+
+        api = PayPalAPI(client_id=self._id, secret=self._secret, context=Context(sandbox=True))
+        text = description[:500]
+        created = self._toolkit(api, "create_invoice", {
+            "currency_code": "USD", "note": text,
+            "primary_recipients": [{"billing_info": {"email_address": sponsor_email}}],
+            "items": [{"name": "River cleanup sponsorship", "description": text, "quantity": "1",
+                       "unit_amount": {"currency_code": "USD", "value": cents_to_value(amount_cents)}}],
+        })
+        invoice_id = created.get("id") or str(created.get("href", "")).rstrip("/").rsplit("/", 1)[-1]
+        if not invoice_id:
+            raise _fail()
+        self._toolkit(api, "send_invoice", {"invoice_id": invoice_id, "send_to_recipient": True})
+        return invoice_id
+
+    @staticmethod
+    def _toolkit(api, method: str, params: dict) -> dict:
+        """The toolkit uses requests without timeouts, so we enforce our 15 s limit around it."""
+        future = _toolkit_pool.submit(api.run, method, params)
+        try:
+            out = future.result(timeout=TIMEOUT_S)
+            return json.loads(out) if out else {}
+        except Exception as exc:
+            log.error("paypal toolkit error", extra={"fields": {"method": method, "error": type(exc).__name__}})
+            raise _fail() from exc
 
 
 @lru_cache

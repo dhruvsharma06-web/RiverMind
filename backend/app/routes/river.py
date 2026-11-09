@@ -7,6 +7,7 @@ from app import schemas
 from app.config import get_settings
 from app.db import get_db
 from app.errors import error_responses
+from app.hardening import rate_limit
 from app.security import require_council
 from app.seed import reset_demo
 from app.services import river
@@ -25,8 +26,9 @@ def diary_latest(db: Db) -> schemas.DiaryResponse:
     return river.latest_diary(db)
 
 
-@router.post("/demo/reset", response_model=schemas.ResetResponse, dependencies=[Depends(require_council)],
-             responses=error_responses("UNAUTHORIZED"))
+@router.post("/demo/reset", response_model=schemas.ResetResponse,
+             dependencies=[rate_limit("council", 30), Depends(require_council)],
+             responses=error_responses("UNAUTHORIZED", "RATE_LIMITED"))
 def demo_reset(db: Db) -> schemas.ResetResponse:
     reset_demo(db, get_settings())
     river.write_diary(db)  # the seed diary stays as a fallback if the AI is down

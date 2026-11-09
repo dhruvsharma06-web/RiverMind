@@ -1,0 +1,4 @@
+# Install with:  pip install --no-deps -r backend/requirements-toolkit.txt
+# --no-deps: we use only the toolkit core (shared/), not its LangChain/CrewAI/OpenAI agent frameworks,
+# which pull in 120+ packages with known CVEs. Its core needs only pydantic, httpx and requests.
+paypal-agent-toolkit==1.11.0

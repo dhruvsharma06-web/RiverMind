@@ -11,6 +11,7 @@ from app import schemas
 from app.adapters.paypal_client import get_paypal
 from app.db import get_db
 from app.errors import ApiError, error_json, error_responses
+from app.hardening import rate_limit
 from app.idempotency import check_key, run_once
 from app.models import WebhookEvent
 from app.security import require_council
@@ -20,9 +21,10 @@ log = logging.getLogger("rivermind")
 router = APIRouter(prefix="/api/v1")
 Db = Annotated[Session, Depends(get_db)]
 IdemKey = Annotated[str | None, Header(alias="Idempotency-Key")]
-Council = [Depends(require_council)]
+Council = [rate_limit("council", 30), Depends(require_council)]
+DonationLimit = [rate_limit("donations", 30)]
 COUNCIL_ACTION_ERRORS = error_responses("UNAUTHORIZED", "NOT_FOUND", "INVALID_STATE", "IDEMPOTENCY_CONFLICT",
-                                        "PAYPAL_ERROR", "VALIDATION_ERROR")
+                                        "PAYPAL_ERROR", "VALIDATION_ERROR", "RATE_LIMITED")
 
 
 @router.get("/payouts", response_model=schemas.PayoutsResponse, responses=error_responses("VALIDATION_ERROR"))
@@ -50,15 +52,15 @@ def retry(payout_id: str, db: Db, idempotency_key: IdemKey):
     return run_once(db, idempotency_key, f"retry:{payout_id}", {}, lambda: payouts.retry(db, payout_id))
 
 
-@router.post("/donations/orders", response_model=schemas.DonationOrderResponse,
-             responses=error_responses("VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "PAYPAL_ERROR"))
+@router.post("/donations/orders", response_model=schemas.DonationOrderResponse, dependencies=DonationLimit,
+             responses=error_responses("VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "PAYPAL_ERROR", "RATE_LIMITED"))
 def create_donation_order(body: schemas.DonationOrderIn, db: Db, idempotency_key: IdemKey):
     key = check_key(idempotency_key)
     return run_once(db, key, "donation_order", body.model_dump(), lambda: donations.create_order(db, body, key))
 
 
-@router.post("/donations/orders/{order_id}/capture", response_model=schemas.DonationCaptureResponse,
-             responses=error_responses("NOT_FOUND", "INVALID_STATE", "PAYPAL_ERROR"))
+@router.post("/donations/orders/{order_id}/capture", response_model=schemas.DonationCaptureResponse, dependencies=DonationLimit,
+             responses=error_responses("NOT_FOUND", "INVALID_STATE", "PAYPAL_ERROR", "RATE_LIMITED"))
 def capture_donation(order_id: str, db: Db) -> schemas.DonationCaptureResponse:
     return donations.capture(db, order_id)
 
@@ -103,6 +105,6 @@ async def paypal_webhook(request: Request, db: Db):
 
 @router.post("/agent/fundraise", response_model=schemas.FundraiseResponse, dependencies=Council,
              responses=error_responses("UNAUTHORIZED", "BUDGET_EXCEEDED", "PAYPAL_ERROR", "VALIDATION_ERROR",
-                                       "AI_UNAVAILABLE"))
+                                       "AI_UNAVAILABLE", "RATE_LIMITED"))
 def fundraise(body: schemas.FundraiseIn, db: Db) -> schemas.FundraiseResponse:
     return river.fundraise(db, body)

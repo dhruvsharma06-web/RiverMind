@@ -9,6 +9,7 @@ from app import schemas
 from app.config import get_settings
 from app.db import get_db
 from app.errors import error_responses
+from app.hardening import rate_limit
 from app.services import images, sensing
 
 router = APIRouter(prefix="/api/v1")
@@ -28,8 +29,8 @@ def get_readings(db: Db, device_id: Annotated[str | None, Query(max_length=64)] 
     return sensing.list_readings(db, device_id or get_settings().DEVICE_ID, limit)
 
 
-@router.post("/media/analyze", response_model=schemas.MediaAnalyzeResponse,
-             responses=error_responses("PAYLOAD_TOO_LARGE", "VALIDATION_ERROR", "AI_UNAVAILABLE"))
+@router.post("/media/analyze", response_model=schemas.MediaAnalyzeResponse, dependencies=[rate_limit("media", 20)],
+             responses=error_responses("PAYLOAD_TOO_LARGE", "VALIDATION_ERROR", "AI_UNAVAILABLE", "RATE_LIMITED"))
 def analyze(
     db: Db,
     file: Annotated[UploadFile, File()],
