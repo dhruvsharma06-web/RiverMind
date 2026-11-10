@@ -5,7 +5,7 @@ Scope: `frontend/` only. AI and backend logic are out of scope; they arrive late
 
 ## 0. Ground rules for the implementer
 
-- **Ownership.** `frontend/` belongs to P4 (CLAUDE.md), and rayyan made the latest frontend commits.
+- **Ownership.** `frontend/` belongs to P4 (team rules), and rayyan made the latest frontend commits.
   - Tell them before starting, and work on a short branch `feat/fe-river-polish` cut from `origin/main`.
   - Open a PR to `main`. Do not push to `main`.
 - **Do not touch:**
@@ -13,7 +13,7 @@ Scope: `frontend/` only. AI and backend logic are out of scope; they arrive late
   - the generated `openapi.json` and `lib/api-types.ts`
   - anything under `../backend` or `../ai`
 - **No behaviour changes to the journeys** (claim, proof, verify, donate, council). Keep the visual change modest: the user asked for "don't change much, don't change for the sake of it".
-- **Honesty rule** (CLAUDE.md #3): the hero footage is a generic river unless someone films the Yamuna. Its caption must not claim it is the Yamuna. Simulated data stays labelled.
+- **Honesty rule** (team rule #3): the hero footage is a generic river unless someone films the Yamuna. Its caption must not claim it is the Yamuna. Simulated data stays labelled.
 - **Playwright tests assert visible text.** `tests/browser/journeys.spec.ts` checks these strings:
   - Observatory, Signals over time, Every dollar, accounted for
   - Capture a change worth seeing., A little care, carried forward., Explore the river
