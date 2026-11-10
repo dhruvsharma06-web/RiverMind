@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers";
 import "./globals.css";
 import "./dashboard.css";
 import "./landing.css";
+import "./reports.css";
 
 export const metadata: Metadata = {
   title: { default: "RiverMind", template: "%s · RiverMind" },

@@ -13,6 +13,7 @@ import {
   Waves,
 } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
+import { LandingWelcome } from "@/components/landing-welcome";
 import {
   LandingStats,
   AtlasPreview,
@@ -52,6 +53,7 @@ const questions = [
 export default function LandingPage() {
   return (
     <div className="landing-experience">
+      <LandingWelcome />
       <MarketingNav />
       <main id="main-content">
         <section className="experience-hero">

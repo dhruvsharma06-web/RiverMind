@@ -1,0 +1,363 @@
+/* Shared analytical cards and monthly report workspace. */
+.overview-analytics-grid,
+.report-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.overview-analytics-grid > *,
+.report-detail-grid > * {
+  min-width: 0;
+}
+.analytics-period {
+  color: var(--dash-muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.activity-chart {
+  width: 100%;
+  height: 210px;
+  min-width: 0;
+}
+.chart-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 4px 0 10px;
+  color: var(--dash-muted);
+  font-size: 10px;
+}
+.chart-key > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chart-key i,
+.allocation-legend i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+.viz-water {
+  background: var(--viz-water);
+}
+.viz-sand {
+  background: var(--viz-sand);
+}
+.app-shell .analytics-footnote {
+  margin-top: 14px;
+  font-size: 10px;
+  line-height: 1.75;
+  color: var(--dash-muted);
+}
+.analytics-data {
+  border-top: 1px solid var(--dash-line);
+  margin-top: 16px;
+  padding-top: 5px;
+}
+.analytics-data summary {
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 44px;
+}
+.allocation-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 230px;
+}
+.allocation-ring {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  flex: 0 0 auto;
+}
+.allocation-ring > svg {
+  width: 100%;
+  height: 100%;
+}
+.allocation-ring > div {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+}
+.app-shell .allocation-ring strong {
+  font-size: 31px;
+  font-weight: 500;
+  letter-spacing: -1.5px;
+}
+.allocation-ring span {
+  color: var(--dash-muted);
+  font-size: 10px;
+}
+.allocation-legend {
+  display: grid;
+  gap: 18px;
+  flex: 1;
+  min-width: 125px;
+}
+.allocation-legend > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+}
+.allocation-legend dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.app-shell .allocation-legend dd {
+  color: var(--dash-ink);
+  font-variant-numeric: tabular-nums;
+}
+.report-page {
+  display: grid;
+  gap: 24px;
+}
+.report-page > .page-heading {
+  margin-bottom: 0;
+}
+.report-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.report-controls label {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+}
+.report-controls label > span {
+  font-size: 10px;
+}
+.report-controls input {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--dash-line);
+  border-radius: 10px;
+  background: var(--dash-panel);
+  color: var(--dash-ink);
+  font: inherit;
+  font-size: 14px;
+}
+.report-controls input:focus-visible {
+  outline: 2px solid var(--dash-accent);
+  outline-offset: 3px;
+}
+.report-cover {
+  border-top: 3px solid var(--dash-accent);
+}
+.report-cover-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.report-cover-heading > svg {
+  color: var(--dash-accent);
+  flex-shrink: 0;
+}
+.report-kicker {
+  color: var(--dash-muted);
+  font-size: 9px;
+  letter-spacing: 0.13em;
+}
+.app-shell .report-cover h2 {
+  margin-top: 17px;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -1.5px;
+  font-weight: 500;
+}
+.report-cover-heading p {
+  margin-top: 6px;
+  font-size: 12px;
+}
+.report-source {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 26px;
+}
+.report-source > span:last-child {
+  font-size: 10px;
+  color: var(--dash-muted);
+}
+.app-shell .report-scope {
+  margin-top: 18px;
+  max-width: 850px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.report-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--dash-line);
+}
+.report-downloads > span {
+  flex-basis: 100%;
+  color: var(--dash-muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.app-shell .report-metrics {
+  margin: 0;
+}
+.report-metrics .metric-card > span {
+  color: var(--dash-muted);
+  font-size: 11px;
+}
+.report-signals .activity-chart {
+  height: 250px;
+}
+.report-unit {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 4px;
+}
+.report-detail-grid .data-table {
+  margin-top: 20px;
+}
+.report-funding > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.report-funding dt {
+  font-size: 12px;
+}
+.app-shell .report-funding dd {
+  color: var(--dash-ink);
+  font-size: 26px;
+  letter-spacing: -0.8px;
+}
+.report-funding small {
+  font-size: 10px;
+}
+.report-quest-statuses {
+  display: grid;
+  gap: 14px;
+  border-top: 1px solid var(--dash-line);
+  margin-top: 24px;
+  padding-top: 20px;
+}
+.report-quest-statuses > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--dash-muted);
+}
+.report-method p {
+  max-width: 900px;
+  font-size: 12px;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+@media (max-width: 1150px) {
+  .overview-analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .overview-analytics-grid,
+  .report-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .report-controls {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .report-controls input {
+    width: 100%;
+  }
+  .report-downloads > .button {
+    width: 100%;
+  }
+  .report-source > .badge {
+    white-space: normal;
+    line-height: 1.6;
+  }
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  .app-shell:has(.report-page) {
+    display: block;
+    color-scheme: light;
+    --dash-bg: #fff;
+    --dash-panel: #fff;
+    --dash-ink: #14242d;
+    --dash-muted: #4e5a65;
+    --dash-line: #d4dae0;
+    --dash-soft: #f1f3f7;
+    --dash-accent: #176b79;
+    --chart-label: #4e5a65;
+    --chart-grid: #e5e9ee;
+    --viz-water: #267e88;
+    --viz-sand: #aa631d;
+    background: #fff;
+    color: #14242d;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .app-shell:has(.report-page)
+    :is(.app-sidebar, .app-topbar, .mobile-app-nav, .demo-banner, .app-footer),
+  .report-page :is(.report-controls, .report-downloads, .analytics-data),
+  body:has(.report-page) .skip-link {
+    display: none !important;
+  }
+  .app-shell:has(.report-page) .app-body {
+    margin: 0 !important;
+    padding: 0;
+  }
+  .app-shell:has(.report-page) .app-content {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+  .report-page {
+    gap: 16px;
+  }
+  .report-page .panel {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+  .report-page .metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .report-page .metric-card {
+    padding: 12px;
+  }
+  .report-page .metric-card strong {
+    font-size: 24px;
+  }
+  .report-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .report-page .table-wrap {
+    overflow: visible;
+  }
+}

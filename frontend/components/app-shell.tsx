@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BookOpen,
   Compass,
+  FileChartColumn,
   Heart,
   LayoutDashboard,
   Map,
@@ -27,6 +28,7 @@ const links = [
   { href: "/atlas", label: "River atlas", icon: Map },
   { href: "/bounties", label: "Cleanup quests", icon: Compass },
   { href: "/donate", label: "River treasury", icon: Heart },
+  { href: "/reports", label: "Monthly reports", icon: FileChartColumn },
   { href: "/about", label: "How it works", icon: BookOpen },
 ];
 export function AppShell({ children }: { children: ReactNode }) {

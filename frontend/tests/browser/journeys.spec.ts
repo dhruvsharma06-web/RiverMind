@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
 const before = resolve("tests/assets/demo-before.png");
 const after = resolve("tests/assets/demo-after.png");
 const openId = "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e61";
@@ -25,6 +26,47 @@ test("the icon rail expands, navigates, and collapses without an active dot", as
     .click();
   await expect(page.locator(".app-shell")).toHaveClass(/sidebar-collapsed/);
   await expect(page.locator(".sidebar-label").first()).toBeHidden();
+});
+test("monthly reports download their selected data and handle empty months", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/reports");
+  await expect(
+    page.getByRole("heading", { name: "Monthly reports", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Report month").fill("2026-11");
+  const csvButton = page.getByRole("button", {
+    name: "Download CSV",
+    exact: true,
+  });
+  await expect(csvButton).toBeEnabled();
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    csvButton.click(),
+  ]);
+  expect(download.suggestedFilename()).toBe(
+    "rivermind-2026-11-available-records.csv",
+  );
+  const csv = await readFile((await download.path())!, "utf8");
+  expect(csv).toContain("Simulated demo records");
+  expect(csv).toContain("not a complete monthly archive");
+  expect(csv).toContain('1500,"USD cents"');
+  expect(csv).not.toContain("@example.com");
+  await page.getByLabel("Report month").fill("2026-10");
+  await expect(
+    page.getByRole("heading", { name: "No returned records for this month." }),
+  ).toBeVisible();
+  await expect(csvButton).toBeDisabled();
+  await page.getByRole("link", { name: "Observatory", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Signals over time" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Every dollar, accounted for" }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
 });
 test("the full landing page loads data, navigates, and expands its FAQ", async ({
   page,
@@ -195,6 +237,7 @@ for (const width of [375, 768, 1280])
       "/bounties",
       `/bounties/${openId}`,
       "/donate",
+      "/reports",
       "/council/sign-in",
       "/council",
       "/about",

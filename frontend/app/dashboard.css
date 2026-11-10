@@ -29,6 +29,9 @@
   --chart-line: #70c8be;
   --chart-grid: #2b2e37;
   --chart-label: #a4aab7;
+  --viz-water: #70c8be;
+  --viz-sand: #e0b67b;
+  --viz-leaf: #8ac990;
 }
 html[data-theme="light"] {
   color-scheme: light;
@@ -61,6 +64,9 @@ html[data-theme="light"] {
   --chart-line: #267e88;
   --chart-grid: #edf0f4;
   --chart-label: #66717f;
+  --viz-water: #267e88;
+  --viz-sand: #aa631d;
+  --viz-leaf: #398153;
 }
 
 .app-shell {

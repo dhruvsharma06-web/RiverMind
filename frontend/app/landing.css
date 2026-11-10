@@ -13,6 +13,122 @@
 .landing-experience :is(p, small) {
   color: var(--dash-muted);
 }
+
+/* A short introduction; the page loads underneath it. */
+.landing-welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--dash-bg);
+  color: var(--dash-ink);
+  animation: river-welcome-exit 600ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms both;
+}
+.welcome-identity {
+  text-align: center;
+  padding: 24px;
+}
+.welcome-wave {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  color: var(--dash-accent);
+  animation: river-welcome-rise 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.welcome-wave path {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: river-welcome-draw 1000ms cubic-bezier(0.4, 0, 0.2, 1) 100ms
+    forwards;
+}
+.welcome-wave path:nth-child(2) {
+  animation-delay: 220ms;
+}
+.welcome-wave path:nth-child(3) {
+  animation-delay: 340ms;
+}
+.landing-experience .welcome-introducing {
+  margin: 0 0 9px;
+  color: var(--dash-muted);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  animation: river-welcome-rise 800ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+}
+.landing-experience .welcome-name {
+  margin: 0;
+  color: var(--dash-ink);
+  font-size: clamp(34px, 5vw, 42px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -1.8px;
+  animation: river-welcome-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both;
+}
+.welcome-name > span {
+  color: var(--dash-accent);
+}
+.welcome-skip {
+  position: absolute;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dash-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.welcome-skip:hover {
+  color: var(--dash-ink);
+}
+.welcome-skip:focus-visible {
+  outline: 2px solid var(--dash-accent);
+  outline-offset: 3px;
+}
+@keyframes river-welcome-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes river-welcome-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes river-welcome-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-welcome {
+    animation-duration: 120ms;
+    animation-delay: 120ms;
+  }
+  .welcome-wave,
+  .welcome-wave path,
+  .landing-experience :is(.welcome-introducing, .welcome-name) {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
 .landing-experience h2 {
   font-size: clamp(32px, 3.5vw, 49px);
   font-weight: 550;

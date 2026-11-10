@@ -33,6 +33,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { RiverDiary } from "@/components/landing-data";
 import { PayoutLedger } from "@/components/payout-ledger";
+import {
+  SignalActivity,
+  TreasuryAllocation,
+} from "@/components/dashboard-analytics";
 
 const Chart = dynamic(() => import("@/components/readings-chart"), {
   ssr: false,
@@ -62,10 +66,12 @@ export default function ObservatoryPage() {
         title="Overview"
         description="A little care. A real difference. Here’s what’s happening along the Yamuna."
         action={
-          <Badge tone="aqua">
-            <MapPin size={13} />
-            Yamuna · Delhi reach
-          </Badge>
+          <Button asChild variant="secondary">
+            <Link href="/reports">
+              Monthly reports
+              <ArrowUpRight size={15} />
+            </Link>
+          </Button>
         }
       />
       <div className="overview-layout">
@@ -278,6 +284,15 @@ export default function ObservatoryPage() {
               )}
             </AsyncView>
           </Panel>
+
+          <div className="overview-analytics-grid">
+            <AsyncView query={events}>
+              {({ items }) => <SignalActivity events={items} />}
+            </AsyncView>
+            <AsyncView query={river}>
+              {(r) => <TreasuryAllocation treasury={r.treasury} />}
+            </AsyncView>
+          </div>
 
           <section className="overview-quests">
             <div className="section-title">

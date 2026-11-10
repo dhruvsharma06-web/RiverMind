@@ -37,6 +37,7 @@ For backend integration, set `NEXT_PUBLIC_USE_MOCK=false`. The API URL is an ori
 
 - `/` — ten-section public landing page with expedition story, atlas and observatory previews, workflow, featured quest, treasury, diary, FAQ, and final CTA.
 - `/river` — observatory dashboard with real API/demo readings, events, quests, treasury, staleness labels, and payout ledger.
+- `/reports` — monthly available-record summaries, daily signal charts, water statistics, CSV download, and Print / Save as PDF.
 - `/atlas` — accessible Leaflet map with real event/quest coordinates and a keyboard-friendly location list.
 - `/bounties` and `/bounties/[id]` — quest journal, filters, claim flow, proof capture, verification result, and payment/review state.
 - `/donate` — exact-cent donation form, fixture/PayPal sandbox labelling, contributions, treasury, and ledger.
@@ -66,6 +67,8 @@ RIVERMIND_TEST_BACKEND=true npx --no-install vitest run tests/backend.integratio
 The development and build scripts use Next.js's supported Webpack compiler. Turbopack's PostCSS worker could not bind its internal port in this execution environment. ESLint is pinned to 9.39.5 to satisfy the declared peer dependencies of Next.js's lint plugins.
 
 ## Boundaries and limitations
+
+Reports filter the currently returned records by IST month. They are partial summaries, not an archive: the contract exposes recent readings (up to 200), events (up to 50), donations (up to 20), and available quests and payouts. Quest and payout statuses are current, with records grouped by creation date. A successful payout in this cohort does not establish that payment completed in the selected month. These limits and simulation labels appear in the preview, CSV, and printable report. CSV amounts remain integer USD cents; exports omit names, email addresses, and private tokens. No backend report endpoint or historical health trend is assumed.
 
 - `lib/api.ts` is the API entry point. It validates responses, normalizes errors, supports cancellation, uses 20-second ordinary and 60-second AI deadlines, and never retries mutations automatically.
 - Generated `openapi.json` and `lib/api-types.ts` come from `make types`; never hand-edit them. Runtime validators in `lib/contracts.ts` mirror those types.
