@@ -30,13 +30,13 @@ export default function BountyPage({
     <>
       <Link className="back-link" href="/bounties">
         <ArrowLeft size={14} />
-        Back to the quest journal
+        Back to quests
       </Link>
       <AsyncView query={query}>
         {(b) => (
           <>
             <PageHeading
-              chapter="The field journal / Cleanup quest"
+              chapter="Quest"
               title={b.title}
               description={b.description}
               action={<StatusBadge status={b.status} />}

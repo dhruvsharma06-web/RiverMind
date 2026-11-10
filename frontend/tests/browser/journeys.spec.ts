@@ -11,7 +11,7 @@ test("the icon rail expands, navigates, and collapses without an active dot", as
   await expect(page.locator(".app-shell")).toHaveClass(/sidebar-collapsed/);
   await expect(page.locator(".app-sidebar .active-diamond")).toHaveCount(0);
   await expect(
-    page.getByRole("link", { name: "Observatory", exact: true }),
+    page.getByRole("link", { name: "Overview", exact: true }),
   ).toHaveAttribute("aria-current", "page");
   await page
     .getByRole("button", { name: "Expand sidebar", exact: true })
@@ -59,7 +59,7 @@ test("monthly reports download their selected data and handle empty months", asy
     page.getByRole("heading", { name: "No returned records for this month." }),
   ).toBeVisible();
   await expect(csvButton).toBeDisabled();
-  await page.getByRole("link", { name: "Observatory", exact: true }).click();
+  await page.getByRole("link", { name: "Overview", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Signals over time" }),
   ).toBeVisible();
@@ -76,7 +76,7 @@ test("the full landing page loads data, navigates, and expands its FAQ", async (
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "A river with a voice. A future we can change.",
+      name: "A river with a voice. A cleanup with proof.",
     }),
   ).toBeVisible();
   await expect(page.locator(".landing-stat")).toHaveCount(4);

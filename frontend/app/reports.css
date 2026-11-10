@@ -11,7 +11,7 @@
 }
 .analytics-period {
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 400;
 }
 .activity-chart {
@@ -25,7 +25,7 @@
   gap: 16px;
   margin: 4px 0 10px;
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .chart-key > span {
   display: inline-flex;
@@ -48,7 +48,7 @@
 }
 .app-shell .analytics-footnote {
   margin-top: 14px;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.75;
   color: var(--dash-muted);
 }
@@ -60,7 +60,7 @@
 .analytics-data summary {
   min-height: 44px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 44px;
 }
 .allocation-layout {
@@ -91,13 +91,13 @@
   gap: 3px;
 }
 .app-shell .allocation-ring strong {
-  font-size: 31px;
+  font-size: 33px;
   font-weight: 500;
   letter-spacing: -1.5px;
 }
 .allocation-ring span {
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .allocation-legend {
   display: grid;
@@ -110,7 +110,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 11px;
+  font-size: 14px;
 }
 .allocation-legend dt {
   display: flex;
@@ -137,10 +137,10 @@
 .report-controls label {
   display: grid;
   gap: 8px;
-  font-size: 12px;
+  font-size: 15px;
 }
 .report-controls label > span {
-  font-size: 10px;
+  font-size: 13px;
 }
 .report-controls input {
   min-height: 44px;
@@ -150,7 +150,7 @@
   background: var(--dash-panel);
   color: var(--dash-ink);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
 }
 .report-controls input:focus-visible {
   outline: 2px solid var(--dash-accent);
@@ -171,7 +171,7 @@
 }
 .report-kicker {
   color: var(--dash-muted);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.13em;
 }
 .app-shell .report-cover h2 {
@@ -182,7 +182,7 @@
 }
 .report-cover-heading p {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 15px;
 }
 .report-source {
   display: flex;
@@ -192,13 +192,13 @@
   margin-top: 26px;
 }
 .report-source > span:last-child {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--dash-muted);
 }
 .app-shell .report-scope {
   margin-top: 18px;
   max-width: 850px;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.8;
 }
 .report-downloads {
@@ -213,7 +213,7 @@
 .report-downloads > span {
   flex-basis: 100%;
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.7;
 }
 .app-shell .report-metrics {
@@ -221,14 +221,14 @@
 }
 .report-metrics .metric-card > span {
   color: var(--dash-muted);
-  font-size: 11px;
+  font-size: 14px;
 }
 .report-signals .activity-chart {
   height: 250px;
 }
 .report-unit {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 400;
   margin-top: 4px;
 }
@@ -242,15 +242,15 @@
   gap: 12px;
 }
 .report-funding dt {
-  font-size: 12px;
+  font-size: 15px;
 }
 .app-shell .report-funding dd {
   color: var(--dash-ink);
-  font-size: 26px;
+  font-size: 28px;
   letter-spacing: -0.8px;
 }
 .report-funding small {
-  font-size: 10px;
+  font-size: 13px;
 }
 .report-quest-statuses {
   display: grid;
@@ -263,12 +263,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 15px;
   color: var(--dash-muted);
 }
 .report-method p {
   max-width: 900px;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.9;
   margin-top: 12px;
 }
@@ -352,7 +352,7 @@
     padding: 12px;
   }
   .report-page .metric-card strong {
-    font-size: 24px;
+    font-size: 26px;
   }
   .report-detail-grid {
     grid-template-columns: minmax(0, 1fr);

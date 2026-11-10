@@ -45,7 +45,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeading
-        chapter="Behind the expedition / How RiverMind works"
+        chapter="About"
         title="How RiverMind works"
         description="From the first pollution signal to a verified cleanup and a transparent payout."
       />

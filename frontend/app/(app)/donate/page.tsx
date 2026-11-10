@@ -18,7 +18,7 @@ export default function TreasuryPage() {
   return (
     <>
       <PageHeading
-        chapter="Chapter 04 / The river treasury"
+        chapter="Treasury"
         title="River treasury"
         description="Fund the next cleanup and follow every contribution through to a verified payout."
         action={
@@ -32,10 +32,10 @@ export default function TreasuryPage() {
         {(r) => (
           <div className="metric-grid">
             {[
-              ["Available for cleanup", r.treasury.available_cents],
+              ["Available", r.treasury.available_cents],
               ["Reserved for quests", r.treasury.reserved_cents],
-              ["Paid for verified work", r.treasury.paid_cents],
-              ["Contributions captured", r.treasury.donated_cents],
+              ["Paid out", r.treasury.paid_cents],
+              ["Donations", r.treasury.donated_cents],
             ].map(([label, value]) => (
               <div className="metric-card" key={label}>
                 <span>{label}</span>
@@ -118,7 +118,7 @@ export default function TreasuryPage() {
                 ))}
               </div>
             ) : (
-              <EmptyState title="The first contribution could be yours.">
+              <EmptyState title="No donations yet.">
                 Captured contributions will appear here.
               </EmptyState>
             )

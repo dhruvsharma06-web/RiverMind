@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Check,
@@ -31,12 +31,17 @@ export default function CouncilPage() {
     query = usePayouts(),
     cache = useQueryClient();
   const keys = useRef<Record<string, string>>({});
+  const reasonRef = useRef<HTMLTextAreaElement>(null);
   const [selection, setSelection] = useState<{
       payout: Payout;
       action: Action;
     }>(),
     [reason, setReason] = useState(""),
     [success, setSuccess] = useState("");
+  const confirmOpen = !!selection;
+  useEffect(() => {
+    if (confirmOpen) reasonRef.current?.focus();
+  }, [confirmOpen]);
   const mutation = useMutation({
     mutationFn: async ({
       payout,
@@ -80,7 +85,7 @@ export default function CouncilPage() {
     return (
       <>
         <PageHeading
-          chapter="Council workspace / Session access"
+          chapter="Council"
           title="Council workspace"
           description="Review higher-value rewards and failed payments with the evidence and payment trail in view."
         />
@@ -114,7 +119,7 @@ export default function CouncilPage() {
   return (
     <>
       <PageHeading
-        chapter="Council workspace / Responsible stewardship"
+        chapter="Council"
         title="Council workspace"
         description="Review payments awaiting approval and help verified work move past payment failures."
         action={
@@ -171,6 +176,7 @@ export default function CouncilPage() {
               </label>
               <textarea
                 id="council-reason"
+                ref={reasonRef}
                 className="field"
                 rows={3}
                 value={reason}
@@ -239,7 +245,7 @@ export default function CouncilPage() {
                             className="text-link"
                             href={`/bounties/${p.bounty_id}`}
                           >
-                            Review evidence & field journal ↗
+                            Review evidence & quest ↗
                           </Link>
                           {p.paypal_batch_id && (
                             <p className="payout-code">

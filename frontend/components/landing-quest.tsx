@@ -56,9 +56,9 @@ export function LandingQuest() {
           </article>
         ) : (
           <EmptyState
-            title="Every open quest has found a guardian."
+            title="No open quests right now."
             href="/bounties"
-            action="Explore the quest journal"
+            action="Explore quests"
           >
             New cleanup opportunities will appear here when they become
             available.

@@ -127,7 +127,7 @@ export function WorkerJourney({
       const photo = await preparePhoto(file, location, capturedAt);
       if (Date.parse(photo.capturedAt) < Date.parse(b.claimed_at ?? ""))
         throw new Error(
-          "Take or choose a fresh before photo after claiming this quest.",
+          `Take or choose a fresh ${kind} photo after claiming this quest.`,
         );
       if (
         kind === "after" &&
@@ -258,8 +258,14 @@ export function WorkerJourney({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setLocalToken(recovery.trim());
-              saveClaim(b.id, recovery.trim());
+              const restored = recovery.trim();
+              setLocalToken(restored);
+              const saved = saveClaim(b.id, restored);
+              setMessage(
+                saved
+                  ? "Claim token restored for this browser session."
+                  : "Token restored, but browser storage is unavailable. Save your recovery token to avoid losing access.",
+              );
               setRecovery("");
             }}
             className="form-stack"

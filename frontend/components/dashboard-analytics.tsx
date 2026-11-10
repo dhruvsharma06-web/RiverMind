@@ -44,12 +44,12 @@ export function SignalActivity({ events }: { events: RiverEvent[] }) {
       </p>
       <details className="analytics-data">
         <summary>View daily counts</summary>
-        <table className="data-table">
+        <table className="data-table" aria-label="Daily counts">
           <thead>
             <tr>
-              <th>Date · IST</th>
-              <th>Waste</th>
-              <th>Sensor</th>
+              <th scope="col">Date · IST</th>
+              <th scope="col">Waste</th>
+              <th scope="col">Sensor</th>
             </tr>
           </thead>
           <tbody>

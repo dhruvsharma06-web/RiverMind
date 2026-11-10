@@ -4,7 +4,6 @@ import { useState, useSyncExternalStore } from "react";
 import {
   ArrowUpRight,
   Camera,
-  Compass,
   MapPin,
   Search,
   ShieldCheck,
@@ -40,15 +39,9 @@ export default function QuestsPage() {
   return (
     <>
       <PageHeading
-        chapter="Chapter 03 / The quest journal"
+        chapter="Quests"
         title="Cleanup quests"
-        description="Find your next cleanup. Capture the change. Follow your reward."
-        action={
-          <Badge tone="gold">
-            <Compass size={13} />
-            Real work. Clear purpose.
-          </Badge>
-        }
+        description="Browse open cleanups and track your claims."
       />
       <div className="filter-bar">
         <div className="search-field">

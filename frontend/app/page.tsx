@@ -9,11 +9,8 @@ import {
   Layers3,
   Radio,
   ShieldCheck,
-  Sparkles,
-  Waves,
 } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
-import { LandingWelcome } from "@/components/landing-welcome";
 import {
   LandingStats,
   AtlasPreview,
@@ -22,8 +19,8 @@ import {
   RiverDiary,
 } from "@/components/landing-data";
 import { LandingQuest } from "@/components/landing-quest";
-import { RiverWorld } from "@/components/river-world";
-import { AbstractArt } from "@/components/abstract-art";
+import { RiverHeroMedia } from "@/components/river-hero-media";
+import { WaterFlow } from "@/components/water-flow";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/shared";
 
@@ -53,31 +50,26 @@ const questions = [
 export default function LandingPage() {
   return (
     <div className="landing-experience">
-      <LandingWelcome />
       <MarketingNav />
       <main id="main-content">
-        <section className="experience-hero">
-          <div className="experience-container experience-hero-layout">
+        <section className="experience-hero river-hero">
+          <RiverHeroMedia pinned />
+          <div className="experience-container">
             <div className="experience-hero-copy">
-              <span className="experience-kicker">
-                <span className="experience-mini-mark">
-                  <Waves size={14} />
-                </span>
-                A LITTLE ACTION. A DIFFERENT CURRENT.
-              </span>
               <h1>
                 A river with a voice.
                 <br />
-                <span>A future we can change.</span>
+                <span>A cleanup with proof.</span>
               </h1>
               <p>
-                Turn pollution signals into cleanup quests. Verify the change.
-                Reward the work. Give the river its next good chapter.
+                RiverMind spots pollution on the Yamuna, posts cleanup bounties,
+                verifies the work with AI and pays the person who did it through
+                PayPal.
               </p>
               <div className="experience-actions">
                 <Button asChild>
                   <Link href="/river">
-                    Enter the observatory
+                    Open the overview
                     <ArrowUpRight size={16} />
                   </Link>
                 </Button>
@@ -93,38 +85,20 @@ export default function LandingPage() {
                 <span>PayPal sandbox rewards</span>
               </div>
             </div>
-            <div className="experience-hero-stage">
-              <div className="hero-art-shape" />
-              <RiverWorld />
-              <div className="hero-floating-card hero-floating-signal">
-                <span>
-                  <Radio size={18} />
-                </span>
-                <div>
-                  <small>FROM SIGNAL TO ACTION</small>
-                  <strong>A new chapter begins.</strong>
-                </div>
-              </div>
-              <div className="hero-floating-card hero-floating-care">
-                <span>
-                  <Sparkles size={18} />
-                </span>
-                <div>
-                  <small>THE RIVER CARE LOOP</small>
-                  <strong>Sense. Clean. Verify. Reward.</strong>
-                </div>
-              </div>
-              <span className="hero-scene-caption">
-                An illustrated world. A practical mission.
-              </span>
-            </div>
           </div>
-          <a href="#story" className="experience-scroll-cue">
-            <span>EXPLORE WHAT WE CAN DO TOGETHER</span>
+          <a
+            href="#story"
+            className="experience-scroll-cue"
+            aria-label="Scroll to how it works"
+          >
             <ArrowDown size={16} />
           </a>
+          <span className="river-hero-credit">
+            River footage via Pexels · illustrative, not the Yamuna
+          </span>
         </section>
 
+        <WaterFlow className="water-flow-curtain" />
         <section
           className="experience-snapshot"
           aria-label="Latest river snapshot"
@@ -137,9 +111,7 @@ export default function LandingPage() {
         <section id="story" className="experience-purpose experience-section">
           <div className="experience-container">
             <div className="experience-section-heading">
-              <span className="experience-kicker">
-                SMALL MISSIONS. SHARED PURPOSE.
-              </span>
+              <span className="experience-kicker">HOW IT WORKS</span>
               <h2>
                 The river needs more
                 <br />
@@ -155,21 +127,21 @@ export default function LandingPage() {
               {[
                 {
                   icon: Radio,
-                  title: "Find the right place.",
+                  title: "Detect pollution.",
                   text: "Camera frames and water readings make the need visible, with location and context.",
                   tone: "coral",
                   number: "01",
                 },
                 {
                   icon: Compass,
-                  title: "Make care actionable.",
+                  title: "Post a funded quest.",
                   text: "A clear cleanup scope and a funded reward turn concern into a place to begin.",
                   tone: "aqua",
                   number: "02",
                 },
                 {
                   icon: ShieldCheck,
-                  title: "Keep a trail of trust.",
+                  title: "Verify, then pay.",
                   text: "Evidence and backend rules connect the work to its verification and payment.",
                   tone: "green",
                   number: "03",
@@ -242,7 +214,7 @@ export default function LandingPage() {
                 </div>
                 <ObservatoryPreview />
                 <Link className="experience-text-link" href="/river">
-                  See the observatory
+                  See the overview
                   <ArrowUpRight size={15} />
                 </Link>
               </div>
@@ -269,6 +241,7 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <WaterFlow />
         <section id="funding" className="experience-funding experience-section">
           <div className="experience-container experience-funding-grid">
             <div>
@@ -353,7 +326,11 @@ export default function LandingPage() {
         <section className="experience-invitation">
           <div className="experience-container">
             <div className="invitation-art">
-              <AbstractArt variant="ripple" />
+              <RiverHeroMedia
+                className="invitation-media"
+                priority={false}
+                sizes="(max-width: 800px) 100vw, 600px"
+              />
             </div>
             <div className="experience-invitation-copy">
               <span className="experience-kicker">
@@ -393,7 +370,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h3>Explore</h3>
-              <Link href="/river">Observatory</Link>
+              <Link href="/river">Overview</Link>
               <Link href="/atlas">River atlas</Link>
               <Link href="/bounties">Cleanup quests</Link>
             </div>

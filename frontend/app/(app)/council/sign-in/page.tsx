@@ -14,7 +14,7 @@ export default function CouncilSignIn() {
   return (
     <>
       <PageHeading
-        chapter="Council access / A responsibility to the river"
+        chapter="Council"
         title="A little oversight. A lot of trust."
         description="Enter a council key to review payment decisions. The backend authorizes every action."
       />

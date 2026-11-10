@@ -78,7 +78,7 @@ export function ReportsWorkspace() {
   return (
     <div className="report-page">
       <PageHeading
-        chapter="A clearer view of your river"
+        chapter="Reports"
         title="Monthly reports"
         description="Explore the records. Share the progress. Take a little perspective with you."
         action={

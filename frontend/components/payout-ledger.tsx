@@ -46,7 +46,7 @@ export function PayoutLedger() {
             </table>
           </div>
         ) : (
-          <EmptyState title="The first payout is still ahead.">
+          <EmptyState title="No payouts yet.">
             Verified cleanups will leave a payment record here.
           </EmptyState>
         )
