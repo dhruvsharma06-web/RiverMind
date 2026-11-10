@@ -11,9 +11,11 @@ Issued: Mon 9 Nov 2026, IST. Adding an optional field = v1.1. Renaming, removing
 - Unknown request fields are rejected (`VALIDATION_ERROR`). Max JSON body 64 KB; max image upload 8 MB (jpeg/png only, checked by content).
 - Auth:
   - Device: header `X-Device-Token` (stored hashed).
-  - Worker: header `X-Claim-Token` (returned once by the claim endpoint).
-  - Council: header `Authorization: Bearer <COUNCIL_API_KEY>`.
+  - User session: header `Authorization: Bearer st_...` (token returned by register and login, valid 7 days; only its sha256 is stored). Needed to claim a bounty, submit proof and create a donation order.
+  - Worker: header `X-Claim-Token` (returned once by the claim endpoint). Proof needs both the user session and the claim token.
+  - Council: header `Authorization: Bearer <COUNCIL_API_KEY>`, OR a user session whose user has role `council`. A worker session gets FORBIDDEN (403); a missing, bad or expired token gets UNAUTHORIZED (401).
   - Everything else is public read.
+- Accounts: `POST /auth/register` always creates a `worker`; the role can never be set by the client. Council users are created only by the seed from env `COUNCIL_EMAIL` + `COUNCIL_PASSWORD` (set both; run `python -m app.seed` or `POST /demo/reset`). Reset keeps accounts and sessions. Passwords are stored as salted scrypt hashes. Register and login are rate-limited to 10/min/IP.
 - Idempotency: header `Idempotency-Key` (UUID) is REQUIRED on endpoints marked (IK). A repeat with the same key returns the stored response.
 - Backend timeouts: AI calls 25 s; PayPal calls 15 s.
 
@@ -82,6 +84,10 @@ Issued: Mon 9 Nov 2026, IST. Adding an optional field = v1.1. Renaming, removing
 | # | Method + path | Auth | Owner → used by |
 |---|---|---|---|
 | 1 | GET /health | none | BE → all |
+| 23 | POST /auth/register | none (rate-limited 10/min/IP) | BE → FE |
+| 24 | POST /auth/login | none (rate-limited 10/min/IP) | BE → FE |
+| 25 | POST /auth/logout | session | BE → FE |
+| 26 | GET /auth/me | session | BE → FE |
 | 2 | POST /readings | device | BE → firmware, sim |
 | 3 | GET /readings?device_id=&limit=200 | none | BE → FE |
 | 4 | POST /media/analyze | none (rate-limited 20/min/IP) | BE → camera node, FE |
@@ -89,20 +95,29 @@ Issued: Mon 9 Nov 2026, IST. Adding an optional field = v1.1. Renaming, removing
 | 6 | GET /events?type=&limit=50 | none | BE → FE |
 | 7 | GET /bounties?status= | none | BE → FE |
 | 8 | GET /bounties/{id} | none | BE → FE |
-| 9 | POST /bounties/{id}/claim | none | BE → FE |
-| 10 | POST /bounties/{id}/proof | claim | BE → FE |
+| 9 | POST /bounties/{id}/claim | session | BE → FE |
+| 10 | POST /bounties/{id}/proof | session + claim | BE → FE |
 | 11 | GET /payouts?status= | none | BE → FE |
-| 12 | POST /payouts/{id}/approve (IK) | council | BE → FE |
-| 13 | POST /payouts/{id}/veto | council | BE → FE |
-| 14 | POST /payouts/{id}/retry (IK) | council | BE → FE |
-| 15 | POST /donations/orders (IK) | none | BE → FE (PayPal Buttons createOrder) |
+| 12 | POST /payouts/{id}/approve (IK) | council (key or council session) | BE → FE |
+| 13 | POST /payouts/{id}/veto | council (key or council session) | BE → FE |
+| 14 | POST /payouts/{id}/retry (IK) | council (key or council session) | BE → FE |
+| 15 | POST /donations/orders (IK) | session | BE → FE (PayPal Buttons createOrder) |
 | 16 | POST /donations/orders/{order_id}/capture | none | BE → FE (PayPal Buttons onApprove) |
 | 17 | GET /donations?limit=20 | none | BE → FE |
 | 18 | GET /river/status | none | BE → FE |
 | 19 | GET /diary/latest | none | BE → FE |
 | 20 | POST /webhooks/paypal | PayPal signature | PayPal → BE |
-| 21 | POST /agent/fundraise (P1) | council | BE → FE |
-| 22 | POST /demo/reset | council | BE → scripts |
+| 21 | POST /agent/fundraise (P1) | council (key or council session) | BE → FE |
+| 22 | POST /demo/reset | council (key or council session) | BE → scripts |
+
+### 23–26. Auth
+`user` = `{"id":"uuid","name":"string","email":"string","role":"worker|council"}`. Emails are stored lowercased.
+- 23 register: request `{"name":"1-80 chars","email":"string","password":"8-128 chars"}` → 201 `{"user":User,"token":"st_..."}`. Duplicate email: VALIDATION_ERROR, message "An account with this email already exists". Unknown fields (such as `role`) are rejected.
+- 24 login: request `{"email":"string","password":"string"}` → 200 `{"user":User,"token":"st_..."}`. Wrong email or password: UNAUTHORIZED "Invalid email or password" (the same answer for both).
+- 25 logout: revokes the session in the `Authorization` header → 204, no body.
+- 26 me: → 200 `{"user":User}`. Missing, unknown, revoked or expired token: UNAUTHORIZED "Sign in required".
+
+Errors: VALIDATION_ERROR, UNAUTHORIZED, RATE_LIMITED. Endpoints 9, 10 and 15 also return UNAUTHORIZED ("Sign in required") without a valid session. Reads, device ingest, the PayPal webhook and donation capture stay public.
 
 ### 1. GET /health
 200: `{"status":"ok","version":"1.0","mock_ai":true,"paypal_mode":"mock|sandbox","db":"ok"}`

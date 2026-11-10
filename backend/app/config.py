@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     PAYPAL_CLIENT_SECRET: SecretStr = SecretStr("")
     PAYPAL_WEBHOOK_ID: str = ""
     COUNCIL_API_KEY: SecretStr = SecretStr("")
+    COUNCIL_EMAIL: SecretStr = SecretStr("")  # with COUNCIL_PASSWORD: the seed creates this council user
+    COUNCIL_PASSWORD: SecretStr = SecretStr("")
     CORS_ORIGINS: str = "http://localhost:3000"
     DEVICE_ID: str = Field("yamuna-okhla-01", min_length=1, max_length=64)
     DEVICE_TOKEN: SecretStr = SecretStr("")

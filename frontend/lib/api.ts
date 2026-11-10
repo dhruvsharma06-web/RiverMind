@@ -1,5 +1,6 @@
 import { z } from "zod";
 import * as contract from "@/lib/contracts";
+import { clearSessionToken, getSessionToken } from "@/lib/auth-token";
 
 export class ApiError extends Error {
   readonly code: contract.ErrorCode;
@@ -22,7 +23,8 @@ export interface IdempotentOptions extends RequestOptions {
   idempotencyKey: string;
 }
 export interface CouncilOptions extends RequestOptions {
-  councilKey: string;
+  /** Optional: council users authenticate with their session token instead. */
+  councilKey?: string;
 }
 export interface CouncilIdempotentOptions extends CouncilOptions {
   idempotencyKey: string;
@@ -33,6 +35,7 @@ interface ClientConfig {
   useMock: boolean;
   mockWorkflow?: boolean;
   fetcher?: typeof fetch;
+  getToken?: () => string;
   timeoutMs?: number;
   aiTimeoutMs?: number;
 }
@@ -42,6 +45,8 @@ interface EndpointOptions extends RequestOptions {
   headers?: Record<string, string>;
   fixture: string;
   ai?: boolean;
+  /** Auth endpoints: never attach a session token or treat 401 as expiry. */
+  anonymous?: boolean;
 }
 
 function failure(
@@ -95,8 +100,17 @@ export function createApiClient(config: ClientConfig) {
     try {
       const headers = new Headers({ Accept: "application/json" });
       let body: BodyInit | undefined;
+      const token = options.anonymous
+        ? ""
+        : (config.getToken ?? getSessionToken)();
+      const explicitAuth = Boolean(options.headers?.Authorization);
+      const sent = token && !explicitAuth ? token : "";
+      const merged: Record<string, string> = {
+        ...(sent ? { Authorization: `Bearer ${sent}` } : {}),
+        ...options.headers,
+      };
       if (!config.useMock) {
-        for (const [key, value] of Object.entries(options.headers ?? {}))
+        for (const [key, value] of Object.entries(merged))
           headers.set(key, value);
         if (options.body instanceof FormData) body = options.body;
         else if (options.body !== undefined) {
@@ -137,7 +151,7 @@ export function createApiClient(config: ClientConfig) {
         config.useMock && config.mockWorkflow
           ? await (
               await mockTransport!
-            )(path, options, options.fixture)
+            )(path, { ...options, headers: merged }, options.fixture)
           : await fetcher(
               config.useMock
                 ? `/fixtures/${options.fixture}`
@@ -152,6 +166,8 @@ export function createApiClient(config: ClientConfig) {
                 redirect: "error",
               },
             );
+      if (response.status === 204 && response.ok)
+        return undefined as z.infer<S>;
       let data: unknown;
       try {
         data = await response.json();
@@ -165,6 +181,8 @@ export function createApiClient(config: ClientConfig) {
         );
       }
       if (!response.ok) {
+        if (response.status === 401 && sent && getSessionToken() === sent)
+          clearSessionToken();
         const parsed = contract.errorResponseSchema.safeParse(data);
         if (parsed.success)
           throw new ApiError(response.status, parsed.data.error);
@@ -219,7 +237,8 @@ export function createApiClient(config: ClientConfig) {
     return params.size ? `${path}?${params}` : path;
   }
   const resourceId = (value: string) => encodeURIComponent(value);
-  const councilHeaders = (key: string) => ({ Authorization: `Bearer ${key}` });
+  const councilHeaders = (key?: string): Record<string, string> =>
+    key ? { Authorization: `Bearer ${key}` } : {};
   const idemHeaders = (key: string) => {
     if (!z.uuid().safeParse(key).success)
       throw failure(
@@ -232,6 +251,39 @@ export function createApiClient(config: ClientConfig) {
 
   return {
     mode: config.useMock ? ("fixture" as const) : ("api" as const),
+    register: (
+      input: { name: string; email: string; password: string },
+      options: RequestOptions = {},
+    ) =>
+      request("/auth/register", contract.authSessionSchema, {
+        ...options,
+        method: "POST",
+        body: input,
+        anonymous: true,
+        fixture: "health.ok.json",
+      }),
+    login: (
+      input: { email: string; password: string },
+      options: RequestOptions = {},
+    ) =>
+      request("/auth/login", contract.authSessionSchema, {
+        ...options,
+        method: "POST",
+        body: input,
+        anonymous: true,
+        fixture: "health.ok.json",
+      }),
+    logout: (options: RequestOptions = {}) =>
+      request("/auth/logout", z.undefined(), {
+        ...options,
+        method: "POST",
+        fixture: "health.ok.json",
+      }),
+    me: (options: RequestOptions = {}) =>
+      request("/auth/me", contract.meSchema, {
+        ...options,
+        fixture: "health.ok.json",
+      }),
     getHealth: (options: RequestOptions = {}) =>
       request("/health", contract.healthSchema, {
         ...options,

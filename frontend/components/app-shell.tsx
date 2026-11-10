@@ -21,6 +21,7 @@ import {
 import { Logo } from "./ui/shared";
 import { ModeStatus, DemoNotice } from "./mode-status";
 import { ThemeToggle } from "./theme-toggle";
+import { AuthMenu } from "./auth-menu";
 import { WaterFlow } from "./water-flow";
 import { cn } from "@/lib/utils";
 const links = [
@@ -122,6 +123,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               Yamuna, Delhi
             </span>
             <ThemeToggle />
+            <AuthMenu next={pathname} />
             <ModeStatus />
           </div>
         </header>

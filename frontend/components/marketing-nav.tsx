@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "./ui/shared";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import { AuthMenu } from "./auth-menu";
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   const [overHero, setOverHero] = useState(true);
@@ -39,6 +40,7 @@ export function MarketingNav() {
         </nav>
         <div className="experience-nav-actions">
           <ThemeToggle />
+          <AuthMenu next="/river" />
           <Button asChild variant="secondary" size="sm">
             <Link href="/river">
               Open workspace

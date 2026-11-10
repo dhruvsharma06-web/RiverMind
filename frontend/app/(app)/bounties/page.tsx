@@ -41,7 +41,7 @@ export default function QuestsPage() {
       <PageHeading
         chapter="Quests"
         title="Cleanup quests"
-        description="Browse open cleanups and track your claims."
+        description="Open cleanups and the ones you have claimed."
       />
       <div className="filter-bar">
         <div className="search-field">
@@ -159,9 +159,7 @@ export default function QuestsPage() {
                         </div>
                         <div className="quest-reward">
                           <div>
-                            <span className="tiny-label">
-                              CLEANUP REWARD · USD
-                            </span>
+                            <span className="tiny-label">Reward · USD</span>
                             <strong className="numeric">
                               {money(b.amount_cents)}
                               <small>
@@ -180,10 +178,10 @@ export default function QuestsPage() {
                           >
                             <Link href={`/bounties/${b.id}`}>
                               {b.status === "OPEN"
-                                ? "Explore quest"
+                                ? "Open quest"
                                 : readClaim(b.id) && b.status === "CLAIMED"
                                   ? "Continue quest"
-                                  : "View journal"}
+                                  : "View quest"}
                               <ArrowUpRight size={15} />
                             </Link>
                           </Button>
@@ -193,7 +191,7 @@ export default function QuestsPage() {
                   ))}
                 </div>
               ) : (
-                <EmptyState title="No quests on this path.">
+                <EmptyState title="No matching quests.">
                   <span>
                     Try another status or search. Session claims appear only in
                     the browser tab where you claimed them.
@@ -218,8 +216,8 @@ export default function QuestsPage() {
       <div className="observatory-bottom">
         <ShieldCheck size={17} />
         <p>
-          Payment follows verification and any required council approval. A
-          claimed quest stays with its worker; there is no claim countdown.
+          Payment follows verification and any required council approval. Claims
+          do not expire.
         </p>
       </div>
     </>

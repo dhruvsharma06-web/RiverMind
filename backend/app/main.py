@@ -5,7 +5,7 @@ from app.config import get_settings
 from app.errors import install_error_handlers
 from app.hardening import BodyLimitMiddleware, SecurityHeadersMiddleware
 from app.observability import RequestLogMiddleware, setup_logging
-from app.routes import bounties, health, money, river, sensing
+from app.routes import auth, bounties, health, money, river, sensing
 
 
 def create_app() -> FastAPI:
@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     app.add_middleware(BodyLimitMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(RequestLogMiddleware)  # added last = outermost, so it sees every response
-    for module in (health, sensing, bounties, money, river):
+    for module in (health, auth, sensing, bounties, money, river):
         app.include_router(module.router)
     return app
 

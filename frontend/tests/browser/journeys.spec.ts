@@ -1,13 +1,71 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { resolve } from "node:path";
 import { readFile } from "node:fs/promises";
 const before = resolve("tests/assets/demo-before.png");
 const after = resolve("tests/assets/demo-after.png");
 const openId = "5d7c1e2f-3a4b-4c5d-9e8f-1a2b3c4d5e61";
+async function signUp(page: Page, next = "/river") {
+  const email = `user-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.test`;
+  await page.goto(`/login?next=${encodeURIComponent(next)}`);
+  await page.getByRole("tab", { name: "Create account" }).click();
+  await page.getByLabel("Your name").fill("Browser Tester");
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password").fill("browser-pass-1");
+  await page
+    .getByRole("button", { name: "Create account", exact: true })
+    .click();
+  await expect(page).toHaveURL(new RegExp(`${next === "/" ? "/$" : next}$`));
+}
+async function signInCouncil(page: Page) {
+  await page.goto("/login?next=/council");
+  await page.getByLabel("Email").fill("council@demo.rivermind");
+  await page.getByLabel("Password").fill("council-demo");
+  await page
+    .getByRole("button", { name: "Sign in", exact: true })
+    .last()
+    .click();
+  await expect(page).toHaveURL(/\/council$/);
+}
+test("signed-out visitors reach / and /river but are redirected from protected pages", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page).toHaveURL(/localhost:\d+\/$/);
+  await page.goto("/river");
+  await expect(page).toHaveURL(/\/river$/);
+  await expect(
+    page.getByRole("link", { name: "Sign in" }).first(),
+  ).toBeVisible();
+  await page.goto("/bounties");
+  await expect(page).toHaveURL(/\/login\?next=%2Fbounties$/);
+  await page.goto("/council");
+  await expect(page).toHaveURL(/\/login\?next=%2Fcouncil$/);
+  await page.goto("/login?next=//evil.example");
+  await page.getByLabel("Email").fill("council@demo.rivermind");
+  await page.getByLabel("Password").fill("council-demo");
+  await page
+    .getByRole("button", { name: "Sign in", exact: true })
+    .last()
+    .click();
+  await expect(page).toHaveURL(/\/river$/);
+});
+test("a worker is told council pages are council-only and can sign out", async ({
+  page,
+}) => {
+  await signUp(page, "/bounties");
+  await page.goto("/council");
+  await expect(
+    page.getByRole("heading", { name: "Council access only" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Browser", exact: true }).click();
+  await expect(page.getByText("Worker", { exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByText("Worker", { exact: true })).toBeHidden();
+});
 test("the icon rail expands, navigates, and collapses without an active dot", async ({
   page,
 }) => {
-  await page.goto("/river");
+  await signUp(page, "/river");
   await expect(page.locator(".app-shell")).toHaveClass(/sidebar-collapsed/);
   await expect(page.locator(".app-sidebar .active-diamond")).toHaveCount(0);
   await expect(
@@ -32,7 +90,7 @@ test("monthly reports download their selected data and handle empty months", asy
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/reports");
+  await signUp(page, "/reports");
   await expect(
     page.getByRole("heading", { name: "Monthly reports", exact: true }),
   ).toBeVisible();
@@ -80,7 +138,7 @@ test("the full landing page loads data, navigates, and expands its FAQ", async (
     }),
   ).toBeVisible();
   await expect(page.locator(".landing-stat")).toHaveCount(4);
-  await expect(page.locator("main > section")).toHaveCount(9);
+  await expect(page.locator("main > section")).toHaveCount(7);
   await expect(
     page.locator('#how-it-works, a[href="#how-it-works"]'),
   ).toHaveCount(0);
@@ -95,6 +153,14 @@ test("the full landing page loads data, navigates, and expands its FAQ", async (
   await page
     .getByRole("link", { name: "Explore the river", exact: true })
     .click();
+  await expect(page).toHaveURL(/\/login\?next=%2Fatlas$/);
+  await page.getByRole("tab", { name: "Create account" }).click();
+  await page.getByLabel("Your name").fill("Landing Tester");
+  await page.getByLabel("Email").fill(`landing-${Date.now()}@example.test`);
+  await page.getByLabel("Password").fill("browser-pass-1");
+  await page
+    .getByRole("button", { name: "Create account", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "River atlas", exact: true }),
   ).toBeVisible();
@@ -106,7 +172,7 @@ test("the full landing page loads data, navigates, and expands its FAQ", async (
 test("a claimed quest survives refresh and completes the labelled demo proof journey", async ({
   page,
 }) => {
-  await page.goto(`/bounties/${openId}`);
+  await signUp(page, `/bounties/${openId}`);
   await page
     .getByLabel("Your name", { exact: true })
     .fill("Browser Test Guardian");
@@ -115,11 +181,11 @@ test("a claimed quest survives refresh and completes the labelled demo proof jou
     .fill("browser-test@example.test");
   await page.getByRole("button", { name: "Claim this cleanup" }).click();
   await expect(
-    page.getByText("Capture a change worth seeing.", { exact: true }),
+    page.getByText("Before and after photos", { exact: true }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByText("Capture a change worth seeing.", { exact: true }),
+    page.getByText("Before and after photos", { exact: true }),
   ).toBeVisible();
   await page
     .getByLabel("Use simulated quest location for this demo only")
@@ -146,7 +212,7 @@ test("a claimed quest survives refresh and completes the labelled demo proof jou
   ).toBeVisible();
 });
 test("identical evidence is rejected in demo mode", async ({ page }) => {
-  await page.goto(`/bounties/${openId}`);
+  await signUp(page, `/bounties/${openId}`);
   await page.getByLabel("Your name", { exact: true }).fill("Duplicate Demo");
   await page
     .getByLabel("PayPal sandbox personal email")
@@ -175,7 +241,7 @@ test("identical evidence is rejected in demo mode", async ({ page }) => {
 test("a simulated donation updates its public contribution record", async ({
   page,
 }) => {
-  await page.goto("/donate");
+  await signUp(page, "/donate");
   await page
     .getByLabel(/Name on the public contribution record/)
     .fill("Browser River Supporter");
@@ -183,7 +249,7 @@ test("a simulated donation updates its public contribution record", async ({
     .getByRole("button", { name: "Simulated donation · $15.00" })
     .click();
   await expect(
-    page.getByText("A little care, carried forward.", { exact: true }),
+    page.getByText("Donation received", { exact: true }),
   ).toBeVisible();
   await expect(
     page
@@ -199,9 +265,7 @@ test("a simulated donation updates its public contribution record", async ({
 test("council approval and retry update the queue and never persist the key", async ({
   page,
 }) => {
-  await page.goto("/council/sign-in");
-  await page.getByLabel("Demo council key").fill("browser-demo-key");
-  await page.getByRole("button", { name: "Enter workspace" }).click();
+  await signInCouncil(page);
   await page.getByRole("button", { name: "Review approval" }).click();
   await page.getByRole("button", { name: "Confirm payout approval" }).click();
   await expect(
@@ -224,12 +288,13 @@ test("council approval and retry update the queue and never persist the key", as
   ).not.toContain("browser-demo-key");
   await page.reload();
   await expect(
-    page.getByRole("link", { name: "Enter council key" }),
+    page.getByRole("heading", { name: "Council workspace", exact: true }),
   ).toBeVisible();
 });
 for (const width of [375, 768, 1280])
   test(`all pages fit a ${width}px viewport`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    await signInCouncil(page);
     for (const path of [
       "/",
       "/river",
@@ -238,7 +303,6 @@ for (const width of [375, 768, 1280])
       `/bounties/${openId}`,
       "/donate",
       "/reports",
-      "/council/sign-in",
       "/council",
       "/about",
     ]) {

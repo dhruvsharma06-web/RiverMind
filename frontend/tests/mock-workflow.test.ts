@@ -19,7 +19,41 @@ function setup() {
       saved.set(key, value);
     },
   };
-  return { transport: createMockTransport(load, storage), storage, saved };
+  const raw = createMockTransport(load, storage);
+  let token: Promise<string> | undefined;
+  // Claims, proofs and donations need a signed-in worker, as in the real API.
+  const transport = (async (
+    path: string,
+    options: Parameters<typeof raw>[1],
+    fallback: string,
+  ) => {
+    if (
+      options.method === "POST" &&
+      /^\/(bounties|donations)\//.test(path) &&
+      !options.headers?.Authorization
+    ) {
+      token ??= raw(
+        "/auth/register",
+        {
+          method: "POST",
+          body: {
+            name: "Test Worker",
+            email: "w@example.test",
+            password: "password-1",
+          },
+        },
+        "health.ok.json",
+      )
+        .then((r) => r.json())
+        .then((j) => j.token as string);
+      options = {
+        ...options,
+        headers: { ...options.headers, Authorization: `Bearer ${await token}` },
+      };
+    }
+    return raw(path, options, fallback);
+  }) as typeof raw;
+  return { transport, raw, storage, saved };
 }
 const getOpen = async (transport: ReturnType<typeof createMockTransport>) =>
   contract.bountiesSchema.parse(
@@ -63,6 +97,128 @@ function proofForm(duplicate = false) {
   );
   return form;
 }
+describe("demo auth", () => {
+  const call = (
+    t: ReturnType<typeof createMockTransport>,
+    path: string,
+    body?: object,
+    headers?: Record<string, string>,
+  ) =>
+    t(path, { method: body ? "POST" : "GET", body, headers }, "health.ok.json");
+  it("registers, signs in, validates the session, and signs out", async () => {
+    const { raw } = setup();
+    const created = await call(raw, "/auth/register", {
+      name: "Rae",
+      email: "Rae@Example.test",
+      password: "long-enough",
+    });
+    expect(created.status).toBe(201);
+    const { user, token } = contract.authSessionSchema.parse(
+      await created.json(),
+    );
+    expect(user.role).toBe("worker");
+    expect(token.startsWith("st_")).toBe(true);
+    const bearer = { Authorization: `Bearer ${token}` };
+    expect((await call(raw, "/auth/me", undefined, bearer)).status).toBe(200);
+    expect(
+      (
+        await call(raw, "/auth/register", {
+          name: "R",
+          email: "rae@example.test",
+          password: "long-enough",
+        })
+      ).status,
+    ).toBe(422);
+    expect(
+      (
+        await call(raw, "/auth/login", {
+          email: "rae@example.test",
+          password: "wrong-pass",
+        })
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await call(raw, "/auth/login", {
+          email: "rae@example.test",
+          password: "long-enough",
+        })
+      ).status,
+    ).toBe(200);
+    expect((await call(raw, "/auth/logout", {}, bearer)).status).toBe(204);
+    expect((await call(raw, "/auth/me", undefined, bearer)).status).toBe(401);
+  });
+  it("stores only a SHA-256 digest of the password", async () => {
+    const { raw, saved } = setup();
+    await call(raw, "/auth/register", {
+      name: "Rae",
+      email: "rae@example.test",
+      password: "plain-secret-1",
+    });
+    const stored = [...saved.values()].join("");
+    expect(stored).not.toContain("plain-secret-1");
+    expect(stored).toMatch(/"hash":"[0-9a-f]{64}"/);
+  });
+  it("seeds a demo council account and rejects unauthenticated claims", async () => {
+    const { raw } = setup();
+    const login = await call(raw, "/auth/login", {
+      email: "council@demo.rivermind",
+      password: "council-demo",
+    });
+    expect(contract.authSessionSchema.parse(await login.json()).user.role).toBe(
+      "council",
+    );
+    const open = await getOpen(raw);
+    const res = await raw(
+      `/bounties/${open.id}/claim`,
+      {
+        method: "POST",
+        body: { worker_name: "A", paypal_email: "a@example.test" },
+      },
+      "claim.ok.json",
+    );
+    expect(res.status).toBe(401);
+    const orders = await raw(
+      "/donations/orders",
+      { method: "POST", body: { amount_cents: 500 } },
+      "donation_order.ok.json",
+    );
+    expect(orders.status).toBe(401);
+  });
+  it("lets only council sessions act on payouts with a session token", async () => {
+    const { raw } = setup();
+    const tokenFor = async (email: string, password: string) =>
+      contract.authSessionSchema.parse(
+        await (await call(raw, "/auth/login", { email, password })).json(),
+      ).token;
+    await call(raw, "/auth/register", {
+      name: "W",
+      email: "w2@example.test",
+      password: "password-2",
+    });
+    const worker = await tokenFor("w2@example.test", "password-2");
+    const council = await tokenFor("council@demo.rivermind", "council-demo");
+    const payouts = contract.payoutsSchema.parse(
+      await (await raw("/payouts", {}, "payouts.ok.json")).json(),
+    ).items;
+    const target = payouts.find((p) => p.status === "PENDING_APPROVAL")!;
+    const approve = (token: string) =>
+      raw(
+        `/payouts/${target.id}/approve`,
+        {
+          method: "POST",
+          body: {},
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Idempotency-Key": uuid,
+          },
+        },
+        "payout_approve.ok.json",
+      );
+    expect((await approve(worker)).status).toBe(403);
+    expect((await approve(council)).status).toBe(200);
+  });
+});
 describe("explicit demo workflow", () => {
   it("keeps independent council fixtures separate from open and rejected quests", async () => {
     const { transport } = setup();
@@ -196,7 +352,7 @@ describe("explicit demo workflow", () => {
     const options = {
       method: "POST",
       body: { amount_cents: 1500, donor_name: "Test Donor" },
-      headers,
+      headers: { "Idempotency-Key": uuid },
     };
     const first = await (
       await transport("/donations/orders", options, "donation_order.ok.json")

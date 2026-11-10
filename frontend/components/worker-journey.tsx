@@ -25,6 +25,8 @@ import { dateTime, money } from "@/lib/format";
 import { Button } from "./ui/button";
 import { Notice, Panel, PanelTitle, StatusBadge } from "./ui/shared";
 import { VerificationCard } from "./verification-card";
+import { SignInPrompt } from "./auth-gate";
+import { useAuth } from "@/lib/auth";
 export function WorkerJourney({
   bounty: b,
   query,
@@ -33,6 +35,7 @@ export function WorkerJourney({
   query: UseQueryResult<Bounty, Error>;
 }) {
   const cache = useQueryClient();
+  const signedOut = useAuth().status === "signed-out";
   const storedToken = useSyncExternalStore(
     subscribeClaims,
     () => readClaim(b.id),
@@ -180,10 +183,11 @@ export function WorkerJourney({
         ))}
       </ol>
       {message && <Notice success>{message}</Notice>}
-      {b.status === "OPEN" && (
+      {signedOut && ["OPEN", "CLAIMED"].includes(b.status) && <SignInPrompt />}
+      {b.status === "OPEN" && !signedOut && (
         <Panel>
           <PanelTitle aside={<KeyRound size={18} className="text-primary" />}>
-            Make this stretch your next chapter.
+            Claim this cleanup
           </PanelTitle>
           <p className="form-intro">
             Claim this cleanup with your name and a PayPal{" "}
@@ -207,7 +211,7 @@ export function WorkerJourney({
                 maxLength={60}
                 autoComplete="name"
                 required
-                placeholder="How should we call you?"
+                placeholder="Name shown on the quest"
                 disabled={claim.isPending}
               />
             </div>
@@ -247,9 +251,9 @@ export function WorkerJourney({
           </form>
         </Panel>
       )}
-      {b.status === "CLAIMED" && !token && (
+      {b.status === "CLAIMED" && !token && !signedOut && (
         <Panel>
-          <PanelTitle>Pick up where you left off.</PanelTitle>
+          <PanelTitle>Restore your claim</PanelTitle>
           <p className="form-intro">
             This quest belongs to {b.worker_name ?? "its worker"}. Restore its
             claim token to submit evidence. Name and email cannot recover a lost
@@ -289,7 +293,7 @@ export function WorkerJourney({
           </form>
         </Panel>
       )}
-      {b.status === "CLAIMED" && token && (
+      {b.status === "CLAIMED" && token && !signedOut && (
         <>
           <details className="recovery-token">
             <summary>
@@ -336,7 +340,7 @@ export function WorkerJourney({
           </details>
           <Panel>
             <PanelTitle aside={<Camera size={18} className="text-primary" />}>
-              Capture a change worth seeing.
+              Before and after photos
             </PanelTitle>
             <p className="form-intro">
               Photograph the same stretch before and after cleaning. Keep the
@@ -475,7 +479,7 @@ export function WorkerJourney({
       {b.status !== "OPEN" && b.status !== "CLAIMED" && (
         <Panel>
           <PanelTitle aside={<StatusBadge status={b.status} />}>
-            The next part of the journey.
+            Payment status
           </PanelTitle>
           <div aria-live="polite" className="payment-result">
             <strong className="numeric">
@@ -483,7 +487,7 @@ export function WorkerJourney({
             </strong>
             <p>
               {b.status === "PAID"
-                ? "The payout is confirmed. Thank you for carrying a little of the river’s work."
+                ? "The payout is confirmed."
                 : b.status === "REJECTED"
                   ? `This quest is closed. ${b.rejection_reason ?? "The evidence did not satisfy the verification policy."}`
                   : b.status === "PAYOUT_PENDING_APPROVAL"

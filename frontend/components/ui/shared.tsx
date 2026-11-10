@@ -66,12 +66,12 @@ export function StatusBadge({ status }: { status: string }) {
   return <Badge tone={tone}>{statusLabels[status] ?? status}</Badge>;
 }
 export function PageHeading({
-  chapter,
   title,
   description,
   action,
 }: {
-  chapter: string;
+  /** Kept for call-site compatibility; no longer rendered. */
+  chapter?: string;
   title: string;
   description: string;
   action?: ReactNode;
@@ -79,7 +79,6 @@ export function PageHeading({
   return (
     <header className="page-heading">
       <div>
-        <Eyebrow>{chapter}</Eyebrow>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>

@@ -61,7 +61,7 @@ export default function AtlasPage() {
       <PageHeading
         chapter="Atlas"
         title="River atlas"
-        description="Explore pollution signals and cleanup opportunities along the Yamuna’s Delhi reach."
+        description="Pollution signals and cleanup quests along the Yamuna’s Delhi reach."
         action={
           <Badge tone="aqua">
             <MapPin size={12} />
@@ -88,16 +88,16 @@ export default function AtlasPage() {
             </button>
           ))}
         </div>
-        <span className="tiny-label">
-          {points.length} LOCATIONS IN THIS VIEW
-        </span>
+        <span className="tiny-label">{points.length} locations shown</span>
       </div>
       <AsyncView query={bounties}>
-        {() => <RiverMap points={points} selected={selected} onSelect={onSelect} />}
+        {() => (
+          <RiverMap points={points} selected={selected} onSelect={onSelect} />
+        )}
       </AsyncView>
       <div className="atlas-detail-grid">
         <Panel>
-          <PanelTitle>Field notes</PanelTitle>
+          <PanelTitle>Selected location</PanelTitle>
           {point ? (
             <div className="atlas-selection">
               <Badge tone={point.kind === "quest" ? "gold" : "aqua"}>
@@ -118,18 +118,17 @@ export default function AtlasPage() {
               )}
             </div>
           ) : (
-            <EmptyState title="A place to begin.">
+            <EmptyState title="Nothing selected.">
               <span>
-                Select a marker or a location from the list to read its field
-                notes. Locations come from event and bounty data; no monitoring
-                station locations are inferred.
+                Pick a marker or a location from the list. Locations come from
+                event and quest data only.
               </span>
             </EmptyState>
           )}
         </Panel>
         <Panel>
           <PanelTitle aside={<Compass size={17} className="text-primary" />}>
-            Location journal
+            Locations
           </PanelTitle>
           <AsyncView query={events}>
             {() =>

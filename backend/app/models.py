@@ -215,3 +215,23 @@ class IdempotencyKey(Base):
     status_code: Mapped[int] = mapped_column(Integer, nullable=False)
     response_body: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = _created()
+
+
+class User(Base):
+    __tablename__ = "users"
+    __table_args__ = (CheckConstraint("role IN ('worker', 'council')", name="user_role_valid"),)
+    id: Mapped[str] = _id()
+    email: Mapped[str] = mapped_column(String(254), unique=True, nullable=False)  # always lowercased
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(200), nullable=False)  # scrypt$<salt_hex>$<hash_hex>
+    role: Mapped[str] = mapped_column(String(16), nullable=False, default="worker")  # worker | council
+    created_at: Mapped[datetime] = _created()
+
+
+class UserSession(Base):
+    __tablename__ = "sessions"
+    id: Mapped[str] = _id()
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)  # sha256 hex of "st_..."
+    created_at: Mapped[datetime] = _created()
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

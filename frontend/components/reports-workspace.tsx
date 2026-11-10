@@ -80,7 +80,7 @@ export function ReportsWorkspace() {
       <PageHeading
         chapter="Reports"
         title="Monthly reports"
-        description="Explore the records. Share the progress. Take a little perspective with you."
+        description="Preview a month of records, then download it as CSV or print it."
         action={
           <Badge>
             <FileChartColumn size={14} />
@@ -135,11 +135,8 @@ export function ReportsWorkspace() {
               <Panel className="report-cover">
                 <div className="report-cover-heading">
                   <div>
-                    <span className="report-kicker">
-                      RIVERMIND / YAMUNA, DELHI
-                    </span>
                     <h2>{monthLabel(month)}</h2>
-                    <p>Monthly river report</p>
+                    <p>Yamuna, Delhi · monthly report</p>
                   </div>
                   <FileChartColumn
                     size={40}

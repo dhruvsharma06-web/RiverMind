@@ -44,6 +44,19 @@ COUNCIL = {"Authorization": "Bearer test-council-key"}
 DEVICE = {"X-Device-Token": "test-device-token"}
 
 
+def register_user(c, email="worker@example.com", name="Worker", password="correct horse"):
+    r = c.post("/api/v1/auth/register", json={"name": name, "email": email, "password": password})
+    assert r.status_code == 201, r.text
+    return r.json()["token"]
+
+
+def worker_headers(c):
+    """Authorization header for a worker account, registered once per client (the tests' signed-in user)."""
+    if not hasattr(c, "_worker_headers"):
+        c._worker_headers = {"Authorization": f"Bearer {register_user(c)}"}
+    return c._worker_headers
+
+
 def jpeg(seed: int, size: int = 64) -> bytes:
     """A random-noise JPEG: different seeds give clearly different perceptual hashes."""
     import io
@@ -80,3 +93,27 @@ def ai_impl():
     from app.adapters import ai_adapter
 
     return type(ai_adapter._ai())
+
+
+REAL_AI = os.environ.get("USE_MOCK_AI", "true").lower() == "false"
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "real_vision: in real-AI mode, keep the real analyze_media/verify_cleanup")
+
+
+@pytest.fixture(autouse=True)
+def _mock_vision_on_synthetic_images(request, monkeypatch):
+    """Real-AI mode only. These backend tests upload random-noise JPEGs and need a "waste found" / "cleanup passed"
+    verdict to exercise money flows; the real detector rightly finds no waste in noise. So the two image verdicts
+    (analyze_media, verify_cleanup) come from rivermind_ai's labelled mock here; every other method stays real.
+    The real vision path is tested in ai/tests/test_real.py. Opt out with @pytest.mark.real_vision."""
+    if not REAL_AI or request.node.get_closest_marker("real_vision"):
+        yield
+        return
+    from rivermind_ai.mock import MockRiverAI
+
+    impl = ai_impl()
+    monkeypatch.setattr(impl, "analyze_media", MockRiverAI.analyze_media)
+    monkeypatch.setattr(impl, "verify_cleanup", MockRiverAI.verify_cleanup)
+    yield

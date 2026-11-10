@@ -290,3 +290,17 @@ export interface ProofInput {
   before_captured_at: string;
   after_captured_at: string;
 }
+
+export const userSchema = z.strictObject({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  role: z.enum(["worker", "council"]),
+});
+export type User = z.infer<typeof userSchema>;
+export const authSessionSchema = z.object({
+  user: userSchema,
+  token: z.string().min(1),
+});
+export const meSchema = z.object({ user: userSchema });
+export type AuthSession = z.infer<typeof authSessionSchema>;

@@ -6,11 +6,13 @@ from app.db import Base
 from app.geo import haversine_m
 from app.models import Bounty, Device, DiaryEntry, Event, LedgerEntry, new_id, utcnow
 from app.security import sha256_hex
+from app.services.auth import ensure_council_user
 
 # Position of DEVICE_ID as used in CONTRACT.md's reading example (Okhla). Readings are wiped by reset,
 # so this is the only device position known at seed time.
 DEVICE_REF = (28.5355, 77.3100)
 MIN_DISTANCE_M = 2000
+ACCOUNT_TABLES = {"users", "sessions"}
 # Yamuna points in Delhi, far from Okhla. The first two that clear 2 km from device and camera are used.
 CANDIDATES = [
     ("Wazirabad barrage", 28.7120, 77.2310),
@@ -32,7 +34,8 @@ def pick_points(settings: Settings) -> list[tuple[str, float, float]]:
 
 def reset_demo(session: Session, settings: Settings) -> None:
     for table in reversed(Base.metadata.sorted_tables):
-        session.execute(table.delete())
+        if table.name not in ACCOUNT_TABLES:  # reset never signs people out or deletes accounts
+            session.execute(table.delete())
 
     now = utcnow()
     (waste_name, wlat, wlon), (sensor_name, slat, slon) = pick_points(settings)
@@ -65,6 +68,7 @@ def reset_demo(session: Session, settings: Settings) -> None:
               f"${amount / 100:.2f} for 1 open cleanup bounty. 2 problems were reported today."),
     ))
     session.commit()
+    ensure_council_user(session, settings)
 
 
 if __name__ == "__main__":

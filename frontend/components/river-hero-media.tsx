@@ -3,19 +3,39 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-const POSTER = "/hero/poster.webp";
+/** Footage sets in public/: poster plus a small and a large muted loop. */
+export const FOOTAGE = {
+  hero: {
+    poster: "/hero/poster.webp",
+    small: "/hero/hero-960.mp4",
+    large: "/hero/hero-1600.mp4",
+  },
+  stream: {
+    poster: "/stream/poster.webp",
+    small: "/stream/stream-960.mp4",
+    large: "/stream/stream-1600.mp4",
+  },
+  flow: {
+    poster: "/flow/poster.webp",
+    small: "/flow/flow-960.mp4",
+    large: "/flow/flow-1600.mp4",
+  },
+} as const;
 
 /**
- * Real river footage behind the landing hero. The poster still is always
- * rendered (and is the LCP element); the muted loop is added only once the
- * page is idle, and never for reduced-motion or data-saver visitors.
+ * Real water footage (illustrative, not the Yamuna). The poster still is
+ * always rendered (and is the LCP element in the hero); the muted loop is
+ * added only once the page is idle, and never for reduced-motion or
+ * data-saver visitors. Playback pauses whenever the frame is off-screen.
  */
 export function RiverHeroMedia({
   className = "river-hero-media",
   priority = true,
   sizes = "100vw",
   pinned = false,
+  footage = "hero",
 }: {
+  footage?: keyof typeof FOOTAGE;
   className?: string;
   priority?: boolean;
   sizes?: string;
@@ -27,6 +47,7 @@ export function RiverHeroMedia({
   const video = useRef<HTMLVideoElement>(null);
   const [source, setSource] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const media = FOOTAGE[footage];
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -40,9 +61,7 @@ export function RiverHeroMedia({
         setPlaying(false);
         return;
       }
-      setSource(
-        window.innerWidth < 768 ? "/hero/hero-960.mp4" : "/hero/hero-1600.mp4",
-      );
+      setSource(window.innerWidth < 768 ? media.small : media.large);
     }
 
     const timer = window.setTimeout(decide, 600);
@@ -51,7 +70,7 @@ export function RiverHeroMedia({
       window.clearTimeout(timer);
       motion.removeEventListener("change", decide);
     };
-  }, []);
+  }, [media]);
 
   useEffect(() => {
     const element = video.current;
@@ -86,13 +105,13 @@ export function RiverHeroMedia({
 
   return (
     <div ref={frame} className={className} aria-hidden="true">
-      <Image src={POSTER} alt="" fill priority={priority} sizes={sizes} />
+      <Image src={media.poster} alt="" fill priority={priority} sizes={sizes} />
       {source && (
         <video
           ref={video}
           key={source}
           src={source}
-          poster={POSTER}
+          poster={media.poster}
           muted
           loop
           playsInline

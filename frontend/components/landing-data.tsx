@@ -1,23 +1,16 @@
 "use client";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, ShieldCheck, Waves } from "lucide-react";
+import { ArrowUpRight, Waves } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { useReadings, useRiver } from "@/lib/queries";
+import { useRiver } from "@/lib/queries";
 import { dateTime, money } from "@/lib/format";
-import { AsyncView, Badge, Eyebrow, Skeleton } from "./ui/shared";
-import { Button } from "./ui/button";
-const Chart = dynamic(() => import("./readings-chart"), {
-  loading: () => <Skeleton />,
-  ssr: false,
-});
+import { AsyncView, Badge } from "./ui/shared";
 export function LandingStats() {
   const river = useRiver();
   return (
     <div className="landing-stats">
       <div className="stats-intro">
-        <span className="tiny-label">A WINDOW INTO THE RIVER</span>
         <span className="stats-source">
           {api.mode === "fixture"
             ? "Simulated demo snapshot"
@@ -29,7 +22,7 @@ export function LandingStats() {
           <>
             {[
               ["River indicator", `${r.health_score}`, "/100"],
-              ["Open cleanup quests", String(r.open_bounties), "quests"],
+              ["Open quests", String(r.open_bounties), ""],
               ["Paid out", money(r.treasury.paid_cents), "USD"],
               ["Available", money(r.treasury.available_cents), "USD"],
             ].map(([label, value, unit]) => (
@@ -55,7 +48,7 @@ export function AtlasPreview() {
           <span className="location-dot" />
           Yamuna · Delhi reach
         </Badge>
-        <span className="tiny-label">ILLUSTRATED ATLAS PREVIEW</span>
+        <span className="tiny-label">Illustration</span>
       </div>
       <svg
         className="preview-river-map"
@@ -128,62 +121,6 @@ export function AtlasPreview() {
           N
         </text>
       </svg>
-      <div className="atlas-preview-caption">
-        <MapPin size={16} />
-        <div>
-          <strong>Follow the need. Find your place.</strong>
-          <span>Open the real map to explore event and quest locations.</span>
-        </div>
-        <Button asChild variant="secondary" size="icon">
-          <Link href="/atlas" aria-label="Open the river atlas">
-            <ArrowUpRight size={18} />
-          </Link>
-        </Button>
-      </div>
-    </div>
-  );
-}
-export function ObservatoryPreview() {
-  const readings = useReadings();
-  return (
-    <div className="observatory-preview">
-      <div className="panel-title">
-        <div>
-          <span className="tiny-label">RIVER OBSERVATORY</span>
-          <h3>Listen to the current.</h3>
-        </div>
-        <Badge>
-          {api.mode === "fixture" ? "Demo readings" : "Available readings"}
-        </Badge>
-      </div>
-      <AsyncView query={readings}>
-        {({ items }) => (
-          <>
-            <div className="preview-metrics">
-              {[
-                ["Turbidity", items[0]?.turbidity_ntu, "NTU"],
-                ["Water pH", items[0]?.ph, "pH"],
-                ["Temperature", items[0]?.temp_c, "°C"],
-              ].map(([label, value, unit]) => (
-                <div key={label}>
-                  <span>{label}</span>
-                  <strong className="numeric">
-                    {value ?? "—"}
-                    <small>{unit}</small>
-                  </strong>
-                </div>
-              ))}
-            </div>
-            <Chart readings={items} />
-            <p className="chart-source">
-              {items.some((r) => r.simulated)
-                ? "Simulated measurements"
-                : "Device measurements"}{" "}
-              · Turbidity over the available readings window · IST
-            </p>
-          </>
-        )}
-      </AsyncView>
     </div>
   );
 }
@@ -193,14 +130,14 @@ export function TreasuryPreview() {
     <div className="treasury-receipt">
       <div className="receipt-head">
         <Waves size={24} strokeWidth={1} />
-        <span>THE RIVER’S TREASURY</span>
+        <span>River treasury</span>
         <Badge>USD</Badge>
       </div>
       <AsyncView query={river}>
         {(r) => (
           <>
             <div className="receipt-total">
-              <span>AVAILABLE FOR THE NEXT CHAPTER</span>
+              <span>Available</span>
               <strong className="numeric">
                 {money(r.treasury.available_cents)}
               </strong>
@@ -222,15 +159,11 @@ export function TreasuryPreview() {
                 </div>
               ))}
             </div>
-            <div className="receipt-note">
-              <ShieldCheck size={16} />
-              <span>Budget rules. Evidence checks. A public trail.</span>
-            </div>
           </>
         )}
       </AsyncView>
       <Link href="/donate" className="receipt-link">
-        Explore the public ledger
+        See the public ledger
         <ArrowUpRight size={16} />
       </Link>
     </div>
@@ -247,14 +180,10 @@ export function RiverDiary() {
       <div className="diary-symbol">
         <Waves size={32} strokeWidth={1} />
       </div>
-      <Eyebrow>A NOTE FROM THE YAMUNA</Eyebrow>
       {diary.error &&
       "code" in diary.error &&
       diary.error.code === "NOT_FOUND" ? (
-        <p>
-          The river is still finding its words. Its first diary entry will
-          appear here.
-        </p>
+        <p>No diary entry yet.</p>
       ) : (
         <AsyncView query={diary}>
           {(entry) => (

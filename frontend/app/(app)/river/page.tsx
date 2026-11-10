@@ -72,10 +72,6 @@ export default function OverviewPage() {
               sizes="(max-width: 1100px) 100vw, 900px"
             />
             <div className="river-now-body">
-              <span className="river-now-label">
-                <Droplets size={13} />
-                RIVER NOW
-              </span>
               <h2 id="river-now-title">Yamuna · Delhi reach</h2>
               <AsyncView query={river}>
                 {(r) => (
@@ -122,7 +118,7 @@ export default function OverviewPage() {
               </Button>
             </div>
             <span className="river-now-credit">
-              Illustrative river footage · Pexels
+              River footage via Pexels · illustrative, not the Yamuna
             </span>
           </section>
 
@@ -140,32 +136,28 @@ export default function OverviewPage() {
                   {
                     label: "Available",
                     value: r.treasury.available_cents,
-                    caption: "Ready to fund a cleanup",
                     icon: Wallet,
                     tone: "teal",
                   },
                   {
                     label: "Reserved for quests",
                     value: r.treasury.reserved_cents,
-                    caption: "Committed to posted work",
                     icon: Layers3,
                     tone: "orange",
                   },
                   {
                     label: "Paid out",
                     value: r.treasury.paid_cents,
-                    caption: "Confirmed payment total",
                     icon: Check,
                     tone: "green",
                   },
                   {
                     label: "Donations",
                     value: r.treasury.donated_cents,
-                    caption: "Captured contributions",
                     icon: Heart,
                     tone: "blue",
                   },
-                ].map(({ label, value, caption, icon: Icon, tone }) => (
+                ].map(({ label, value, icon: Icon, tone }) => (
                   <div className="metric-card" key={label}>
                     <div className="metric-card-heading">
                       <span className={`metric-icon metric-icon-${tone}`}>
@@ -177,7 +169,6 @@ export default function OverviewPage() {
                       {money(value)}
                       <small>USD</small>
                     </strong>
-                    <p>{caption}</p>
                   </div>
                 ))}
               </div>
@@ -296,7 +287,6 @@ export default function OverviewPage() {
             <div className="section-title">
               <div>
                 <h2>Open quests</h2>
-                <p>Cleanup work with a posted reward.</p>
               </div>
               <Link href="/bounties">
                 All quests
@@ -460,12 +450,6 @@ export default function OverviewPage() {
                           <strong>{stage.count}</strong>
                         </div>
                       ))}
-                    </div>
-                    <div className="activity-note">
-                      <Check size={15} />
-                      <span>
-                        Every reward follows evidence and approval rules.
-                      </span>
                     </div>
                   </>
                 );
