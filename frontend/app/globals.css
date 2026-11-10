@@ -3135,44 +3135,55 @@ a {
   }
 }
 
-/* River motion shared by the landing page and the workspace. */
-.water-flow {
-  position: relative;
-  height: 64px;
+/* A quiet layer of moving water behind the landing (below the hero) and
+   the Overview. Kept faint and desaturated over the page colour, so text
+   on it keeps its contrast; cards and panels stay solid. */
+.water-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background: var(--dash-bg);
 }
-.water-flow svg {
+.water-backdrop-media {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 200%;
+  inset: 0;
+  opacity: 0.13;
+  filter: grayscale(0.55) contrast(0.7) brightness(1.2);
+}
+html:not([data-theme="light"]) .water-backdrop-media {
+  opacity: 0.2;
+  filter: grayscale(0.45) contrast(0.85) brightness(0.8);
+}
+.water-backdrop-media :is(img, video) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
   height: 100%;
+  object-fit: cover;
 }
-.water-flow path {
-  stroke: none;
+.water-backdrop-media video {
+  opacity: 0;
+  transition: opacity 1200ms ease;
 }
-.water-flow-back {
-  fill: color-mix(in srgb, var(--viz-water, #4fafa9) 22%, transparent);
+.water-backdrop-media video[data-playing="true"] {
+  opacity: 1;
 }
-.water-flow-mid {
-  fill: color-mix(in srgb, var(--viz-water, #4fafa9) 38%, transparent);
+/* Muted text sits directly on the water in places; deepen it a touch in
+   the light theme so it stays above 4.5:1 over the brightest frames. */
+html[data-theme="light"]
+  :is(.landing-experience, .app-shell):has(.water-backdrop) {
+  --dash-muted: #56626e;
 }
-.water-flow-front {
-  fill: var(--dash-panel, #fff);
+/* In the workspace the layer sits inside the content column: lift that
+   column into its own stack and keep the layer at the bottom of it. */
+.app-shell:has(.water-backdrop) .app-body {
+  position: relative;
+  z-index: 1;
 }
-.water-flow-curtain {
-  margin-top: -63px;
-  z-index: 2;
-}
-.water-flow-curtain .water-flow-front {
-  fill: var(--dash-panel, #fff);
-}
-.water-flow-app {
-  height: 44px;
-  margin-top: 24px;
-}
-.water-flow-app .water-flow-front {
-  fill: var(--dash-bg, #f5f7f8);
+.app-shell .water-backdrop {
+  z-index: -1;
 }
 .river-now-media {
   position: absolute;
@@ -3194,14 +3205,8 @@ a {
   opacity: 1;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .water-flow-back {
-    animation: water-drift 16s linear infinite;
-  }
-  .water-flow-mid {
-    animation: water-drift 11s linear infinite reverse;
-  }
-  .water-flow-front {
-    animation: water-drift 8s linear infinite;
+  .water-backdrop-media {
+    animation: backdrop-drift 48s ease-in-out infinite alternate;
   }
   .reach-stage path.reach-water {
     stroke-dasharray: 70 5;
@@ -3210,19 +3215,21 @@ a {
   @supports (animation-timeline: view()) {
     /* Content surfaces as it enters the view, like rising water. */
     .landing-experience main > section:not(.river-hero) .experience-container,
-    .app-content .panel,
-    .app-content .metric-card,
-    .app-content .overview-quest-card,
-    .app-content .river-now {
+    .app-content:not(:has(.overview-deck))
+      :is(.panel, .metric-card, .overview-quest-card) {
       animation: surface linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 70%;
     }
   }
 }
-@keyframes water-drift {
+@keyframes backdrop-drift {
+  from {
+    scale: 1.02;
+  }
   to {
-    translate: -50% 0;
+    scale: 1.08;
+    translate: -1% -1%;
   }
 }
 @keyframes reach-current {
@@ -3235,7 +3242,4 @@ a {
     opacity: 0;
     translate: 0 28px;
   }
-}
-.landing-experience .water-flow:not(.water-flow-curtain) {
-  background: var(--dash-bg);
 }

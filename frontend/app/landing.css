@@ -220,8 +220,8 @@ html[data-theme="light"] .landing-experience .badge-gold {
 }
 
 /* ---------------------------------------------------------------------
-   Landing: hero -> how it works -> water wall -> live river -> quest ->
-   donate -> FAQ. Type is set large on purpose: body 17-19px, labels
+   Landing: hero -> how it works -> live river -> quest -> donate -> FAQ,
+   over a quiet layer of moving water (components/water-backdrop.tsx). Type is set large on purpose: body 17-19px, labels
    13px minimum.
    --------------------------------------------------------------------- */
 .landing-experience h2 {
@@ -297,9 +297,8 @@ html[data-theme="light"] .landing-experience .badge-gold {
   color: #bfe9e2;
 }
 .landing-experience .river-hero {
-  position: sticky;
-  top: 0;
-  z-index: 0;
+  position: relative;
+  z-index: 1;
   isolation: isolate;
   display: flex;
   align-items: center;
@@ -313,26 +312,23 @@ html[data-theme="light"] .landing-experience .badge-gold {
   position: relative;
   z-index: 1;
 }
-.river-hero-media,
-.stream-media,
-.water-wall-media {
+.river-hero-media {
   position: absolute;
   inset: 0;
   z-index: -1;
 }
-:is(.river-hero-media, .stream-media, .water-wall-media) :is(img, video) {
+.river-hero-media :is(img, video) {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-:is(.river-hero-media, .stream-media, .water-wall-media) video {
+.river-hero-media video {
   opacity: 0;
   transition: opacity 700ms ease;
 }
-:is(.river-hero-media, .stream-media, .water-wall-media)
-  video[data-playing="true"] {
+.river-hero-media video[data-playing="true"] {
   opacity: 1;
 }
 .river-hero-scrim {
@@ -387,116 +383,22 @@ html[data-theme="light"] .landing-experience .badge-gold {
 .river-hero .experience-story-link {
   color: #fff;
 }
-.footage-credit {
-  position: absolute;
-  right: 24px;
-  bottom: 18px;
-  color: rgb(255 255 255 / 0.78);
-  font-size: 13px;
-  letter-spacing: 0.01em;
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* As the page rises over it, the footage sinks back and dims. */
-    .river-hero-media,
-    .river-hero .experience-container {
-      animation: hero-recede linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100svh;
-    }
-    .river-hero .experience-container {
-      animation-name: hero-copy-out;
-    }
-  }
-}
-@keyframes hero-recede {
-  to {
-    scale: 1.08;
-    filter: brightness(0.55);
-  }
-}
-@keyframes hero-copy-out {
-  to {
-    opacity: 0;
-    translate: 0 -60px;
-  }
-}
-
-/* The single-scroll transition: a sheet of real water that rises over the
-   whole window (components/river-transition.tsx). */
-.river-wipe {
-  --crest: 120px;
-  position: fixed;
-  z-index: 200;
-  left: 0;
-  right: 0;
-  top: calc(var(--crest) * -1);
-  height: calc(100vh + var(--crest) * 2);
-  visibility: hidden;
-  pointer-events: none;
-  transform: translate3d(0, calc(100vh + 120px), 0);
-  background:
-    linear-gradient(rgb(7 30 34 / 0.42), rgb(7 30 34 / 0.42)),
-    url("/flow/poster.webp") center / cover,
-    #12343a;
-  --wave-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0 70 C150 20 300 20 450 62 S750 112 900 64 S1100 18 1200 60 V120 H0Z'/%3E%3C/svg%3E");
-  --wave-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0 50 C150 100 300 100 450 58 S750 8 900 56 S1100 102 1200 60 V0 H0Z'/%3E%3C/svg%3E");
-  -webkit-mask-image:
-    var(--wave-top), linear-gradient(#000, #000), var(--wave-bottom);
-  mask-image: var(--wave-top), linear-gradient(#000, #000), var(--wave-bottom);
-  -webkit-mask-size:
-    1200px var(--crest),
-    100% calc(100% - var(--crest) * 2 + 2px),
-    1200px var(--crest);
-  mask-size:
-    1200px var(--crest),
-    100% calc(100% - var(--crest) * 2 + 2px),
-    1200px var(--crest);
-  -webkit-mask-position:
-    0 0,
-    0 calc(var(--crest) - 1px),
-    0 100%;
-  mask-position:
-    0 0,
-    0 calc(var(--crest) - 1px),
-    0 100%;
-  -webkit-mask-repeat: repeat-x, no-repeat, repeat-x;
-  mask-repeat: repeat-x, no-repeat, repeat-x;
-}
-.river-wipe[data-active="true"] {
-  visibility: visible;
-  animation: wipe-current 1.3s linear infinite;
-}
-@keyframes wipe-current {
-  to {
-    -webkit-mask-position:
-      -1200px 0,
-      0 calc(var(--crest) - 1px),
-      1200px 100%;
-    mask-position:
-      -1200px 0,
-      0 calc(var(--crest) - 1px),
-      1200px 100%;
-  }
-}
-
-/* How it works, beside clear water running over stones. */
-.landing-experience main > section:not(.river-hero, .water-wall) {
-  background: var(--dash-bg);
-}
-.landing-experience main > section.landing-steps {
-  background: var(--dash-panel);
-}
+/* How it works: heading beside the three steps. Sections stay transparent
+   so the water backdrop shows between them; cards keep solid surfaces. */
 .landing-steps-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
   gap: clamp(48px, 7vw, 112px);
-  align-items: center;
+  align-items: start;
+}
+.landing-steps-grid > h2 {
+  position: sticky;
+  top: 120px;
 }
 .step-list {
   list-style: none;
   counter-reset: step;
-  margin-top: 48px;
+  margin: 0;
   padding: 0;
 }
 .step-list li {
@@ -529,53 +431,6 @@ html[data-theme="light"] .landing-experience .badge-gold {
   max-width: 46ch;
   font-size: 18px;
 }
-.stream-frame {
-  margin: 0;
-}
-.stream-media {
-  position: relative;
-  inset: auto;
-  z-index: 0;
-  aspect-ratio: 4 / 5;
-  border-radius: 18px;
-  overflow: hidden;
-  background: #2a2f2c;
-}
-.stream-media .river-hero-scrim,
-.water-wall-media .river-hero-scrim {
-  background: none;
-}
-.stream-frame figcaption {
-  margin-top: 14px;
-  color: var(--dash-muted);
-  font-size: 13px;
-}
-
-/* The water wall: an endless sheet of falling water, edge to edge. */
-.landing-experience main > section.water-wall {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  align-items: flex-end;
-  min-height: 92svh;
-  padding: 0 0 clamp(80px, 13vh, 140px);
-  overflow: hidden;
-  background: #1d2427;
-}
-.water-wall-media .river-hero-scrim {
-  background: linear-gradient(
-    180deg,
-    rgb(8 20 24 / 0.08) 0%,
-    rgb(8 20 24 / 0) 35%,
-    rgb(8 20 24 / 0.68) 100%
-  );
-}
-.landing-experience .water-wall h2 {
-  max-width: 17ch;
-  color: #fff;
-  font-size: clamp(40px, 5.4vw, 76px);
-}
-
 /* The river right now. */
 .landing-live-grid {
   display: grid;
@@ -877,15 +732,15 @@ html[data-theme="light"] .landing-experience .badge-gold {
   }
 }
 @media (max-width: 900px) {
+  .landing-steps-grid > h2 {
+    position: static;
+  }
   .landing-steps-grid,
   .landing-live-grid,
   .landing-funding-grid,
   .landing-faq-layout,
   .experience-quest-card {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .stream-media {
-    aspect-ratio: 16 / 10;
   }
   .experience-quest-art {
     min-height: 220px;
@@ -929,18 +784,10 @@ html[data-theme="light"] .landing-experience .badge-gold {
       rgb(8 18 24 / 0.7) 100%
     );
   }
-  .footage-credit {
-    right: auto;
-    left: 24px;
-    bottom: 14px;
-  }
   .landing-heading-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-  }
-  .landing-experience main > section.water-wall {
-    min-height: 80svh;
   }
 }
 @media (max-width: 540px) {

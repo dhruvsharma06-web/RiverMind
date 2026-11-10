@@ -138,7 +138,7 @@ test("the full landing page loads data, navigates, and expands its FAQ", async (
     }),
   ).toBeVisible();
   await expect(page.locator(".landing-stat")).toHaveCount(4);
-  await expect(page.locator("main > section")).toHaveCount(7);
+  await expect(page.locator("main > section")).toHaveCount(6);
   await expect(
     page.locator('#how-it-works, a[href="#how-it-works"]'),
   ).toHaveCount(0);

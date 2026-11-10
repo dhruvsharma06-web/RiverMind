@@ -10,11 +10,6 @@ export const FOOTAGE = {
     small: "/hero/hero-960.mp4",
     large: "/hero/hero-1600.mp4",
   },
-  stream: {
-    poster: "/stream/poster.webp",
-    small: "/stream/stream-960.mp4",
-    large: "/stream/stream-1600.mp4",
-  },
   flow: {
     poster: "/flow/poster.webp",
     small: "/flow/flow-960.mp4",
@@ -32,16 +27,12 @@ export function RiverHeroMedia({
   className = "river-hero-media",
   priority = true,
   sizes = "100vw",
-  pinned = false,
   footage = "hero",
 }: {
   footage?: keyof typeof FOOTAGE;
   className?: string;
   priority?: boolean;
   sizes?: string;
-  /** The media stays in view while covered (sticky hero); pause it once
-   *  the page has scrolled a full window past. */
-  pinned?: boolean;
 }) {
   const frame = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
@@ -80,8 +71,7 @@ export function RiverHeroMedia({
 
     function sync() {
       if (!element) return;
-      const covered = pinned && window.scrollY > window.innerHeight;
-      if (visible && !covered && !document.hidden) {
+      if (visible && !document.hidden) {
         // Autoplay can be refused (e.g. low-power mode); the poster stays.
         element.play().catch(() => setPlaying(false));
       } else {
@@ -95,13 +85,11 @@ export function RiverHeroMedia({
     });
     observer.observe(container);
     document.addEventListener("visibilitychange", sync);
-    if (pinned) window.addEventListener("scroll", sync, { passive: true });
     return () => {
       observer.disconnect();
       document.removeEventListener("visibilitychange", sync);
-      window.removeEventListener("scroll", sync);
     };
-  }, [source, pinned]);
+  }, [source]);
 
   return (
     <div ref={frame} className={className} aria-hidden="true">

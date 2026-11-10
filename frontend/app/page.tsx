@@ -8,8 +8,7 @@ import {
 } from "@/components/landing-data";
 import { LandingQuest } from "@/components/landing-quest";
 import { RiverHeroMedia } from "@/components/river-hero-media";
-import { RiverTransition } from "@/components/river-transition";
-import { WaterFlow } from "@/components/water-flow";
+import { WaterBackdrop } from "@/components/water-backdrop";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/shared";
 
@@ -51,10 +50,10 @@ export default function LandingPage() {
   return (
     <div className="landing-experience">
       <MarketingNav />
-      <RiverTransition targetId="story" />
+      <WaterBackdrop startAfter={240} />
       <main id="main-content">
         <section className="river-hero">
-          <RiverHeroMedia pinned />
+          <RiverHeroMedia />
           <div className="experience-container">
             <div className="experience-hero-copy">
               <h1>
@@ -81,53 +80,20 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <span className="footage-credit">
-            River footage via Pexels · illustrative, not the Yamuna
-          </span>
         </section>
 
-        <WaterFlow className="water-flow-curtain" />
         <section id="story" className="landing-steps experience-section">
           <div className="experience-container landing-steps-grid">
-            <div>
-              <h2>How it works</h2>
-              <ol className="step-list">
-                {steps.map(([title, text]) => (
-                  <li key={title}>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <figure className="stream-frame">
-              <RiverHeroMedia
-                footage="stream"
-                className="stream-media"
-                priority={false}
-                sizes="(max-width: 900px) 100vw, 560px"
-              />
-              <figcaption>
-                Stream footage via Pexels · illustrative, not the Yamuna
-              </figcaption>
-            </figure>
+            <h2>How it works</h2>
+            <ol className="step-list">
+              {steps.map(([title, text]) => (
+                <li key={title}>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </li>
+              ))}
+            </ol>
           </div>
-        </section>
-
-        <section className="water-wall" aria-labelledby="water-wall-line">
-          <RiverHeroMedia
-            footage="flow"
-            className="water-wall-media"
-            priority={false}
-          />
-          <div className="experience-container">
-            <h2 id="water-wall-line">
-              Every report, quest and payout stays on the public record.
-            </h2>
-          </div>
-          <span className="footage-credit">
-            Waterfall footage via Pexels · illustrative, not the Yamuna
-          </span>
         </section>
 
         <section id="expedition" className="landing-live experience-section">
@@ -234,7 +200,9 @@ export default function LandingPage() {
           </div>
           <div className="experience-footer-bottom">
             <span>RiverMind · Yamuna, Delhi · sandbox prototype</span>
-            <span>Footage via Pexels, illustrative only</span>
+            <span>
+              Background and hero footage: Pexels — illustrative, not the Yamuna
+            </span>
           </div>
         </div>
       </footer>

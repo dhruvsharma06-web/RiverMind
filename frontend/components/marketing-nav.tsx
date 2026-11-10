@@ -5,15 +5,14 @@ import { useEffect, useState } from "react";
 import { Logo } from "./ui/shared";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
-import { AuthMenu } from "./auth-menu";
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   const [overHero, setOverHero] = useState(true);
   useEffect(() => {
     const hero = document.querySelector<HTMLElement>(".river-hero");
     if (!hero) return;
-    // The hero is sticky, so it never leaves the viewport; compare scroll
-    // position with its height instead of observing intersection.
+    // Light the nav over the hero only; compare scroll position with its
+    // height (cheaper than an observer for a fixed bar).
     const update = () => setOverHero(window.scrollY < hero.offsetHeight - 80);
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -40,7 +39,6 @@ export function MarketingNav() {
         </nav>
         <div className="experience-nav-actions">
           <ThemeToggle />
-          <AuthMenu next="/river" />
           <Button asChild variant="secondary" size="sm">
             <Link href="/river">
               Open workspace

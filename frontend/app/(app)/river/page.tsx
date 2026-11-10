@@ -18,6 +18,8 @@ import { dateTime, elapsed, money } from "@/lib/format";
 import type { ReadingParameter } from "@/components/readings-chart";
 import { RiverReach } from "@/components/river-reach";
 import { RiverHeroMedia } from "@/components/river-hero-media";
+import { WaterBackdrop } from "@/components/water-backdrop";
+import { ScreenDeck } from "@/components/screen-deck";
 import {
   AsyncView,
   Badge,
@@ -41,6 +43,14 @@ const Chart = dynamic(() => import("@/components/readings-chart"), {
   loading: () => <Skeleton />,
 });
 
+const SCREENS = [
+  "River now",
+  "Treasury and water readings",
+  "Signals and allocation",
+  "Open quests",
+  "Payouts",
+];
+
 export default function OverviewPage() {
   const river = useRiver();
   const bounties = useBounties();
@@ -51,21 +61,25 @@ export default function OverviewPage() {
 
   return (
     <>
-      <PageHeading
-        chapter="Overview"
-        title="Overview"
-        description="Live readings, signals, quests and treasury for the Yamuna, Delhi."
-        action={
-          <Button asChild variant="secondary">
-            <Link href="/reports">
-              Monthly reports
-              <ArrowUpRight size={15} />
-            </Link>
-          </Button>
-        }
-      />
-      <div className="overview-layout">
-        <div className="overview-main">
+      <WaterBackdrop />
+      <ScreenDeck labels={SCREENS}>
+        <section
+          className="deck-screen deck-screen-first"
+          aria-label={SCREENS[0]}
+        >
+          <PageHeading
+            chapter="Overview"
+            title="Overview"
+            description="Live readings, signals, quests and treasury for the Yamuna, Delhi."
+            action={
+              <Button asChild variant="secondary">
+                <Link href="/reports">
+                  Monthly reports
+                  <ArrowUpRight size={15} />
+                </Link>
+              </Button>
+            }
+          />
           <section className="river-now" aria-labelledby="river-now-title">
             <RiverHeroMedia
               className="river-now-media"
@@ -118,17 +132,17 @@ export default function OverviewPage() {
               </Button>
             </div>
             <span className="river-now-credit">
-              River footage via Pexels · illustrative, not the Yamuna
+              Footage via Pexels · illustrative, not the Yamuna
             </span>
           </section>
-
           {events.data && bounties.data && (
             <RiverReach
               events={events.data.items}
               bounties={bounties.data.items}
             />
           )}
-
+        </section>
+        <section className="deck-screen" aria-label={SCREENS[1]}>
           <AsyncView query={river}>
             {(r) => (
               <div className="metric-grid overview-metrics">
@@ -174,7 +188,6 @@ export default function OverviewPage() {
               </div>
             )}
           </AsyncView>
-
           <Panel className="overview-chart-panel">
             <PanelTitle
               aside={
@@ -273,195 +286,202 @@ export default function OverviewPage() {
               )}
             </AsyncView>
           </Panel>
-
-          <div className="overview-analytics-grid">
+        </section>
+        <section className="deck-screen" aria-label={SCREENS[2]}>
+          <div className="deck-analytics">
             <AsyncView query={events}>
               {({ items }) => <SignalActivity events={items} />}
             </AsyncView>
             <AsyncView query={river}>
               {(r) => <TreasuryAllocation treasury={r.treasury} />}
             </AsyncView>
-          </div>
-
-          <section className="overview-quests">
-            <div className="section-title">
-              <div>
-                <h2>Open quests</h2>
-              </div>
-              <Link href="/bounties">
-                All quests
-                <ArrowUpRight size={15} />
-              </Link>
-            </div>
-            <AsyncView query={bounties}>
-              {({ items }) =>
-                items.length ? (
-                  <div className="overview-quest-grid">
-                    {[...items]
-                      .sort(
-                        (a, b) =>
-                          Number(b.status === "OPEN") -
-                          Number(a.status === "OPEN"),
-                      )
-                      .slice(0, 3)
-                      .map((b) => (
-                        <article className="overview-quest-card" key={b.id}>
-                          <div className="overview-quest-status">
-                            <StatusBadge status={b.status} />
-                          </div>
-                          <div className="overview-quest-body">
-                            <h3>
-                              <Link href={`/bounties/${b.id}`}>{b.title}</Link>
-                            </h3>
+            <Panel className="signal-panel">
+              <PanelTitle aside={<Link href="/atlas">View all</Link>}>
+                Latest signals
+              </PanelTitle>
+              <AsyncView query={events}>
+                {({ items }) =>
+                  items.length ? (
+                    <div className="event-list">
+                      {items.slice(0, 3).map((event) => (
+                        <article key={event.id} className="event-item">
+                          <span
+                            className={`event-symbol ${event.type === "WASTE" ? "event-waste" : "event-water"}`}
+                          >
+                            {event.type === "WASTE" ? (
+                              <ScanEye size={17} />
+                            ) : (
+                              <Droplets size={17} />
+                            )}
+                          </span>
+                          <div>
+                            <h3>{event.summary}</h3>
                             <p>
-                              <MapPin size={12} />
-                              {b.radius_m} m cleanup area
+                              Severity {event.severity}/5 ·{" "}
+                              {elapsed(event.created_at)}
                             </p>
-                            <div>
-                              <span>
-                                <small>Reward · USD</small>
-                                <strong>{money(b.amount_cents)}</strong>
-                              </span>
-                              <Link
-                                href={`/bounties/${b.id}`}
-                                className="quest-arrow"
-                                aria-label={`View ${b.title}`}
-                              >
-                                <ArrowUpRight size={19} />
+                            {event.bounty_id && (
+                              <Link href={`/bounties/${event.bounty_id}`}>
+                                View quest
+                                <ArrowUpRight size={12} />
                               </Link>
-                            </div>
+                            )}
                           </div>
                         </article>
                       ))}
-                  </div>
-                ) : (
-                  <EmptyState
-                    title="No quests available yet."
-                    href="/atlas"
-                    action="Explore the atlas"
-                  />
-                )
-              }
-            </AsyncView>
-          </section>
-
-          <Panel id="ledger">
-            <PanelTitle
-              aside={
-                <Link href="/donate">
-                  View treasury
-                  <ArrowUpRight size={14} />
-                </Link>
-              }
-            >
-              Payouts
-            </PanelTitle>
-            <PayoutLedger />
-          </Panel>
-        </div>
-
-        <aside className="overview-rail" aria-label="River activity">
-          <Panel className="signal-panel">
-            <PanelTitle aside={<Link href="/atlas">View all</Link>}>
-              Latest signals
-            </PanelTitle>
-            <AsyncView query={events}>
-              {({ items }) =>
-                items.length ? (
-                  <div className="event-list">
-                    {items.slice(0, 3).map((event) => (
-                      <article key={event.id} className="event-item">
-                        <span
-                          className={`event-symbol ${event.type === "WASTE" ? "event-waste" : "event-water"}`}
-                        >
-                          {event.type === "WASTE" ? (
-                            <ScanEye size={17} />
-                          ) : (
-                            <Droplets size={17} />
-                          )}
-                        </span>
-                        <div>
-                          <h3>{event.summary}</h3>
-                          <p>
-                            Severity {event.severity}/5 ·{" "}
-                            {elapsed(event.created_at)}
-                          </p>
-                          {event.bounty_id && (
-                            <Link href={`/bounties/${event.bounty_id}`}>
-                              View quest
-                              <ArrowUpRight size={12} />
-                            </Link>
-                          )}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState title="No signals in this snapshot." />
-                )
-              }
-            </AsyncView>
-          </Panel>
-
-          <Panel className="quest-activity">
-            <PanelTitle>Quest activity</PanelTitle>
-            <AsyncView query={bounties}>
-              {({ items }) => {
-                const stages = [
-                  {
-                    label: "Ready to claim",
-                    count: items.filter((b) => b.status === "OPEN").length,
-                    className: "activity-teal",
-                  },
-                  {
-                    label: "In progress",
-                    count: items.filter((b) =>
-                      [
-                        "CLAIMED",
-                        "PROOF_SUBMITTED",
-                        "VERIFIED",
-                        "PAYOUT_PENDING_APPROVAL",
-                        "PAYOUT_FAILED",
-                      ].includes(b.status),
-                    ).length,
-                    className: "activity-orange",
-                  },
-                  {
-                    label: "Paid cleanups",
-                    count: items.filter((b) => b.status === "PAID").length,
-                    className: "activity-green",
-                  },
-                  {
-                    label: "Evidence rejected",
-                    count: items.filter((b) => b.status === "REJECTED").length,
-                    className: "activity-coral",
-                  },
-                ];
-                return (
-                  <>
-                    <p className="activity-caption">
-                      Across {items.length} reported quests
-                    </p>
-                    <div className="activity-stages">
-                      {stages.map((stage) => (
-                        <div key={stage.label}>
-                          <span className={`activity-dot ${stage.className}`} />
-                          <span>{stage.label}</span>
-                          <strong>{stage.count}</strong>
-                        </div>
-                      ))}
                     </div>
-                  </>
-                );
-              }}
-            </AsyncView>
-          </Panel>
-
-          <Panel className="dashboard-diary">
-            <RiverDiary />
-          </Panel>
-        </aside>
-      </div>
+                  ) : (
+                    <EmptyState title="No signals in this snapshot." />
+                  )
+                }
+              </AsyncView>
+            </Panel>
+          </div>
+        </section>
+        <section className="deck-screen" aria-label={SCREENS[3]}>
+          <div className="deck-quests">
+            <section className="overview-quests">
+              <div className="section-title">
+                <div>
+                  <h2>Open quests</h2>
+                </div>
+                <Link href="/bounties">
+                  All quests
+                  <ArrowUpRight size={15} />
+                </Link>
+              </div>
+              <AsyncView query={bounties}>
+                {({ items }) =>
+                  items.length ? (
+                    <div className="overview-quest-grid">
+                      {[...items]
+                        .sort(
+                          (a, b) =>
+                            Number(b.status === "OPEN") -
+                            Number(a.status === "OPEN"),
+                        )
+                        .slice(0, 3)
+                        .map((b) => (
+                          <article className="overview-quest-card" key={b.id}>
+                            <div className="overview-quest-status">
+                              <StatusBadge status={b.status} />
+                            </div>
+                            <div className="overview-quest-body">
+                              <h3>
+                                <Link href={`/bounties/${b.id}`}>
+                                  {b.title}
+                                </Link>
+                              </h3>
+                              <p>
+                                <MapPin size={12} />
+                                {b.radius_m} m cleanup area
+                              </p>
+                              <div>
+                                <span>
+                                  <small>Reward · USD</small>
+                                  <strong>{money(b.amount_cents)}</strong>
+                                </span>
+                                <Link
+                                  href={`/bounties/${b.id}`}
+                                  className="quest-arrow"
+                                  aria-label={`View ${b.title}`}
+                                >
+                                  <ArrowUpRight size={19} />
+                                </Link>
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                    </div>
+                  ) : (
+                    <EmptyState
+                      title="No quests available yet."
+                      href="/atlas"
+                      action="Explore the atlas"
+                    />
+                  )
+                }
+              </AsyncView>
+            </section>
+            <Panel className="quest-activity">
+              <PanelTitle>Quest activity</PanelTitle>
+              <AsyncView query={bounties}>
+                {({ items }) => {
+                  const stages = [
+                    {
+                      label: "Ready to claim",
+                      count: items.filter((b) => b.status === "OPEN").length,
+                      className: "activity-teal",
+                    },
+                    {
+                      label: "In progress",
+                      count: items.filter((b) =>
+                        [
+                          "CLAIMED",
+                          "PROOF_SUBMITTED",
+                          "VERIFIED",
+                          "PAYOUT_PENDING_APPROVAL",
+                          "PAYOUT_FAILED",
+                        ].includes(b.status),
+                      ).length,
+                      className: "activity-orange",
+                    },
+                    {
+                      label: "Paid cleanups",
+                      count: items.filter((b) => b.status === "PAID").length,
+                      className: "activity-green",
+                    },
+                    {
+                      label: "Evidence rejected",
+                      count: items.filter((b) => b.status === "REJECTED")
+                        .length,
+                      className: "activity-coral",
+                    },
+                  ];
+                  return (
+                    <>
+                      <p className="activity-caption">
+                        Across {items.length} reported quests
+                      </p>
+                      <div className="activity-stages">
+                        {stages.map((stage) => (
+                          <div key={stage.label}>
+                            <span
+                              className={`activity-dot ${stage.className}`}
+                            />
+                            <span>{stage.label}</span>
+                            <strong>{stage.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  );
+                }}
+              </AsyncView>
+            </Panel>
+          </div>
+        </section>
+        <section className="deck-screen" aria-label={SCREENS[4]}>
+          <div className="deck-ledger">
+            <Panel id="ledger">
+              <PanelTitle
+                aside={
+                  <Link href="/donate">
+                    View treasury
+                    <ArrowUpRight size={14} />
+                  </Link>
+                }
+              >
+                Payouts
+              </PanelTitle>
+              <PayoutLedger />
+            </Panel>
+            <Panel className="dashboard-diary">
+              <RiverDiary />
+            </Panel>
+          </div>
+        </section>
+      </ScreenDeck>
     </>
   );
 }

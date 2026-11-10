@@ -22,7 +22,6 @@ import { Logo } from "./ui/shared";
 import { ModeStatus, DemoNotice } from "./mode-status";
 import { ThemeToggle } from "./theme-toggle";
 import { AuthMenu } from "./auth-menu";
-import { WaterFlow } from "./water-flow";
 import { cn } from "@/lib/utils";
 const links = [
   { href: "/river", label: "Overview", icon: LayoutDashboard },
@@ -156,7 +155,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main id="main-content" className="app-content">
           {children}
         </main>
-        <WaterFlow className="water-flow-app" />
         <footer className="app-footer">
           <span>RiverMind · PayPal AI Hackathon 2026 · Sandbox prototype</span>
           <Link href="/about">
