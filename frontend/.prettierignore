@@ -1,0 +1,14 @@
+.next/
+node_modules/
+.venv/
+test-results/
+playwright-report/
+.qa/
+.npm-cache/
+out/
+coverage/
+public/fixtures/
+package-lock.json
+next-env.d.ts
+openapi.json
+lib/api-types.ts
