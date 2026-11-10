@@ -22,11 +22,11 @@ Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) (Nov
 - PayPal Agent Toolkit (agent fundraising invoices; planned)
 
 ## AI used
-- Vision LLM: Claude API or Gemini, selected by `LLM_PROVIDER`
-- YOLO detector (ONNX), with YOLO-World as the zero-shot baseline
+- Vision LLM: Qwen (`qwen/qwen3.8-27b`) served by Groq, with Claude API or Gemini as backups, selected by `LLM_PROVIDER`
+- YOLO11n waste detector (ONNX on CPU) fine-tuned on public, pre-labelled river-waste datasets (bottle / bag / other / vegetation), compared against YOLO-World as the zero-shot baseline. Data credits: `ai/ATTRIBUTION.md`
 - IsolationForest + robust z-score for sensor anomalies
 
-Details and measured results: `ai/MODEL_CARD.md`, `eval/RESULTS.md` (coming).
+How it works: `ai/README.md` · model card: `ai/MODEL_CARD.md` · decisions: `ai/DECISIONS.md` · evaluation plan and measured results: `eval/README.md`, `eval/RESULTS.md`.
 
 ## Run locally (mock mode, no keys needed)
 ```bash
@@ -54,4 +54,4 @@ Contract: `CONTRACT.md` · Plan: `PROJECT.md` · PRD: `docs/PRD.md`
 Dhruv Sharma (integration, IoT, pitch) · P2 (AI/CV) · P3 (backend, PayPal) · P4 (frontend)
 
 ## Licence
-MIT. See `LICENSE`.
+MIT. See `LICENSE`. The detector weights are trained with Ultralytics YOLO (AGPL-3.0); training data credits are in `ai/ATTRIBUTION.md`.

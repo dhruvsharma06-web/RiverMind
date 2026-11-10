@@ -7,7 +7,7 @@ from datetime import timedelta
 
 import httpx
 import pytest
-from app.adapters import ai_adapter, ai_standin
+from app.adapters import ai_adapter
 from app.adapters.paypal_client import PayPalClient, cents_to_value
 from app.adapters.paypal_mock import MockPayPal
 from app.config import get_settings
@@ -16,7 +16,7 @@ from app.models import LedgerEntry, Payout
 from app.services import payouts
 from sqlalchemy import func, select
 
-from tests.conftest import COUNCIL
+from tests.conftest import COUNCIL, ai_impl
 from tests.test_endpoints import API, IK, claim, err, make_bounty, proof, upload_waste
 
 
@@ -208,7 +208,7 @@ def test_paypal_down_during_send_recovers_without_double_pay(seeded, monkeypatch
 
 def test_ai_timeout_is_503(seeded, monkeypatch):
     monkeypatch.setattr(ai_adapter, "AI_TIMEOUT_S", 0.05)
-    monkeypatch.setattr(ai_standin.StandInMockAI, "analyze_media", lambda self, *a: time.sleep(0.5))
+    monkeypatch.setattr(ai_impl(), "analyze_media", lambda self, *a: time.sleep(0.5))
     err(upload_waste(seeded), 503, "AI_UNAVAILABLE")
 
 

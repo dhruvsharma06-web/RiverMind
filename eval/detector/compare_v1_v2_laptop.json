@@ -1,0 +1,68 @@
+{
+  "v1": {
+    "mendeley_test": {
+      "images": 157,
+      "waste_mAP50": 0.3902,
+      "waste_boxes": 648,
+      "vegetation_mAP50": 0.3172,
+      "vegetation_boxes": 126,
+      "count_mae": 1.82,
+      "mean_true_count": 4.13,
+      "count_conf": 0.25
+    },
+    "river_trash_test": {
+      "images": 171,
+      "waste_mAP50": 0.017,
+      "waste_boxes": 247,
+      "vegetation_mAP50": 0.0001,
+      "vegetation_boxes": 44,
+      "count_mae": 1.23,
+      "mean_true_count": 1.44,
+      "count_conf": 0.25
+    }
+  },
+  "v2": {
+    "mendeley_test": {
+      "images": 157,
+      "waste_mAP50": 0.3642,
+      "waste_boxes": 648,
+      "vegetation_mAP50": 0.4125,
+      "vegetation_boxes": 126,
+      "count_mae": 1.98,
+      "mean_true_count": 4.13,
+      "count_conf": 0.25
+    },
+    "river_trash_test": {
+      "images": 171,
+      "waste_mAP50": 0.789,
+      "waste_boxes": 247,
+      "vegetation_mAP50": 0.0848,
+      "vegetation_boxes": 44,
+      "count_mae": 0.6,
+      "mean_true_count": 1.44,
+      "count_conf": 0.25
+    }
+  },
+  "v1-onnx": {
+    "mendeley_test": {
+      "images": 157,
+      "waste_mAP50": 0.3841,
+      "waste_boxes": 648,
+      "vegetation_mAP50": 0.316,
+      "vegetation_boxes": 126,
+      "count_mae": 1.8,
+      "mean_true_count": 4.13,
+      "count_conf": 0.25
+    },
+    "river_trash_test": {
+      "images": 171,
+      "waste_mAP50": 0.0174,
+      "waste_boxes": 247,
+      "vegetation_mAP50": 0.0001,
+      "vegetation_boxes": 44,
+      "count_mae": 1.2,
+      "mean_true_count": 1.44,
+      "count_conf": 0.25
+    }
+  }
+}

@@ -1,9 +1,9 @@
 """S3: diary after PAID, webhooks drive payout/donation status (deduped, never backwards)."""
-from app.adapters import ai_standin
 from app.models import DiaryEntry, LedgerEntry, Payout
 from app.services import payouts
 from sqlalchemy import func, select
 
+from tests.conftest import ai_impl
 from tests.test_endpoints import API, IK, claim, make_bounty, proof
 from tests.test_paypal import FlakyPayPal
 
@@ -20,8 +20,8 @@ def test_diary_written_after_paid(seeded, monkeypatch, db):
 
 
 def test_diary_with_unvalidated_numbers_is_not_stored(seeded, monkeypatch, db):
-    orig = ai_standin.StandInMockAI.write_diary
-    monkeypatch.setattr(ai_standin.StandInMockAI, "write_diary",
+    orig = ai_impl().write_diary
+    monkeypatch.setattr(ai_impl(), "write_diary",
                         lambda self, *a: orig(self, *a).model_copy(update={"numbers_validated": False}))
     before = diary_count(db)
     bid = make_bounty(seeded, amount=1500, monkeypatch=monkeypatch)

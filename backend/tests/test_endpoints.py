@@ -4,14 +4,14 @@ import uuid
 from datetime import timedelta
 
 import pytest
-from app.adapters import ai_standin
+from app.adapters import ai_adapter
 from app.adapters.paypal_mock import MockPayPal
 from app.config import get_settings
 from app.models import Bounty, LedgerEntry, Payout, WebhookEvent, utcnow
 from PIL import Image
 from sqlalchemy import func, select
 
-from tests.conftest import COUNCIL, DEVICE, jpeg
+from tests.conftest import COUNCIL, DEVICE, ai_impl, jpeg
 
 API = "/api/v1"
 SPOT = (28.5440, 77.3070)  # Kalindi Kunj: > 2 km from every seed point
@@ -32,12 +32,12 @@ def upload_waste(c, lat=SPOT[0], lon=SPOT[1], seed=1, source="upload"):
 
 def make_bounty(c, amount=1500, lat=SPOT[0], seed=1, monkeypatch=None):
     """Upload a waste image -> WASTE event -> bounty of `amount` (agent proposal patched)."""
-    orig = ai_standin.StandInMockAI.propose_bounty
+    orig = ai_impl().propose_bounty
 
     def propose(self, event, budget):
         return orig(self, event, budget).model_copy(update={"amount_cents": amount})
 
-    monkeypatch.setattr(ai_standin.StandInMockAI, "propose_bounty", propose)
+    monkeypatch.setattr(ai_impl(), "propose_bounty", propose)
     r = upload_waste(c, lat=lat, seed=seed)
     assert r.status_code == 200, r.text
     assert r.json()["bounty_id"], r.json()
@@ -70,14 +70,14 @@ def test_reset_needs_council(client):
 def test_diary(client):
     err(client.get(f"{API}/diary/latest"), 404, "NOT_FOUND")
     client.post(f"{API}/demo/reset", headers=COUNCIL)
-    assert client.get(f"{API}/diary/latest").json()["model_version"] == "standin-mock"  # written on reset
+    assert client.get(f"{API}/diary/latest").json()["model_version"] in ("standin-mock", "mock-1")  # written on reset
 
 
 def test_diary_falls_back_to_seed_when_ai_down(client, monkeypatch):
     def boom(*a):
-        raise ai_standin.AIUnavailable()
+        raise ai_adapter.AIUnavailable()
 
-    monkeypatch.setattr(ai_standin.StandInMockAI, "write_diary", boom)
+    monkeypatch.setattr(ai_impl(), "write_diary", boom)
     client.post(f"{API}/demo/reset", headers=COUNCIL)
     assert client.get(f"{API}/diary/latest").json()["model_version"] == "seed"
 
@@ -118,9 +118,9 @@ def test_readings_duplicate_and_spike_opens_event_and_bounty(seeded):
 
 def test_reading_still_stored_when_ai_down(seeded, monkeypatch):
     def boom(*a):
-        raise ai_standin.AIUnavailable()
+        raise ai_adapter.AIUnavailable()
 
-    monkeypatch.setattr(ai_standin.StandInMockAI, "detect_sensor_anomaly", boom)
+    monkeypatch.setattr(ai_impl(), "detect_sensor_anomaly", boom)
     r = seeded.post(f"{API}/readings", json=reading(1), headers=DEVICE)
     assert r.status_code == 200 and r.json()["event_id"] is None
 
@@ -137,8 +137,8 @@ def test_media_waste_creates_event_and_bounty_once(seeded):
 
 
 def test_media_clean_image_opens_nothing(seeded, monkeypatch):
-    orig = ai_standin.StandInMockAI.analyze_media
-    monkeypatch.setattr(ai_standin.StandInMockAI, "analyze_media",
+    orig = ai_impl().analyze_media
+    monkeypatch.setattr(ai_impl(), "analyze_media",
                         lambda self, *a: orig(self, *a).model_copy(update={"waste_score": 0.12, "waste_detected": False}))
     r = upload_waste(seeded).json()
     assert r["event_id"] is None and r["bounty_id"] is None
@@ -158,9 +158,9 @@ def test_media_validation(seeded):
 
 def test_media_ai_down_is_503(seeded, monkeypatch):
     def boom(*a):
-        raise ai_standin.AIUnavailable()
+        raise ai_adapter.AIUnavailable()
 
-    monkeypatch.setattr(ai_standin.StandInMockAI, "analyze_media", boom)
+    monkeypatch.setattr(ai_impl(), "analyze_media", boom)
     err(upload_waste(seeded), 503, "AI_UNAVAILABLE")
 
 
@@ -231,9 +231,9 @@ def test_proof_ai_down_keeps_claim(seeded, monkeypatch):
     token = claim(seeded, bid)
 
     def boom(*a):
-        raise ai_standin.AIUnavailable()
+        raise ai_adapter.AIUnavailable()
 
-    monkeypatch.setattr(ai_standin.StandInMockAI, "verify_cleanup", boom)
+    monkeypatch.setattr(ai_impl(), "verify_cleanup", boom)
     err(proof(seeded, bid, token), 503, "AI_UNAVAILABLE")
     assert seeded.get(f"{API}/bounties/{bid}").json()["status"] == "CLAIMED"
 

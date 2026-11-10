@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rivermind-ai"
+version = "0.1.0"
+description = "RiverMind AI core: waste detection, sensor anomalies, bounty agent, cleanup verification, river diary."
+requires-python = ">=3.11"
+license = "MIT"
+# Base deps are enough for the mock (CONTRACT.md "AI adapter").
+dependencies = ["pydantic>=2.7", "numpy>=1.26", "Pillow>=10.0", "imagehash>=4.3"]
+
+[project.optional-dependencies]
+real = ["opencv-python-headless>=4.9", "onnxruntime>=1.18", "scikit-learn>=1.4", "httpx>=0.27"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+include = ["rivermind_ai*"]
+
+[tool.setuptools.package-data]
+rivermind_ai = ["models/*.onnx"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
