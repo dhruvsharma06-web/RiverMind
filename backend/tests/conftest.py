@@ -73,3 +73,10 @@ def _fresh_rate_limits():
 
     ai_adapter._usage.update(day=None, calls=0)
     yield
+
+
+def ai_impl():
+    """The AI class the adapter really uses (rivermind_ai's mock, or the stand-in if that package is absent)."""
+    from app.adapters import ai_adapter
+
+    return type(ai_adapter._ai())

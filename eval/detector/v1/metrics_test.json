@@ -1,0 +1,14 @@
+{
+  "model": "yolo11n-rivermind-v1",
+  "split": "test",
+  "images": 157,
+  "imgsz": 960,
+  "mAP50": 0.3707,
+  "mAP50_95": 0.1199,
+  "precision": 0.4463,
+  "recall": 0.4086,
+  "per_class_mAP50": {
+    "other": 0.4089,
+    "vegetation": 0.3325
+  }
+}
