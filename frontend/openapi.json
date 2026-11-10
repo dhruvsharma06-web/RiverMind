@@ -1,0 +1,3584 @@
+{
+  "components": {
+    "schemas": {
+      "ApproveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "ApproveIn",
+        "type": "object"
+      },
+      "Body_analyze_api_v1_media_analyze_post": {
+        "properties": {
+          "captured_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Captured At"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "source": {
+            "default": "upload",
+            "enum": [
+              "camera",
+              "upload"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_analyze_api_v1_media_analyze_post",
+        "type": "object"
+      },
+      "Body_proof_api_v1_bounties__bounty_id__proof_post": {
+        "properties": {
+          "after": {
+            "contentMediaType": "application/octet-stream",
+            "title": "After",
+            "type": "string"
+          },
+          "after_captured_at": {
+            "format": "date-time",
+            "title": "After Captured At",
+            "type": "string"
+          },
+          "before": {
+            "contentMediaType": "application/octet-stream",
+            "title": "Before",
+            "type": "string"
+          },
+          "before_captured_at": {
+            "format": "date-time",
+            "title": "Before Captured At",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "before",
+          "after",
+          "lat",
+          "lon",
+          "before_captured_at",
+          "after_captured_at"
+        ],
+        "title": "Body_proof_api_v1_bounties__bounty_id__proof_post",
+        "type": "object"
+      },
+      "BountiesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Bounty"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BountiesResponse",
+        "type": "object"
+      },
+      "Bounty": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_rationale": {
+            "title": "Agent Rationale",
+            "type": "string"
+          },
+          "amount_cents": {
+            "minimum": 0.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "claimed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claimed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "payout": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Payout"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "radius_m": {
+            "title": "Radius M",
+            "type": "integer"
+          },
+          "rejection_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejection Reason"
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "CLAIMED",
+              "PROOF_SUBMITTED",
+              "VERIFIED",
+              "REJECTED",
+              "PAYOUT_PENDING_APPROVAL",
+              "PAID",
+              "PAYOUT_FAILED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "urgency": {
+            "enum": [
+              "low",
+              "med",
+              "high"
+            ],
+            "title": "Urgency",
+            "type": "string"
+          },
+          "verification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Verification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "worker_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worker Name"
+          }
+        },
+        "required": [
+          "id",
+          "event_id",
+          "title",
+          "description",
+          "amount_cents",
+          "currency",
+          "status",
+          "lat",
+          "lon",
+          "radius_m",
+          "expires_at",
+          "urgency",
+          "agent_rationale",
+          "worker_name",
+          "claimed_at",
+          "rejection_reason",
+          "verification",
+          "payout",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Bounty",
+        "type": "object"
+      },
+      "Box": {
+        "additionalProperties": false,
+        "properties": {
+          "cls": {
+            "enum": [
+              "bottle",
+              "bag",
+              "other"
+            ],
+            "title": "Cls",
+            "type": "string"
+          },
+          "conf": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Conf",
+            "type": "number"
+          },
+          "xyxy": {
+            "items": {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Xyxy",
+            "type": "array"
+          }
+        },
+        "required": [
+          "xyxy",
+          "cls",
+          "conf"
+        ],
+        "title": "Box",
+        "type": "object"
+      },
+      "Checks": {
+        "additionalProperties": false,
+        "properties": {
+          "count_drop": {
+            "$ref": "#/components/schemas/CountDropCheck"
+          },
+          "duplicate": {
+            "$ref": "#/components/schemas/DuplicateCheck"
+          },
+          "geo": {
+            "$ref": "#/components/schemas/GeoCheck"
+          },
+          "llm": {
+            "$ref": "#/components/schemas/LlmCheck"
+          },
+          "manipulation": {
+            "$ref": "#/components/schemas/ManipulationCheck"
+          },
+          "scene_match": {
+            "$ref": "#/components/schemas/SceneMatchCheck"
+          },
+          "sensor": {
+            "$ref": "#/components/schemas/SensorCheck"
+          },
+          "time": {
+            "$ref": "#/components/schemas/TimeCheck"
+          }
+        },
+        "required": [
+          "geo",
+          "time",
+          "duplicate",
+          "scene_match",
+          "count_drop",
+          "llm",
+          "manipulation",
+          "sensor"
+        ],
+        "title": "Checks",
+        "type": "object"
+      },
+      "ClaimIn": {
+        "additionalProperties": false,
+        "properties": {
+          "paypal_email": {
+            "maxLength": 254,
+            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            "title": "Paypal Email",
+            "type": "string"
+          },
+          "worker_name": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Worker Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "worker_name",
+          "paypal_email"
+        ],
+        "title": "ClaimIn",
+        "type": "object"
+      },
+      "ClaimResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty": {
+            "$ref": "#/components/schemas/Bounty"
+          },
+          "claim_token": {
+            "title": "Claim Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bounty",
+          "claim_token"
+        ],
+        "title": "ClaimResponse",
+        "type": "object"
+      },
+      "CountDropCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "after_count": {
+            "title": "After Count",
+            "type": "integer"
+          },
+          "before_count": {
+            "title": "Before Count",
+            "type": "integer"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "passed",
+          "before_count",
+          "after_count"
+        ],
+        "title": "CountDropCheck",
+        "type": "object"
+      },
+      "Counts": {
+        "additionalProperties": false,
+        "properties": {
+          "bag": {
+            "title": "Bag",
+            "type": "integer"
+          },
+          "bottle": {
+            "title": "Bottle",
+            "type": "integer"
+          },
+          "foam": {
+            "title": "Foam",
+            "type": "integer"
+          },
+          "other": {
+            "title": "Other",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "bottle",
+          "bag",
+          "foam",
+          "other"
+        ],
+        "title": "Counts",
+        "type": "object"
+      },
+      "Detection": {
+        "additionalProperties": false,
+        "properties": {
+          "boxes": {
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "title": "Boxes",
+            "type": "array"
+          },
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/Counts"
+          },
+          "foam_ratio": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Foam Ratio",
+            "type": "number"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "waste_detected": {
+            "title": "Waste Detected",
+            "type": "boolean"
+          },
+          "waste_score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Waste Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "waste_detected",
+          "waste_score",
+          "counts",
+          "boxes",
+          "foam_ratio",
+          "summary",
+          "confidence",
+          "model_version"
+        ],
+        "title": "Detection",
+        "type": "object"
+      },
+      "DiaryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "mood": {
+            "enum": [
+              "hopeful",
+              "worried",
+              "grateful"
+            ],
+            "title": "Mood",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "mood",
+          "model_version",
+          "created_at"
+        ],
+        "title": "DiaryResponse",
+        "type": "object"
+      },
+      "DonationCaptureResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "donation": {
+            "$ref": "#/components/schemas/DonationCaptured"
+          }
+        },
+        "required": [
+          "donation"
+        ],
+        "title": "DonationCaptureResponse",
+        "type": "object"
+      },
+      "DonationCaptured": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_cents": {
+            "minimum": 0.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "donor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Donor Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "const": "CAPTURED",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "amount_cents",
+          "currency",
+          "status",
+          "donor_name",
+          "created_at"
+        ],
+        "title": "DonationCaptured",
+        "type": "object"
+      },
+      "DonationItem": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_cents": {
+            "minimum": 0.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "donor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Donor Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "donor_name",
+          "amount_cents",
+          "currency",
+          "created_at"
+        ],
+        "title": "DonationItem",
+        "type": "object"
+      },
+      "DonationOrderIn": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_cents": {
+            "maximum": 100000.0,
+            "minimum": 100.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "donor_name": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Donor Name"
+          }
+        },
+        "required": [
+          "amount_cents"
+        ],
+        "title": "DonationOrderIn",
+        "type": "object"
+      },
+      "DonationOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "donation_id": {
+            "title": "Donation Id",
+            "type": "string"
+          },
+          "order_id": {
+            "title": "Order Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "donation_id",
+          "order_id"
+        ],
+        "title": "DonationOrderResponse",
+        "type": "object"
+      },
+      "DonationsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DonationItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total_cents": {
+            "minimum": 0.0,
+            "title": "Total Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total_cents"
+        ],
+        "title": "DonationsResponse",
+        "type": "object"
+      },
+      "DuplicateCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "nearest_hamming": {
+            "title": "Nearest Hamming",
+            "type": "integer"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "passed",
+          "nearest_hamming"
+        ],
+        "title": "DuplicateCheck",
+        "type": "object"
+      },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": [
+              "VALIDATION_ERROR",
+              "UNAUTHORIZED",
+              "FORBIDDEN",
+              "NOT_FOUND",
+              "INVALID_STATE",
+              "IDEMPOTENCY_CONFLICT",
+              "PAYLOAD_TOO_LARGE",
+              "BUDGET_EXCEEDED",
+              "RATE_LIMITED",
+              "INTERNAL",
+              "PAYPAL_ERROR",
+              "AI_UNAVAILABLE"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "details"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "EventOut": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bounty Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "media_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Media Id"
+          },
+          "severity": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Severity",
+            "type": "integer"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "WASTE",
+              "SENSOR_ANOMALY"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "waste_score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Waste Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "severity",
+          "waste_score",
+          "summary",
+          "lat",
+          "lon",
+          "media_id",
+          "bounty_id",
+          "created_at"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "EventsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EventOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "EventsResponse",
+        "type": "object"
+      },
+      "FundraiseIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "sponsor_email": {
+            "maxLength": 254,
+            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            "title": "Sponsor Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sponsor_email"
+        ],
+        "title": "FundraiseIn",
+        "type": "object"
+      },
+      "FundraiseResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_rationale": {
+            "title": "Agent Rationale",
+            "type": "string"
+          },
+          "amount_cents": {
+            "minimum": 0.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "invoice_id": {
+            "title": "Invoice Id",
+            "type": "string"
+          },
+          "status": {
+            "const": "SENT",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "invoice_id",
+          "amount_cents",
+          "status",
+          "agent_rationale"
+        ],
+        "title": "FundraiseResponse",
+        "type": "object"
+      },
+      "GeoCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "distance_m": {
+            "title": "Distance M",
+            "type": "number"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "browser",
+              "exif",
+              "none"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "passed",
+          "distance_m",
+          "source"
+        ],
+        "title": "GeoCheck",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "db": {
+            "const": "ok",
+            "title": "Db",
+            "type": "string"
+          },
+          "mock_ai": {
+            "title": "Mock Ai",
+            "type": "boolean"
+          },
+          "paypal_mode": {
+            "enum": [
+              "mock",
+              "sandbox"
+            ],
+            "title": "Paypal Mode",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "version",
+          "mock_ai",
+          "paypal_mode",
+          "db"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "LlmCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "vote": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Vote",
+            "type": "number"
+          }
+        },
+        "required": [
+          "passed",
+          "vote",
+          "notes"
+        ],
+        "title": "LlmCheck",
+        "type": "object"
+      },
+      "ManipulationCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "flagged": {
+            "title": "Flagged",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "flagged"
+        ],
+        "title": "ManipulationCheck",
+        "type": "object"
+      },
+      "MediaAnalyzeResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis": {
+            "$ref": "#/components/schemas/Detection"
+          },
+          "bounty_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bounty Id"
+          },
+          "event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Id"
+          },
+          "media_id": {
+            "title": "Media Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "media_id",
+          "analysis",
+          "event_id",
+          "bounty_id"
+        ],
+        "title": "MediaAnalyzeResponse",
+        "type": "object"
+      },
+      "Payout": {
+        "additionalProperties": false,
+        "properties": {
+          "amount_cents": {
+            "minimum": 0.0,
+            "title": "Amount Cents",
+            "type": "integer"
+          },
+          "bounty_id": {
+            "title": "Bounty Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "paypal_batch_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paypal Batch Id"
+          },
+          "paypal_item_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paypal Item Id"
+          },
+          "receiver_masked": {
+            "title": "Receiver Masked",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING_APPROVAL",
+              "QUEUED",
+              "SENDING",
+              "SENT",
+              "SUCCEEDED",
+              "FAILED",
+              "VETOED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "bounty_id",
+          "amount_cents",
+          "currency",
+          "status",
+          "receiver_masked",
+          "paypal_batch_id",
+          "paypal_item_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Payout",
+        "type": "object"
+      },
+      "PayoutActionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "payout": {
+            "$ref": "#/components/schemas/Payout"
+          }
+        },
+        "required": [
+          "payout"
+        ],
+        "title": "PayoutActionResponse",
+        "type": "object"
+      },
+      "PayoutTotals": {
+        "additionalProperties": false,
+        "properties": {
+          "paid_cents": {
+            "minimum": 0.0,
+            "title": "Paid Cents",
+            "type": "integer"
+          },
+          "pending_cents": {
+            "minimum": 0.0,
+            "title": "Pending Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "paid_cents",
+          "pending_cents"
+        ],
+        "title": "PayoutTotals",
+        "type": "object"
+      },
+      "PayoutVetoResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty": {
+            "$ref": "#/components/schemas/Bounty"
+          },
+          "payout": {
+            "$ref": "#/components/schemas/Payout"
+          }
+        },
+        "required": [
+          "payout",
+          "bounty"
+        ],
+        "title": "PayoutVetoResponse",
+        "type": "object"
+      },
+      "PayoutsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Payout"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/PayoutTotals"
+          }
+        },
+        "required": [
+          "items",
+          "totals"
+        ],
+        "title": "PayoutsResponse",
+        "type": "object"
+      },
+      "ProofResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty": {
+            "$ref": "#/components/schemas/Bounty"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/Verification"
+          }
+        },
+        "required": [
+          "bounty",
+          "verification"
+        ],
+        "title": "ProofResponse",
+        "type": "object"
+      },
+      "ReadingCreated": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bounty Id"
+          },
+          "duplicate": {
+            "title": "Duplicate",
+            "type": "boolean"
+          },
+          "event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Id"
+          },
+          "reading_id": {
+            "title": "Reading Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reading_id",
+          "duplicate",
+          "event_id",
+          "bounty_id"
+        ],
+        "title": "ReadingCreated",
+        "type": "object"
+      },
+      "ReadingIn": {
+        "additionalProperties": false,
+        "properties": {
+          "device_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Device Id",
+            "type": "string"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "ph": {
+            "maximum": 14.0,
+            "minimum": 0.0,
+            "title": "Ph",
+            "type": "number"
+          },
+          "seq": {
+            "minimum": 0.0,
+            "title": "Seq",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "tds_ppm": {
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Tds Ppm",
+            "type": "number"
+          },
+          "temp_c": {
+            "maximum": 60.0,
+            "minimum": -10.0,
+            "title": "Temp C",
+            "type": "number"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          },
+          "turbidity_ntu": {
+            "maximum": 4000.0,
+            "minimum": 0.0,
+            "title": "Turbidity Ntu",
+            "type": "number"
+          }
+        },
+        "required": [
+          "device_id",
+          "seq",
+          "ts",
+          "lat",
+          "lon",
+          "turbidity_ntu",
+          "ph",
+          "tds_ppm",
+          "temp_c",
+          "simulated"
+        ],
+        "title": "ReadingIn",
+        "type": "object"
+      },
+      "ReadingOut": {
+        "additionalProperties": false,
+        "properties": {
+          "ph": {
+            "title": "Ph",
+            "type": "number"
+          },
+          "seq": {
+            "title": "Seq",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "tds_ppm": {
+            "title": "Tds Ppm",
+            "type": "number"
+          },
+          "temp_c": {
+            "title": "Temp C",
+            "type": "number"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          },
+          "turbidity_ntu": {
+            "title": "Turbidity Ntu",
+            "type": "number"
+          }
+        },
+        "required": [
+          "seq",
+          "ts",
+          "turbidity_ntu",
+          "ph",
+          "tds_ppm",
+          "temp_c",
+          "simulated"
+        ],
+        "title": "ReadingOut",
+        "type": "object"
+      },
+      "ReadingsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReadingOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ReadingsResponse",
+        "type": "object"
+      },
+      "ResetResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "reset": {
+            "const": true,
+            "title": "Reset",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "reset"
+        ],
+        "title": "ResetResponse",
+        "type": "object"
+      },
+      "RiverStatusResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "title": "City",
+            "type": "string"
+          },
+          "events_24h": {
+            "title": "Events 24H",
+            "type": "integer"
+          },
+          "health_score": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Health Score",
+            "type": "integer"
+          },
+          "latest_reading": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReadingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "open_bounties": {
+            "title": "Open Bounties",
+            "type": "integer"
+          },
+          "river": {
+            "title": "River",
+            "type": "string"
+          },
+          "treasury": {
+            "$ref": "#/components/schemas/Treasury"
+          },
+          "trend": {
+            "enum": [
+              "improving",
+              "stable",
+              "worsening"
+            ],
+            "title": "Trend",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "river",
+          "city",
+          "health_score",
+          "trend",
+          "latest_reading",
+          "open_bounties",
+          "events_24h",
+          "treasury",
+          "updated_at"
+        ],
+        "title": "RiverStatusResponse",
+        "type": "object"
+      },
+      "SceneMatchCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "inliers": {
+            "title": "Inliers",
+            "type": "integer"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "passed",
+          "inliers"
+        ],
+        "title": "SceneMatchCheck",
+        "type": "object"
+      },
+      "SensorCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "passed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passed"
+          },
+          "turbidity_delta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turbidity Delta"
+          }
+        },
+        "required": [
+          "passed",
+          "turbidity_delta"
+        ],
+        "title": "SensorCheck",
+        "type": "object"
+      },
+      "TimeCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "passed"
+        ],
+        "title": "TimeCheck",
+        "type": "object"
+      },
+      "Treasury": {
+        "additionalProperties": false,
+        "properties": {
+          "available_cents": {
+            "minimum": 0.0,
+            "title": "Available Cents",
+            "type": "integer"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "donated_cents": {
+            "minimum": 0.0,
+            "title": "Donated Cents",
+            "type": "integer"
+          },
+          "paid_cents": {
+            "minimum": 0.0,
+            "title": "Paid Cents",
+            "type": "integer"
+          },
+          "reserved_cents": {
+            "minimum": 0.0,
+            "title": "Reserved Cents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "available_cents",
+          "reserved_cents",
+          "paid_cents",
+          "donated_cents",
+          "currency"
+        ],
+        "title": "Treasury",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Verification": {
+        "additionalProperties": false,
+        "properties": {
+          "bounty_id": {
+            "title": "Bounty Id",
+            "type": "string"
+          },
+          "checks": {
+            "$ref": "#/components/schemas/Checks"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "bounty_id",
+          "passed",
+          "score",
+          "checks",
+          "reasons",
+          "explanation",
+          "model_version",
+          "created_at"
+        ],
+        "title": "Verification",
+        "type": "object"
+      },
+      "VetoIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "VetoIn",
+        "type": "object"
+      },
+      "WebhookAck": {
+        "additionalProperties": false,
+        "properties": {
+          "received": {
+            "const": true,
+            "title": "Received",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "received"
+        ],
+        "title": "WebhookAck",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "RiverMind API",
+    "version": "1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/agent/fundraise": {
+      "post": {
+        "operationId": "fundraise_api_v1_agent_fundraise_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundraiseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundraiseResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Fundraise"
+      }
+    },
+    "/api/v1/bounties": {
+      "get": {
+        "operationId": "list_bounties_api_v1_bounties_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "OPEN",
+                    "CLAIMED",
+                    "PROOF_SUBMITTED",
+                    "VERIFIED",
+                    "REJECTED",
+                    "PAYOUT_PENDING_APPROVAL",
+                    "PAID",
+                    "PAYOUT_FAILED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BountiesResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "List Bounties"
+      }
+    },
+    "/api/v1/bounties/{bounty_id}": {
+      "get": {
+        "operationId": "get_bounty_api_v1_bounties__bounty_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bounty_id",
+            "required": true,
+            "schema": {
+              "title": "Bounty Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bounty"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Bounty"
+      }
+    },
+    "/api/v1/bounties/{bounty_id}/claim": {
+      "post": {
+        "operationId": "claim_api_v1_bounties__bounty_id__claim_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bounty_id",
+            "required": true,
+            "schema": {
+              "title": "Bounty Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Claim"
+      }
+    },
+    "/api/v1/bounties/{bounty_id}/proof": {
+      "post": {
+        "operationId": "proof_api_v1_bounties__bounty_id__proof_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bounty_id",
+            "required": true,
+            "schema": {
+              "title": "Bounty Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-claim-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Claim-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_proof_api_v1_bounties__bounty_id__proof_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProofResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Proof"
+      }
+    },
+    "/api/v1/demo/reset": {
+      "post": {
+        "operationId": "demo_reset_api_v1_demo_reset_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Demo Reset"
+      }
+    },
+    "/api/v1/diary/latest": {
+      "get": {
+        "operationId": "diary_latest_api_v1_diary_latest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiaryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Diary Latest"
+      }
+    },
+    "/api/v1/donations": {
+      "get": {
+        "operationId": "list_donations_api_v1_donations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "List Donations"
+      }
+    },
+    "/api/v1/donations/orders": {
+      "post": {
+        "operationId": "create_donation_order_api_v1_donations_orders_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DonationOrderIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationOrderResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Create Donation Order"
+      }
+    },
+    "/api/v1/donations/orders/{order_id}/capture": {
+      "post": {
+        "operationId": "capture_donation_api_v1_donations_orders__order_id__capture_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonationCaptureResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Capture Donation"
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "operationId": "get_events_api_v1_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "WASTE",
+                    "SENSOR_ANOMALY"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Events"
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/v1/media/analyze": {
+      "post": {
+        "operationId": "analyze_api_v1_media_analyze_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_analyze_api_v1_media_analyze_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaAnalyzeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request Entity Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Analyze"
+      }
+    },
+    "/api/v1/media/{media_id}": {
+      "get": {
+        "operationId": "get_media_api_v1_media__media_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "media_id",
+            "required": true,
+            "schema": {
+              "title": "Media Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Media"
+      }
+    },
+    "/api/v1/payouts": {
+      "get": {
+        "operationId": "list_payouts_api_v1_payouts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "PENDING_APPROVAL",
+                    "QUEUED",
+                    "SENDING",
+                    "SENT",
+                    "SUCCEEDED",
+                    "FAILED",
+                    "VETOED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "List Payouts"
+      }
+    },
+    "/api/v1/payouts/{payout_id}/approve": {
+      "post": {
+        "operationId": "approve_api_v1_payouts__payout_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Approve"
+      }
+    },
+    "/api/v1/payouts/{payout_id}/retry": {
+      "post": {
+        "operationId": "retry_api_v1_payouts__payout_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Retry"
+      }
+    },
+    "/api/v1/payouts/{payout_id}/veto": {
+      "post": {
+        "operationId": "veto_api_v1_payouts__payout_id__veto_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VetoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutVetoResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          }
+        },
+        "summary": "Veto"
+      }
+    },
+    "/api/v1/readings": {
+      "get": {
+        "operationId": "get_readings_api_v1_readings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "device_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Device Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Readings"
+      },
+      "post": {
+        "operationId": "post_reading_api_v1_readings_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post Reading"
+      }
+    },
+    "/api/v1/river/status": {
+      "get": {
+        "operationId": "river_status_api_v1_river_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiverStatusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "River Status"
+      }
+    },
+    "/api/v1/webhooks/paypal": {
+      "post": {
+        "operationId": "paypal_webhook_api_v1_webhooks_paypal_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookAck"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Paypal Webhook"
+      }
+    }
+  }
+}

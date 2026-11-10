@@ -1,0 +1,13 @@
+node_modules/
+.venv/
+test-results/
+playwright-report/
+.qa/
+.npm-cache/
+.next/
+out/
+coverage/
+public/fixtures/
+*.tsbuildinfo
+.env*
+!.env.local.example
