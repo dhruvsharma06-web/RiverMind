@@ -66,8 +66,9 @@ def _physical_size(s: Sensor, x: float, median: float) -> float:
 def _forest():
     from sklearn.ensemble import IsolationForest  # [real] extra; imported lazily
 
-    simulated_normal = np.random.default_rng(0).standard_normal((5000, 2 * len(SENSORS)))
-    return IsolationForest(n_estimators=200, contamination=0.02, random_state=0).fit(simulated_normal)
+    # 100 trees / 2,000 samples: same decisions in our tests as 200 / 5,000, about half the memory while fitting
+    simulated_normal = np.random.default_rng(0).standard_normal((2000, 2 * len(SENSORS)))
+    return IsolationForest(n_estimators=100, contamination=0.02, random_state=0).fit(simulated_normal)
 
 
 def _ts(value: str) -> datetime | None:

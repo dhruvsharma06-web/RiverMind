@@ -76,12 +76,13 @@ def test_factory_returns_protocol_implementations():
     assert isinstance(get_river_ai(False), RiverAI)
 
 
-def test_real_adapter_fails_honestly_until_built():
+def test_real_adapter_fails_honestly_without_an_llm_key():
     from rivermind_ai.factory import get_river_ai
 
-    real = get_river_ai(False)
+    real = get_river_ai(False)  # tests run with no API key (conftest)
+    schemas.Detection.model_validate(real.analyze_media(jpeg("noise"), "image/jpeg", META).model_dump())
     with pytest.raises(AIUnavailable):
-        real.analyze_media(jpeg("noise"), "image/jpeg", META)
+        real.verify_cleanup(jpeg("noise", 1), jpeg("noise", 2), schemas.VerifyCtx(bounty_id="b", prior_phashes=[]))
     assert len(real.phash(jpeg("noise"))) == 16
 
 

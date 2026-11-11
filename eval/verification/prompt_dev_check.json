@@ -1,0 +1,314 @@
+{
+  "summary": {
+    "verify-v1": {
+      "natural_drop": "0/5 accepted by the LLM",
+      "no_change": "0/6 accepted by the LLM",
+      "edited_cleanup": "1/3 accepted by the LLM"
+    },
+    "verify-v2": {
+      "natural_drop": "1/6 accepted by the LLM",
+      "no_change": "0/3 accepted by the LLM",
+      "edited_cleanup": "0/0 accepted by the LLM"
+    }
+  },
+  "rows": [
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "FOTO_0172",
+      "after": "FOTO_0167",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The photos show different sections of the river. The specific landmarks (stick, bottle, plant clumps) in the BEFORE image are not present in the AFTER image.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6180_frame_00009",
+      "after": "IMG_6180_frame_00015",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The photos show different angles and vegetation layouts. The specific trash items in the first image are not visible in the second, but the scene is not clearly the same spot.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6186_frame_00010",
+      "after": "IMG_6186_frame_00013",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "Same spot, but the prominent bottle and debris remain in the AFTER photo. No visible reduction in trash.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6189_frame_00001",
+      "after": "IMG_6189_frame_00003",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The photos show the exact same pile of trash in the same position. No cleanup has occurred; the images appear identical.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6191_frame_00005",
+      "after": "IMG_6191_frame_00009",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The specific arrangement of the white paper, the pink object, and the debris lines is completely different between the two images, indicating different locations.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "natural_drop",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "FOTO_0001",
+      "after": "FOTO_0004",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The vegetation layout and specific trash items (like the white bag) are in different positions, indicating different locations or times, not a cleanup.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6180_frame_00000",
+      "after": "IMG_6180_frame_00001",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The photos are nearly identical. The same pieces of trash, including a white bottle and a brown log, remain in the exact same positions in both images.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6181_frame_00000",
+      "after": "IMG_6181_frame_00001",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The photos show the exact same scene with identical trash placement (white bags, blue bottle, debris). No cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6184_frame_00000",
+      "after": "IMG_6184_frame_00001",
+      "vote": 0.0,
+      "manipulation": true,
+      "notes": "Both images are identical, showing the same pile of trash and debris in the water. No cleanup has occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6185_frame_00000",
+      "after": "IMG_6185_frame_00001",
+      "vote": 0.0,
+      "manipulation": true,
+      "notes": "Both images are duplicates showing a plastic bottle and white trash floating in the water. No cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6186_frame_00000",
+      "after": "IMG_6186_frame_00002",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The photos show the same spot, but the trash (bottle, plastic) remains in the exact same positions. No cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "edited_cleanup",
+      "expected": "reject",
+      "before": "FOTO_0001",
+      "after": "FOTO_0004 (erased)",
+      "vote": 0.9,
+      "manipulation": false,
+      "notes": "The same riverbank with water hyacinths is shown. The large white plastic bag and other visible trash present in the first photo are gone in the second.",
+      "llm_says_accept": true
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "edited_cleanup",
+      "expected": "reject",
+      "before": "IMG_6180_frame_00000",
+      "after": "IMG_6180_frame_00001 (erased)",
+      "vote": 0.1,
+      "manipulation": true,
+      "notes": "The same riverbank is shown, but the AFTER photo is heavily obscured by blurry digital artifacts, making it impossible to verify if the trash was actually removed.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v1",
+      "kind": "edited_cleanup",
+      "expected": "reject",
+      "before": "IMG_6181_frame_00000",
+      "after": "IMG_6181_frame_00001 (erased)",
+      "vote": 0.2,
+      "manipulation": true,
+      "notes": "The white trash bags visible in the BEFORE photo are gone in the AFTER photo, but the image is heavily obscured by a digital overlay.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "FOTO_0172",
+      "after": "FOTO_0167",
+      "vote": 1.0,
+      "manipulation": false,
+      "notes": "The same river spot is shown. In the AFTER photo, the man-made litter (bottles, wrappers, cans) visible in the BEFORE photo has been removed.",
+      "llm_says_accept": true
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6180_frame_00009",
+      "after": "IMG_6180_frame_00015",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The photos show different angles and sections of the riverbank. The specific litter items visible in the first image are not present in the second, but the scene is not the same spot.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6186_frame_00010",
+      "after": "IMG_6186_frame_00013",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The same man-made litter items (a bottle and a yellow object) are visible in both photos. No cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6189_frame_00001",
+      "after": "IMG_6189_frame_00003",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The pile of man-made litter, including a distinct red and white bag, remains in the exact same position in both photos. No cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6191_frame_00005",
+      "after": "IMG_6191_frame_00009",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The distinctive pink object and white piece of litter visible in the first photo are still present in the second photo, indicating no cleanup occurred.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "natural_drop",
+      "expected": "accept",
+      "before": "IMG_6311_frame_00050",
+      "after": "IMG_6311_frame_00055",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "Both photos show the same spot with murky water and reflections. The visible floating items are natural vegetation (leaves/stems), not man-made litter.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "FOTO_0001",
+      "after": "FOTO_0004",
+      "vote": 0.1,
+      "manipulation": false,
+      "notes": "The same white plastic bag and blue litter are clearly visible in both photos. The vegetation has not been cleared, and the man-made waste remains in the same location.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6180_frame_00000",
+      "after": "IMG_6180_frame_00001",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The photos are nearly identical. The same pieces of man-made litter (cylindrical objects, wrappers) are present in the exact same positions in both images.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "expected": "reject",
+      "before": "IMG_6181_frame_00000",
+      "after": "IMG_6181_frame_00001",
+      "vote": 0.0,
+      "manipulation": false,
+      "notes": "The white bags and blue bottle visible in the BEFORE photo are still present in the AFTER photo. No man-made litter has been removed.",
+      "llm_says_accept": false
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "no_change",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "edited_cleanup",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "edited_cleanup",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "edited_cleanup",
+      "error": "LLM unavailable: rate limited (HTTP 429)"
+    },
+    {
+      "prompt": "verify-v2",
+      "kind": "edited_cleanup",
+      "before": "IMG_6181_frame_00000",
+      "vote": 0.9,
+      "manipulation": true,
+      "llm_says_accept": false,
+      "notes": "The white plastic bags and blue bottle visible in the BEFORE photo are absent in the AFTER photo, indicating cleanup."
+    }
+  ],
+  "completion_run": "missing cases re-run at 62 s spacing"
+}

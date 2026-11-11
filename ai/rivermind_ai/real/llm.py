@@ -105,7 +105,12 @@ def call_json(system: str, text: str, schema: type[T], *, images: tuple[bytes, .
                 problem = f"network error ({type(exc).__name__})"
                 continue
             if r.status_code == 429:
-                problem = "rate limited (HTTP 429)"
+                try:
+                    msg = str((r.json().get("error") or {}).get("message", ""))
+                except ValueError:
+                    msg = ""
+                limit = "daily limit" if "per day" in msg or "(TPD)" in msg or "(RPD)" in msg else "per-minute limit"
+                problem = f"rate limited, {limit} (HTTP 429)"  # Groq's own message names the account: not passed on
                 break  # the wait Groq asks for is longer than our deadline
             if r.status_code in (401, 403):
                 problem = f"provider rejected the API key (HTTP {r.status_code})"

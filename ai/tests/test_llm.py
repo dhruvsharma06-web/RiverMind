@@ -76,9 +76,18 @@ def test_extra_fields_twice_raise_invalid_output(groq):
 def test_rate_limit_is_unavailable_without_retry(groq):
     seen, script = groq
     script.append((429, {"error": {"message": "slow down"}}))
-    with pytest.raises(AIUnavailable, match="429"):
+    with pytest.raises(AIUnavailable, match="per-minute limit.*429"):
         call()
     assert len(seen) == 1
+
+
+def test_daily_limit_is_named_but_account_details_are_not_passed_on(groq):
+    _, script = groq
+    script.append((429, {"error": {"message": "Rate limit reached in organization `org_abc123` on tokens per day "
+                                              "(TPD): Limit 200000"}}))
+    with pytest.raises(AIUnavailable) as exc:
+        call()
+    assert "daily limit" in str(exc.value) and "org_abc123" not in str(exc.value)
 
 
 def test_server_error_then_success(groq):
