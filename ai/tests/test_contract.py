@@ -76,12 +76,12 @@ def test_factory_returns_protocol_implementations():
     assert isinstance(get_river_ai(False), RiverAI)
 
 
-def test_real_adapter_fails_honestly_on_bad_input():
+def test_real_adapter_fails_honestly_until_built():
     from rivermind_ai.factory import get_river_ai
 
     real = get_river_ai(False)
     with pytest.raises(AIUnavailable):
-        real.analyze_media(b"not an image", "image/jpeg", META)
+        real.analyze_media(jpeg("noise"), "image/jpeg", META)
     assert len(real.phash(jpeg("noise"))) == 16
 
 

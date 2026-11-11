@@ -16,12 +16,15 @@ chose) · [`ATTRIBUTION.md`](ATTRIBUTION.md) (datasets, licences) · [`../eval/R
 
 Status words as in the team prompts: *implemented* → *integrated* (merged + called by the backend) → *verified*.
 
-| Function (`RiverAI`) | Mock (`USE_MOCK_AI=true`) | Real (`USE_MOCK_AI=false`, Wed 11 Nov) |
+| Function (`RiverAI`) | Mock (`USE_MOCK_AI=true`) | Real (`USE_MOCK_AI=false`) |
 |---|---|---|
-| `analyze_media` | texture heuristic, `mock-1` | ✅ YOLO11n v2 ONNX (`real/detector.py`): letterbox 960, conf ≥ 0.25, NMS 0.7; waste_score = 1 − Π(1 − conf); foam from the HSV colour rule (not the detector) |
-| `detect_sensor_anomaly` | turbidity > 2× median | ✅ `anomaly-v1` |
-| `verify_cleanup` | always passing | ✅ ORB inliers + detector count drop (`real/verify.py`); **no LLM**: `llm.vote` is a deterministic proxy, manipulation not checked; model_version `…+proxy-vote-no-llm` |
-| `propose_bounty` / `write_diary` / `draft_invoice` | templates | ✅ deterministic `rules-v1` (`real/agent.py`); diary numbers checked against inputs; **no LLM path yet** |
+| `analyze_media` | ✅ texture heuristic, labelled `mock-1` | 🟡 detector **trained and exported** (YOLO11n v2 ONNX); adapter code not built yet → raises `AIUnavailable` |
+| `detect_sensor_anomaly` | ✅ turbidity > 2× median | ✅ **implemented + unit-tested** (robust z-score + limits + IsolationForest) |
+| `propose_bounty` | ✅ clamp(500 × severity) | ⬜ planned: code computes the allowed range, Groq LLM writes text and picks inside it |
+| `verify_cleanup` | ✅ always-passing scores + real phashes | ⬜ planned: pHash + ORB scene match + detector count drop + Groq vote |
+| `phash` | ✅ real | ✅ real (same function) |
+| `write_diary` | ✅ template from given numbers | ⬜ planned: Groq text + number validator, template fallback |
+| `draft_invoice` | ✅ min(max, $100) | ⬜ planned (P1 feature F14) |
 
 Nothing is merged to `main` yet: the work is on branch `feat/ai-core`, not yet pushed.
 Backend integration so far: the backend's test suite passes with this package installed (213 passed).
@@ -226,8 +229,9 @@ S5 Thu 15:00–22:00 (submit).
 - [ ] `draft_invoice` real (S4.3)
 - [ ] Re-run all evals, finalise `MODEL_CARD.md` (S4.4)
 
-**S5 — submit**
+**S5 — demo**
 - [ ] Pin model ids, prompt versions, parameters (S5.1)
+- [ ] 3 demo inputs + 1 hard case for the video (S5.2)
 - [ ] "How the AI works" slide content (S5.3)
 
 **Done**

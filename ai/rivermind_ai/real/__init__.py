@@ -1,8 +1,8 @@
-"""Real RiverAI (USE_MOCK_AI=false). No LLM is called yet: the detector is the shipped ONNX model, verification uses
-ORB + detector counts with a deterministic proxy vote, and bounty/diary/invoice text is rule-based ("rules-v1").
-Every output's model_version names the path that produced it."""
+"""Real RiverAI (USE_MOCK_AI=false). Built step by step in P2 S1-S4; anything not built yet raises AIUnavailable,
+which the backend turns into an honest AI_UNAVAILABLE error instead of a fake result."""
 from rivermind_ai import imaging
-from rivermind_ai.real import agent, anomaly, detector, verify
+from rivermind_ai.errors import AIUnavailable
+from rivermind_ai.real import anomaly
 from rivermind_ai.schemas import (
     AnomalyResult,
     BountyProposal,
@@ -19,24 +19,28 @@ from rivermind_ai.schemas import (
 )
 
 
+def _not_built(feature: str) -> AIUnavailable:
+    return AIUnavailable(f"real {feature} is not built yet")
+
+
 class RealRiverAI:
     def analyze_media(self, data: bytes, mime: str, meta: MediaMeta) -> Detection:
-        return detector.analyze(data)
+        raise _not_built("analyze_media")
 
     def detect_sensor_anomaly(self, reading: SensorReading, history: list[SensorReading]) -> AnomalyResult:
         return anomaly.detect(reading, history)
 
     def propose_bounty(self, event: EventCtx, budget: BudgetCtx) -> BountyProposal:
-        return agent.propose_bounty(event, budget)
+        raise _not_built("propose_bounty")
 
     def verify_cleanup(self, before: bytes, after: bytes, ctx: VerifyCtx) -> VerificationScores:
-        return verify.verify(before, after, ctx)
+        raise _not_built("verify_cleanup")
 
     def phash(self, data: bytes) -> str:
         return imaging.phash(data)
 
     def write_diary(self, status: RiverStatusCtx, recent: list[EventCtx]) -> DiaryEntry:
-        return agent.write_diary(status, recent)
+        raise _not_built("write_diary")
 
     def draft_invoice(self, status: RiverStatusCtx, sponsor_email: str, max_cents: int) -> InvoiceDraft:
-        return agent.draft_invoice(status, sponsor_email, max_cents)
+        raise _not_built("draft_invoice")
