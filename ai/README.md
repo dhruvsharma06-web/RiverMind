@@ -226,9 +226,8 @@ S5 Thu 15:00–22:00 (submit).
 - [ ] `draft_invoice` real (S4.3)
 - [ ] Re-run all evals, finalise `MODEL_CARD.md` (S4.4)
 
-**S5 — demo**
+**S5 — submit**
 - [ ] Pin model ids, prompt versions, parameters (S5.1)
-- [ ] 3 demo inputs + 1 hard case for the video (S5.2)
 - [ ] "How the AI works" slide content (S5.3)
 
 **Done**
