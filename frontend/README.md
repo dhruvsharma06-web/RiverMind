@@ -4,11 +4,13 @@ RiverMind’s shared interface: a public landing page, a responsive observatory 
 
 ## Interface design
 
-The application uses a clean card dashboard with an expandable icon rail, a river activity panel, and original abstract quest artwork. The rail starts compact, retains its state between workspace routes, and expands from the top-bar control. Active navigation uses the tile itself, with no status dot. Light mode uses white and cool-gray surfaces; dark mode uses charcoal surfaces.
+The application uses a clean card dashboard with an expandable icon rail and a river activity panel. The rail starts compact, retains its state between workspace routes, and expands from the top-bar control. Light mode uses white and cool-gray surfaces; dark mode uses charcoal surfaces. The saved theme is applied before first paint.
 
-`app/dashboard.css` owns the shared dashboard palette and component styles for both themes. `components/abstract-art.tsx` contains decorative SVG artwork; these illustrations are not monitoring imagery or cleanup evidence. The Magic UI theme switch remembers the selected mode in browser storage and respects reduced-motion preferences.
+`app/dashboard.css` owns the shared dashboard palette and component styles for both themes. The landing page shares those tokens through `app/landing.css`.
 
-The landing page shares those tokens through `app/landing.css`, with a static illustrated river in the hero, concise project explanations, workspace previews, and a real API/demo quest. It has no pinned scroll story or chapter sequence. The shared accent palette uses river blue, aqua, leafy green, and a little warm sand.
+The landing hero plays real river footage (`components/river-hero-media.tsx`): a poster still loads first, and a muted 9-second loop starts once the page is idle. The loop pauses off-screen and is skipped for reduced-motion and data-saver visitors. The Overview page reuses the still behind its "River now" card and adds a schematic of the Delhi reach (`components/river-reach.tsx`) that places returned events and open quests by latitude.
+
+The footage is illustrative stock footage of a river, not the Yamuna, and is labelled so in the interface. Source and licence are in `public/hero/CREDITS.md`; that media is not covered by the repository's MIT licence. `components/abstract-art.tsx` contains decorative SVG artwork for quest cards; neither is monitoring imagery or cleanup evidence.
 
 ## Local setup
 
@@ -35,8 +37,8 @@ For backend integration, set `NEXT_PUBLIC_USE_MOCK=false`. The API URL is an ori
 
 ## Routes
 
-- `/` — ten-section public landing page with expedition story, atlas and observatory previews, workflow, featured quest, treasury, diary, FAQ, and final CTA.
-- `/river` — observatory dashboard with real API/demo readings, events, quests, treasury, staleness labels, and payout ledger.
+- `/` — public landing page with a river-footage hero, live snapshot, how it works, atlas and readings previews, featured quest, treasury, diary, FAQ, and final CTA.
+- `/river` — overview dashboard with real API/demo readings, events, quests, treasury, staleness labels, and payout ledger.
 - `/reports` — monthly available-record summaries, daily signal charts, water statistics, CSV download, and Print / Save as PDF.
 - `/atlas` — accessible Leaflet map with real event/quest coordinates and a keyboard-friendly location list.
 - `/bounties` and `/bounties/[id]` — quest journal, filters, claim flow, proof capture, verification result, and payment/review state.
@@ -73,7 +75,7 @@ Reports filter the currently returned records by IST month. They are partial sum
 - `lib/api.ts` is the API entry point. It validates responses, normalizes errors, supports cancellation, uses 20-second ordinary and 60-second AI deadlines, and never retries mutations automatically.
 - Generated `openapi.json` and `lib/api-types.ts` come from `make types`; never hand-edit them. Runtime validators in `lib/contracts.ts` mirror those types.
 - Money is integer cents in the contract. Backend rules decide reward amounts; the frontend only displays them and sends user input through validation.
-- The hero artwork is an original decorative illustration, not monitoring data or cleanup evidence. See `public/images/README.md` for attribution and the generation prompt.
+- The hero footage is illustrative stock footage, not monitoring data or cleanup evidence. See `public/hero/CREDITS.md`.
 - The frontend does not invent accounts, monitoring stations, XP, achievements, safety indices, or live AI/payment results that the backend does not provide.
 
 Git branch management, commits, pushes, merges, and PRs are handled by the user.

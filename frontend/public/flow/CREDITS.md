@@ -1,0 +1,16 @@
+# Waterfall footage
+
+`flow-1600.mp4`, `flow-960.mp4` and `poster.webp` are a trimmed, re-encoded
+9-second seamless loop (crossfaded ends) made from a free stock clip of a
+waterfall curtain falling onto rocks:
+
+- Source: https://www.pexels.com/video/close-up-shot-of-the-waterfalls-6256992/
+  (Neugiernase)
+- Licence: Pexels Licence, https://www.pexels.com/license/ (free to use and
+  modify; attribution not required, given here anyway)
+
+The clip is **not the Yamuna**. It is illustrative artwork, not monitoring
+imagery or cleanup evidence, and the interface labels it as such.
+
+Media in this folder is not covered by the repository's MIT licence; it
+remains under the Pexels Licence.

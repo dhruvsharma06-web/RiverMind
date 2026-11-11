@@ -7,8 +7,11 @@ import { api } from "@/lib/api";
 import { money, parseDonation } from "@/lib/format";
 import { useHealth } from "@/lib/queries";
 import { Button } from "./ui/button";
+import { SignInPrompt } from "./auth-gate";
+import { useAuth } from "@/lib/auth";
 import { ErrorNotice, Notice, Panel, PanelTitle, Skeleton } from "./ui/shared";
 export function DonationForm() {
+  const signedOut = useAuth().status === "signed-out";
   const health = useHealth(),
     cache = useQueryClient();
   const [amount, setAmount] = useState("15"),
@@ -69,7 +72,7 @@ export function DonationForm() {
         <span className="success-symbol">
           <Check size={30} strokeWidth={1.5} />
         </span>
-        <h2>A little care, carried forward.</h2>
+        <h2>Donation received</h2>
         <p>
           {money(success)} USD has been captured in the{" "}
           {simulated ? "simulated" : "sandbox"} treasury.
@@ -93,12 +96,11 @@ export function DonationForm() {
   return (
     <Panel className="donation-form">
       <PanelTitle aside={<Heart size={19} className="text-accent" />}>
-        Keep the next chapter flowing.
+        Donate
       </PanelTitle>
       <p className="form-intro">
-        Choose a contribution to the river’s shared treasury. Funds support
-        posted cleanup rewards through the backend’s budget and verification
-        rules.
+        Your donation goes to the river’s shared treasury and funds posted
+        cleanup rewards.
       </p>
       <fieldset disabled={pending}>
         <legend className="form-legend">Choose an amount · USD</legend>
@@ -169,7 +171,9 @@ export function DonationForm() {
           {error}
         </p>
       )}
-      {health.isPending && api.mode !== "fixture" ? (
+      {signedOut ? (
+        <SignInPrompt />
+      ) : health.isPending && api.mode !== "fixture" ? (
         <Skeleton lines={2} />
       ) : health.isError && api.mode !== "fixture" ? (
         <ErrorNotice error={health.error} retry={() => void health.refetch()} />
@@ -196,7 +200,7 @@ export function DonationForm() {
         >
           <div className="paypal-checkout">
             <p className="tiny-label">
-              PAYPAL SANDBOX CHECKOUT · NO REAL MONEY
+              PayPal sandbox checkout · no real money
             </p>
             <PayPalButtons
               disabled={cents === undefined || pending}

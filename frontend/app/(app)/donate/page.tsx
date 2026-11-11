@@ -18,9 +18,9 @@ export default function TreasuryPage() {
   return (
     <>
       <PageHeading
-        chapter="Chapter 04 / The river treasury"
+        chapter="Treasury"
         title="River treasury"
-        description="Fund the next cleanup and follow every contribution through to a verified payout."
+        description="Fund cleanups and follow each contribution to a verified payout."
         action={
           <Badge tone="gold">
             <Wallet size={13} />
@@ -32,15 +32,15 @@ export default function TreasuryPage() {
         {(r) => (
           <div className="metric-grid">
             {[
-              ["Available for cleanup", r.treasury.available_cents],
+              ["Available", r.treasury.available_cents],
               ["Reserved for quests", r.treasury.reserved_cents],
-              ["Paid for verified work", r.treasury.paid_cents],
-              ["Contributions captured", r.treasury.donated_cents],
+              ["Paid out", r.treasury.paid_cents],
+              ["Donations", r.treasury.donated_cents],
             ].map(([label, value]) => (
               <div className="metric-card" key={label}>
                 <span>{label}</span>
                 <strong className="numeric">{money(Number(value))}</strong>
-                <p>USD · Shared river treasury</p>
+                <p>USD</p>
               </div>
             ))}
           </div>
@@ -52,11 +52,7 @@ export default function TreasuryPage() {
           <span className="treasury-story-symbol">
             <Heart size={32} strokeWidth={1} />
           </span>
-          <h2>
-            Care is stronger
-            <br />
-            when we can follow it.
-          </h2>
+          <h2>Where your money goes</h2>
           <p>
             Every contribution enters one shared treasury. Backend rules cap
             rewards and reserve the funds before a quest is posted.
@@ -65,23 +61,24 @@ export default function TreasuryPage() {
             <li>
               <span>01</span>
               <div>
-                <strong>Fund the possibility.</strong>
-                <p>A captured contribution increases available funds.</p>
+                <strong>Donate</strong>
+                <p>A captured contribution adds to available funds.</p>
               </div>
             </li>
             <li>
               <span>02</span>
               <div>
-                <strong>Back a clear task.</strong>
-                <p>Posted quests reserve their reward from the treasury.</p>
+                <strong>Reserve</strong>
+                <p>Each posted quest reserves its reward.</p>
               </div>
             </li>
             <li>
               <span>03</span>
               <div>
-                <strong>Reward verified work.</strong>
+                <strong>Pay</strong>
                 <p>
-                  Evidence is checked before payouts follow the approval policy.
+                  Evidence is checked, then the payout follows the approval
+                  policy.
                 </p>
               </div>
             </li>
@@ -90,13 +87,12 @@ export default function TreasuryPage() {
             <ShieldCheck size={20} />
             <p>
               Contributions do not guarantee a particular environmental outcome.
-              The ledger makes payment activity visible.
             </p>
           </div>
         </div>
       </div>
       <Panel className="contributions-panel">
-        <PanelTitle>Those keeping the story flowing.</PanelTitle>
+        <PanelTitle>Contributions</PanelTitle>
         <AsyncView query={donations}>
           {({ items }) =>
             items.length ? (
@@ -107,7 +103,7 @@ export default function TreasuryPage() {
                       <Heart size={16} />
                     </span>
                     <div>
-                      <h3>{d.donor_name ?? "An unnamed river supporter"}</h3>
+                      <h3>{d.donor_name ?? "Anonymous"}</h3>
                       <p>{dateTime(d.created_at)}</p>
                     </div>
                     <strong className="numeric">
@@ -118,15 +114,15 @@ export default function TreasuryPage() {
                 ))}
               </div>
             ) : (
-              <EmptyState title="The first contribution could be yours.">
-                Captured contributions will appear here.
+              <EmptyState title="No donations yet.">
+                Captured contributions appear here.
               </EmptyState>
             )
           }
         </AsyncView>
       </Panel>
       <Panel id="ledger">
-        <PanelTitle>Every payout leaves a trail.</PanelTitle>
+        <PanelTitle>Payouts</PanelTitle>
         <PayoutLedger />
       </Panel>
     </>

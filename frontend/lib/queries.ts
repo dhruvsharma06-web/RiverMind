@@ -31,3 +31,15 @@ export const useDonations = () =>
     queryFn: ({ signal }) => api.getDonations({}, { signal }),
     refetchInterval: 5_000,
   });
+export const useReadings = () =>
+  useQuery({
+    queryKey: ["readings"],
+    queryFn: ({ signal }) => api.getReadings({}, { signal }),
+    refetchInterval: 5_000,
+  });
+export const useEvents = () =>
+  useQuery({
+    queryKey: ["events"],
+    queryFn: ({ signal }) => api.getEvents({}, { signal }),
+    refetchInterval: 5_000,
+  });

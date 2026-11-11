@@ -1,16 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Check,
-  KeyRound,
-  LogOut,
-  RefreshCw,
-  ShieldCheck,
-  X,
-} from "lucide-react";
-import { api, ApiError } from "@/lib/api";
+import { Check, RefreshCw, ShieldCheck, X } from "lucide-react";
+import { api } from "@/lib/api";
 import { usePayouts } from "@/lib/queries";
 import { money } from "@/lib/format";
 import type { Payout } from "@/lib/contracts";
@@ -31,12 +24,17 @@ export default function CouncilPage() {
     query = usePayouts(),
     cache = useQueryClient();
   const keys = useRef<Record<string, string>>({});
+  const reasonRef = useRef<HTMLTextAreaElement>(null);
   const [selection, setSelection] = useState<{
       payout: Payout;
       action: Action;
     }>(),
     [reason, setReason] = useState(""),
     [success, setSuccess] = useState("");
+  const confirmOpen = !!selection;
+  useEffect(() => {
+    if (confirmOpen) reasonRef.current?.focus();
+  }, [confirmOpen]);
   const mutation = useMutation({
     mutationFn: async ({
       payout,
@@ -72,39 +70,7 @@ export default function CouncilPage() {
       for (const key of ["payouts", "bounties", "bounty", "river"])
         void cache.invalidateQueries({ queryKey: [key] });
     },
-    onError: (error) => {
-      if (error instanceof ApiError && error.status === 401) session.setKey("");
-    },
   });
-  if (!session.key)
-    return (
-      <>
-        <PageHeading
-          chapter="Council workspace / Session access"
-          title="Council workspace"
-          description="Review higher-value rewards and failed payments with the evidence and payment trail in view."
-        />
-        <div className="council-gateway">
-          <Panel>
-            <span className="gateway-symbol">
-              <KeyRound size={32} strokeWidth={1.2} />
-            </span>
-            <h2>Your council key stays with you.</h2>
-            <p>
-              {mutation.error
-                ? "The council key was not accepted. Enter a valid key to try again."
-                : "Enter a council key for this visit. Backend authorization protects every approval, veto, and retry."}
-            </p>
-            <Button asChild>
-              <Link href="/council/sign-in">
-                Enter council key
-                <KeyRound size={15} />
-              </Link>
-            </Button>
-          </Panel>
-        </div>
-      </>
-    );
   const choose = (payout: Payout, action: Action) => {
     setSelection({ payout, action });
     setReason("");
@@ -114,26 +80,13 @@ export default function CouncilPage() {
   return (
     <>
       <PageHeading
-        chapter="Council workspace / Responsible stewardship"
+        chapter="Council"
         title="Council workspace"
         description="Review payments awaiting approval and help verified work move past payment failures."
-        action={
-          <Button
-            variant="secondary"
-            onClick={() => {
-              session.setKey("");
-              setSelection(undefined);
-            }}
-            disabled={mutation.isPending}
-          >
-            Clear council key
-            <LogOut size={14} />
-          </Button>
-        }
       />
       <Notice>
-        Key entered for this visit. Permission is checked by the backend on each
-        action.
+        Signed in as a council member. Permission is checked by the backend on
+        each action.
         {api.mode === "fixture" &&
           " These controls operate on simulated demo payments only."}
       </Notice>
@@ -171,6 +124,7 @@ export default function CouncilPage() {
               </label>
               <textarea
                 id="council-reason"
+                ref={reasonRef}
                 className="field"
                 rows={3}
                 value={reason}
@@ -239,7 +193,7 @@ export default function CouncilPage() {
                             className="text-link"
                             href={`/bounties/${p.bounty_id}`}
                           >
-                            Review evidence & field journal ↗
+                            Review evidence & quest ↗
                           </Link>
                           {p.paypal_batch_id && (
                             <p className="payout-code">

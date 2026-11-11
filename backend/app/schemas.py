@@ -353,3 +353,34 @@ class DonationOrderIn(Strict):
 class FundraiseIn(Strict):
     sponsor_email: Annotated[str, Field(max_length=254, pattern=EMAIL_PATTERN)]
     reason: Annotated[str | None, Field(max_length=500)] = None
+
+
+# --- auth ---
+Role = Literal["worker", "council"]
+
+
+class User(Strict):
+    id: str
+    name: str
+    email: str
+    role: Role
+
+
+class RegisterIn(Strict):
+    name: Annotated[str, Field(min_length=1, max_length=80)]
+    email: Annotated[str, Field(max_length=254, pattern=EMAIL_PATTERN)]
+    password: Annotated[str, Field(min_length=8, max_length=128)]
+
+
+class LoginIn(Strict):
+    email: Annotated[str, Field(max_length=254)]
+    password: Annotated[str, Field(max_length=128)]
+
+
+class AuthResponse(Strict):
+    user: User
+    token: str
+
+
+class MeResponse(Strict):
+    user: User

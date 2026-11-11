@@ -26,6 +26,7 @@ export function Button({
   return (
     <Component
       className={cn(variants({ variant, size }), className)}
+      {...(asChild ? {} : { type: "button" as const })}
       {...props}
     />
   );

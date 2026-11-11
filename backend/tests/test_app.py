@@ -13,11 +13,13 @@ from app.security import sha256_hex
 from app.seed import DEVICE_REF, reset_demo
 from sqlalchemy import create_engine, inspect, select
 
+from tests.conftest import REAL_AI
+
 
 def test_health_ok(client):
     r = client.get("/api/v1/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "version": "1.0", "mock_ai": True, "paypal_mode": "mock", "db": "ok"}
+    assert r.json() == {"status": "ok", "version": "1.0", "mock_ai": not REAL_AI, "paypal_mode": "mock", "db": "ok"}
     assert r.headers["x-request-id"]
 
 

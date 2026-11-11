@@ -11,6 +11,155 @@ interface DemoState {
   operations: Record<string, { fingerprint: string; response: unknown }>;
 }
 const storageKey = "rivermind:demo:v1";
+const accountsKey = "rivermind:demo:accounts";
+const sessionsKey = "rivermind:demo:sessions";
+/** Demo-only accounts. Passwords are kept as SHA-256 digests; this is not real security. */
+export const DEMO_COUNCIL = {
+  email: "council@demo.rivermind",
+  password: "council-demo",
+} as const;
+interface DemoAccount {
+  id: string;
+  name: string;
+  email: string;
+  role: "worker" | "council";
+  hash: string;
+}
+async function digest(email: string, password: string) {
+  const bytes = new TextEncoder().encode(`rivermind-demo:${email}:${password}`);
+  const out = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(out)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+type MiniStorage = Pick<Storage, "getItem" | "setItem">;
+function createMockAuth(storage?: MiniStorage) {
+  const mem: Record<string, string> = {};
+  const read = <T>(key: string, fallback: T): T => {
+    try {
+      const raw = storage?.getItem(key) ?? mem[key];
+      return raw ? (JSON.parse(raw) as T) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+  const write = (key: string, value: unknown) => {
+    mem[key] = JSON.stringify(value);
+    try {
+      storage?.setItem(key, mem[key]);
+    } catch {
+      /* Memory-only demo. */
+    }
+  };
+  const pub = ({ hash: _hash, ...user }: DemoAccount) => {
+    void _hash;
+    return user;
+  };
+  async function accounts() {
+    const list = read<DemoAccount[]>(accountsKey, []);
+    if (!list.some((a) => a.role === "council")) {
+      list.push({
+        id: "demo-council",
+        name: "Demo Council",
+        email: DEMO_COUNCIL.email,
+        role: "council",
+        hash: await digest(DEMO_COUNCIL.email, DEMO_COUNCIL.password),
+      });
+      write(accountsKey, list);
+    }
+    return list;
+  }
+  const open = async (account: DemoAccount) => {
+    const token = `st_demo_${crypto.randomUUID()}`;
+    const sessions = read<Record<string, string>>(sessionsKey, {});
+    sessions[token] = account.id;
+    write(sessionsKey, sessions);
+    return reply({ user: pub(account), token }, 200);
+  };
+  async function userFor(headers?: Record<string, string>) {
+    const token = headers?.Authorization?.replace(/^Bearer /, "") ?? "";
+    const id = read<Record<string, string>>(sessionsKey, {})[token];
+    return {
+      token,
+      user: id ? (await accounts()).find((a) => a.id === id) : undefined,
+    };
+  }
+  const normalize = (email: unknown) =>
+    String(email ?? "")
+      .trim()
+      .toLowerCase();
+  return {
+    userFor,
+    async handle(
+      parts: string[],
+      post: boolean,
+      body: Record<string, unknown> | undefined,
+      headers?: Record<string, string>,
+    ): Promise<Response> {
+      const action = parts[1];
+      if (post && action === "register") {
+        const name = String(body?.name ?? "").trim(),
+          email = normalize(body?.email),
+          password = String(body?.password ?? "");
+        if (!name || name.length > 60)
+          return error(
+            "VALIDATION_ERROR",
+            "Enter your name (up to 60 characters).",
+            422,
+          );
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+          return error("VALIDATION_ERROR", "Enter a valid email address.", 422);
+        if (password.length < 8)
+          return error(
+            "VALIDATION_ERROR",
+            "Use a password of at least 8 characters.",
+            422,
+          );
+        const list = await accounts();
+        if (list.some((a) => a.email === email))
+          return error(
+            "VALIDATION_ERROR",
+            "An account with this email already exists.",
+            422,
+          );
+        const account: DemoAccount = {
+          id: crypto.randomUUID(),
+          name,
+          email,
+          role: "worker",
+          hash: await digest(email, password),
+        };
+        write(accountsKey, [...list, account]);
+        const res = await open(account);
+        return new Response(res.body, { status: 201, headers: res.headers });
+      }
+      if (post && action === "login") {
+        const email = normalize(body?.email);
+        const account = (await accounts()).find((a) => a.email === email);
+        if (
+          !account ||
+          account.hash !== (await digest(email, String(body?.password ?? "")))
+        )
+          return error("UNAUTHORIZED", "Invalid email or password", 401);
+        return open(account);
+      }
+      if (post && action === "logout") {
+        const { token } = await userFor(headers);
+        const sessions = read<Record<string, string>>(sessionsKey, {});
+        delete sessions[token];
+        write(sessionsKey, sessions);
+        return new Response(null, { status: 204 });
+      }
+      if (!post && action === "me") {
+        const { user } = await userFor(headers);
+        return user
+          ? reply({ user: pub(user) })
+          : error("UNAUTHORIZED", "Sign in required", 401);
+      }
+      return error("NOT_FOUND", "Unknown demo auth endpoint.", 404);
+    },
+  };
+}
 const reply = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -19,10 +168,8 @@ const reply = (data: unknown, status = 200) =>
 const error = (code: string, message: string, status: number) =>
   reply({ error: { code, message, details: {} } }, status);
 
-export function createMockTransport(
-  load: Loader,
-  storage?: Pick<Storage, "getItem" | "setItem">,
-) {
+export function createMockTransport(load: Loader, storage?: MiniStorage) {
+  const auth = createMockAuth(storage);
   let state: DemoState | undefined;
   let initialization: Promise<DemoState> | undefined;
   const persist = () => {
@@ -115,6 +262,18 @@ export function createMockTransport(
     },
     fallback: string,
   ): Promise<Response> {
+    {
+      const early = new URL(path, "https://demo.example.test").pathname
+        .split("/")
+        .filter(Boolean);
+      if (early[0] === "auth")
+        return auth.handle(
+          early,
+          options.method === "POST",
+          options.body as Record<string, unknown> | undefined,
+          options.headers,
+        );
+    }
     initialization ??= initialize().catch((error) => {
       initialization = undefined;
       throw error;
@@ -126,13 +285,21 @@ export function createMockTransport(
       post = options.method === "POST",
       now = new Date().toISOString();
     const body = options.body as Record<string, unknown> | undefined;
-    if (
-      post &&
-      parts[0] === "payouts" &&
-      (!options.headers?.Authorization?.startsWith("Bearer ") ||
-        options.headers.Authorization.length < 8)
-    )
-      return error("UNAUTHORIZED", "Enter a demo council key first.", 401);
+    const who = await auth.userFor(options.headers);
+    const signedIn =
+      (post && parts[0] === "bounties" && parts[2]) ||
+      (post && parts[0] === "donations" && parts.length === 2);
+    if (signedIn && !who.user)
+      return error("UNAUTHORIZED", "Sign in required", 401);
+    if (post && parts[0] === "payouts") {
+      const header = options.headers?.Authorization ?? "";
+      if (header.startsWith("Bearer st_")) {
+        if (!who.user) return error("UNAUTHORIZED", "Sign in required", 401);
+        if (who.user.role !== "council")
+          return error("FORBIDDEN", "Council access only.", 403);
+      } else if (!header.startsWith("Bearer ") || header.length < 8)
+        return error("UNAUTHORIZED", "Enter a demo council key first.", 401);
+    }
     const key = options.headers?.["Idempotency-Key"],
       fingerprint = `${path}:${JSON.stringify(body ?? {})}`;
     if (key && s.operations[key]) {

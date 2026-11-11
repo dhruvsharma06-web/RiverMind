@@ -1,15 +1,31 @@
 "use client";
 import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./ui/shared";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
+  const [overHero, setOverHero] = useState(true);
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>(".river-hero");
+    if (!hero) return;
+    // Light the nav over the hero only; compare scroll position with its
+    // height (cheaper than an observer for a fixed bar).
+    const update = () => setOverHero(window.scrollY < hero.offsetHeight - 80);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
   return (
     <header
       className="experience-nav"
+      data-over-hero={overHero && !open}
       onKeyDown={(event) => {
         if (event.key === "Escape") setOpen(false);
       }}
@@ -30,6 +46,7 @@ export function MarketingNav() {
             </Link>
           </Button>
           <button
+            type="button"
             className="experience-menu-toggle"
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-expanded={open}

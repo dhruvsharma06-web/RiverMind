@@ -21,10 +21,10 @@ import {
 import { Logo } from "./ui/shared";
 import { ModeStatus, DemoNotice } from "./mode-status";
 import { ThemeToggle } from "./theme-toggle";
-import { AbstractArt } from "./abstract-art";
+import { AuthMenu } from "./auth-menu";
 import { cn } from "@/lib/utils";
 const links = [
-  { href: "/river", label: "Observatory", icon: LayoutDashboard },
+  { href: "/river", label: "Overview", icon: LayoutDashboard },
   { href: "/atlas", label: "River atlas", icon: Map },
   { href: "/bounties", label: "Cleanup quests", icon: Compass },
   { href: "/donate", label: "River treasury", icon: Heart },
@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <aside className="app-sidebar" id="workspace-sidebar">
         <Logo compact={collapsed} />
         <div className="sidebar-chapter">
-          WORKSPACE<span>River care, made collective.</span>
+          WORKSPACE<span>Yamuna, Delhi</span>
         </div>
         <nav aria-label="Application navigation">
           {links.map(({ href, label, icon: Icon }) => (
@@ -61,11 +61,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="sidebar-note">
-          <AbstractArt variant="bloom" />
-          <span className="sidebar-note-kicker">
-            A LITTLE ACTION GOES A LONG WAY
-          </span>
-          <p>Your next good thing starts here.</p>
+          <span className="sidebar-note-kicker">OPEN QUESTS</span>
+          <p>Find a cleanup to claim.</p>
           <Link href="/bounties">
             Find a cleanup quest <ArrowRight size={15} />
           </Link>
@@ -116,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <Link className="topbar-search" href="/bounties">
             <Search size={18} />
-            <span>Find your next cleanup quest</span>
+            <span>Find a cleanup quest</span>
             <ArrowUpRight size={15} />
           </Link>
           <div className="topbar-actions">
@@ -125,6 +122,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               Yamuna, Delhi
             </span>
             <ThemeToggle />
+            <AuthMenu next={pathname} />
             <ModeStatus />
           </div>
         </header>
@@ -158,7 +156,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {children}
         </main>
         <footer className="app-footer">
-          <span>RiverMind · Every action leaves a trace.</span>
+          <span>RiverMind · PayPal AI Hackathon 2026 · Sandbox prototype</span>
           <Link href="/about">
             Built for transparent restoration <ArrowUpRight size={12} />
           </Link>

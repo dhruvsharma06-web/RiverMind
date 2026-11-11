@@ -19,7 +19,6 @@ export function LandingQuest() {
           <article className="experience-quest-card">
             <div className="experience-quest-art">
               <AbstractArt variant="river" />
-              <span>EVERY GOOD STORY STARTS SOMEWHERE.</span>
             </div>
             <div className="experience-quest-copy">
               <StatusBadge status={quest.status} />
@@ -47,7 +46,7 @@ export function LandingQuest() {
                 </div>
                 <Button asChild>
                   <Link href={`/bounties/${quest.id}`}>
-                    Explore this quest
+                    See this quest
                     <ArrowUpRight size={16} />
                   </Link>
                 </Button>
@@ -56,12 +55,11 @@ export function LandingQuest() {
           </article>
         ) : (
           <EmptyState
-            title="Every open quest has found a guardian."
+            title="No open quests right now."
             href="/bounties"
-            action="Explore the quest journal"
+            action="Explore quests"
           >
-            New cleanup opportunities will appear here when they become
-            available.
+            New quests appear here when they open.
           </EmptyState>
         );
       }}

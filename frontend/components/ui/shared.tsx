@@ -66,12 +66,12 @@ export function StatusBadge({ status }: { status: string }) {
   return <Badge tone={tone}>{statusLabels[status] ?? status}</Badge>;
 }
 export function PageHeading({
-  chapter,
   title,
   description,
   action,
 }: {
-  chapter: string;
+  /** Kept for call-site compatibility; no longer rendered. */
+  chapter?: string;
   title: string;
   description: string;
   action?: ReactNode;
@@ -79,7 +79,6 @@ export function PageHeading({
   return (
     <header className="page-heading">
       <div>
-        <Eyebrow>{chapter}</Eyebrow>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
@@ -117,7 +116,7 @@ export function PanelTitle({
   );
 }
 export function EmptyState({
-  title = "A quiet stretch for now.",
+  title = "Nothing here yet.",
   children,
   href,
   action,
@@ -132,8 +131,7 @@ export function EmptyState({
       <Compass size={30} strokeWidth={1} />
       <h3>{title}</h3>
       <p>
-        {children ??
-          "There is nothing to show here yet. New activity will appear as the river's story unfolds."}
+        {children ?? "New items will appear here."}
       </p>
       {href && (
         <Button asChild variant="secondary">
@@ -157,7 +155,7 @@ export function ErrorNotice({
     <div role="alert" className="notice notice-error">
       <AlertCircle size={18} />
       <div>
-        <strong>We couldn’t load this stretch.</strong>
+        <strong>Couldn’t load this data.</strong>
         <p>{error instanceof Error ? error.message : "Please try again."}</p>
       </div>
       {retry && (
@@ -177,19 +175,24 @@ export function Notice({
   success?: boolean;
 }) {
   return (
-    <div className={cn("notice", success && "notice-success")} role="status">
+    <div
+      className={cn("notice", success && "notice-success")}
+      role={success ? "status" : "alert"}
+    >
       {success ? <Check size={18} /> : <AlertCircle size={18} />}
       <div>{children}</div>
     </div>
   );
 }
-export function Skeleton({ lines = 3 }: { lines?: number }) {
+export function Skeleton({
+  lines = 3,
+  label = "Loading…",
+}: {
+  lines?: number;
+  label?: string;
+}) {
   return (
-    <div
-      className="skeleton-stack"
-      role="status"
-      aria-label="Loading river information"
-    >
+    <div className="skeleton-stack" role="status" aria-label={label}>
       {Array.from({ length: lines }, (_, i) => (
         <div
           key={i}

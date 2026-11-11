@@ -16,7 +16,7 @@ from app.models import LedgerEntry, Payout
 from app.services import payouts
 from sqlalchemy import func, select
 
-from tests.conftest import COUNCIL, ai_impl
+from tests.conftest import COUNCIL, ai_impl, worker_headers
 from tests.test_endpoints import API, IK, claim, err, make_bounty, proof, upload_waste
 
 
@@ -215,11 +215,13 @@ def test_ai_timeout_is_503(seeded, monkeypatch):
 def test_two_concurrent_claims_one_wins(seeded):
     bid = seeded.get(f"{API}/bounties").json()["items"][0]["id"]
     results, gate = [], threading.Barrier(2)
+    headers = worker_headers(seeded)
 
     def go(name):
         gate.wait()
         results.append(seeded.post(f"{API}/bounties/{bid}/claim",
-                                   json={"worker_name": name, "paypal_email": f"{name}@example.com"}).status_code)
+                                   json={"worker_name": name, "paypal_email": f"{name}@example.com"},
+                                   headers=headers).status_code)
 
     threads = [threading.Thread(target=go, args=(n,)) for n in ("ana", "ben")]
     [t.start() for t in threads]

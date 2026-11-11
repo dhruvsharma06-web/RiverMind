@@ -4,7 +4,7 @@
   color: var(--dash-ink);
   background: var(--dash-bg);
   font-family: "Geist Variable", system-ui, sans-serif;
-  font-size: 14px;
+  font-size: 17px;
 }
 .landing-experience :is(h1, h2, h3, h4, strong, .numeric) {
   font-family: inherit;
@@ -14,121 +14,6 @@
   color: var(--dash-muted);
 }
 
-/* A short introduction; the page loads underneath it. */
-.landing-welcome {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  background: var(--dash-bg);
-  color: var(--dash-ink);
-  animation: river-welcome-exit 600ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms both;
-}
-.welcome-identity {
-  text-align: center;
-  padding: 24px;
-}
-.welcome-wave {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-  color: var(--dash-accent);
-  animation: river-welcome-rise 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.welcome-wave path {
-  stroke-dasharray: 60;
-  stroke-dashoffset: 60;
-  animation: river-welcome-draw 1000ms cubic-bezier(0.4, 0, 0.2, 1) 100ms
-    forwards;
-}
-.welcome-wave path:nth-child(2) {
-  animation-delay: 220ms;
-}
-.welcome-wave path:nth-child(3) {
-  animation-delay: 340ms;
-}
-.landing-experience .welcome-introducing {
-  margin: 0 0 9px;
-  color: var(--dash-muted);
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  animation: river-welcome-rise 800ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
-}
-.landing-experience .welcome-name {
-  margin: 0;
-  color: var(--dash-ink);
-  font-size: clamp(34px, 5vw, 42px);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -1.8px;
-  animation: river-welcome-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both;
-}
-.welcome-name > span {
-  color: var(--dash-accent);
-}
-.welcome-skip {
-  position: absolute;
-  bottom: max(28px, env(safe-area-inset-bottom));
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--dash-muted);
-  font: inherit;
-  font-size: 11px;
-  cursor: pointer;
-}
-.welcome-skip:hover {
-  color: var(--dash-ink);
-}
-.welcome-skip:focus-visible {
-  outline: 2px solid var(--dash-accent);
-  outline-offset: 3px;
-}
-@keyframes river-welcome-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-@keyframes river-welcome-rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes river-welcome-exit {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .landing-welcome {
-    animation-duration: 120ms;
-    animation-delay: 120ms;
-  }
-  .welcome-wave,
-  .welcome-wave path,
-  .landing-experience :is(.welcome-introducing, .welcome-name) {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
-}
 .landing-experience h2 {
   font-size: clamp(32px, 3.5vw, 49px);
   font-weight: 550;
@@ -147,23 +32,13 @@
   padding: 100px 0;
   scroll-margin-top: 80px;
 }
-.experience-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 9px;
-  line-height: 1.5;
-  letter-spacing: 0.12em;
-  font-weight: 550;
-  color: var(--dash-muted);
-}
 .experience-text-link,
 .experience-story-link {
   display: inline-flex;
   align-items: center;
   gap: 13px;
   min-height: 44px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--dash-ink);
 }
@@ -178,7 +53,7 @@
   border-radius: 10px;
   box-shadow: none;
   min-height: 45px;
-  font-size: 12px;
+  font-size: 15px;
   gap: 18px;
   letter-spacing: 0;
 }
@@ -198,7 +73,7 @@
   border-radius: 6px;
   background: var(--dash-soft);
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 0;
 }
 .landing-experience .badge-aqua {
@@ -219,7 +94,7 @@ html[data-theme="light"] .landing-experience .badge-gold {
 }
 .landing-experience .brand {
   color: var(--dash-ink);
-  font-size: 27px;
+  font-size: 29px;
   font-weight: 650;
   letter-spacing: -1.4px;
   gap: 9px;
@@ -300,7 +175,7 @@ html[data-theme="light"] .landing-experience .badge-gold {
   gap: 34px;
 }
 .experience-nav-links a {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--dash-muted);
   min-height: 44px;
   display: flex;
@@ -316,7 +191,7 @@ html[data-theme="light"] .landing-experience .badge-gold {
 }
 .experience-nav .button {
   min-height: 40px;
-  font-size: 11px;
+  font-size: 14px;
   padding: 10px 15px;
   gap: 14px;
 }
@@ -337,696 +212,344 @@ html[data-theme="light"] .landing-experience .badge-gold {
   background: var(--dash-panel);
 }
 .experience-mobile-nav a {
-  min-height: 44px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   color: var(--dash-muted);
-  font-size: 13px;
+  font-size: 17px;
 }
 
-/* A tactile little river world, built from real CSS depth and vector planes. */
-.river-world {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  perspective: 1100px;
-  transform-style: preserve-3d;
-}
-.world-platform {
-  position: absolute;
-  width: 360px;
-  height: 360px;
-  top: calc(50% - 180px);
-  left: calc(50% - 180px);
-  transform-style: preserve-3d;
-  transform: rotateX(53deg) rotateZ(-28deg);
-}
-.world-map {
-  position: absolute;
-  inset: 0;
-  width: 360px;
-  height: 360px;
-  overflow: hidden;
-  border-radius: 36px;
-  background: #e3efdc;
-  backface-visibility: hidden;
-}
-.world-platform-depth {
-  position: absolute;
-  inset: 0;
-  border-radius: 36px;
-  background: #a6c5ad;
-  transform: translateZ(-24px);
-  box-shadow: 0 0 0 1px #97b69e;
-}
-.world-platform::before {
-  content: "";
-  position: absolute;
-  left: 27px;
-  right: 27px;
-  height: 24px;
-  top: calc(100% - 5px);
-  transform-origin: top;
-  transform: rotateX(-90deg);
-  background: #a5c2ad;
-}
-.world-platform::after {
-  content: "";
-  position: absolute;
-  top: 27px;
-  bottom: 27px;
-  width: 24px;
-  left: calc(100% - 5px);
-  transform-origin: left;
-  transform: rotateY(90deg);
-  background: #b7d1b9;
-}
-.world-cube {
-  position: absolute;
-  width: 43px;
-  height: 43px;
-  background: #fff5dc;
-  transform: translateZ(30px);
-  border-radius: 7px;
-  transform-style: preserve-3d;
-}
-.world-cube::before {
-  content: "";
-  position: absolute;
-  width: 43px;
-  height: 30px;
-  top: 100%;
-  left: 0;
-  background: #93becb;
-  transform-origin: top;
-  transform: rotateX(-90deg);
-}
-.world-cube::after {
-  content: "";
-  position: absolute;
-  width: 30px;
-  height: 43px;
-  top: 0;
-  left: 100%;
-  background: #b9dce4;
-  transform-origin: left;
-  transform: rotateY(90deg);
-}
-.world-cube span {
-  position: absolute;
-  inset: 12px;
-  border-radius: 4px;
-  background: #80bdcc;
-}
-.world-cube-one {
-  top: 61px;
-  left: 54px;
-}
-.world-cube-two {
-  bottom: 46px;
-  right: 42px;
-  transform: translateZ(22px) scale(0.8);
-}
-.world-tree {
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background: #96c960;
-  transform: translateZ(23px);
-  box-shadow:
-    4px 4px 0 #76af4e,
-    -8px 0 0 -3px #b5df88;
-}
-.world-tree-one {
-  top: 38px;
-  right: 43px;
-}
-.world-tree-two {
-  top: 61px;
-  right: 68px;
-  scale: 0.7;
-}
-.world-tree-three {
-  bottom: 52px;
-  left: 44px;
-}
-.world-marker {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 3px solid #fffdf5;
-  border-radius: 50% 50% 50% 7px;
-  transform: translateZ(62px) rotateZ(28deg) rotateX(-53deg);
-  box-shadow: 0 5px 10px #40355b22;
-  transition:
-    box-shadow 200ms,
-    scale 200ms;
-}
-.world-marker-signal {
-  left: 95px;
-  top: 125px;
-  background: #ffb294;
-  color: #6e3a32;
-}
-.world-marker-quest {
-  left: 254px;
-  top: 158px;
-  background: #8fcbd7;
-  color: #285769;
-}
-.world-marker-care {
-  left: 126px;
-  top: 276px;
-  background: #b8e5a1;
-  color: #315a34;
-}
-.world-marker.marker-focused {
-  box-shadow:
-    0 0 0 7px #ffffff30,
-    0 6px 15px #40355b22;
-  scale: 1.1;
-}
-.world-ground-shadow {
-  position: absolute;
-  width: 310px;
-  height: 100px;
-  border-radius: 50%;
-  left: calc(50% - 155px);
-  top: 62%;
-  background: #4e7c6d2b;
-  filter: blur(30px);
-}
-.world-orbit {
-  position: absolute;
-  border: 1px solid var(--dash-line);
-  border-radius: 50%;
-  width: 92%;
-  height: 59%;
-  top: 25%;
-  left: 4%;
-  transform: rotate(-21deg);
-  opacity: 0.75;
-}
-.world-orbit-two {
-  width: 100%;
-  height: 64%;
-  top: 22%;
-  left: 0;
-  opacity: 0.35;
-}
-.world-coordinate {
-  position: absolute;
-  font-size: 8px;
+/* ---------------------------------------------------------------------
+   Landing: hero -> how it works -> live river -> quest -> donate -> FAQ,
+   over a quiet layer of moving water (components/water-backdrop.tsx). Type is set large on purpose: body 17-19px, labels
+   13px minimum.
+   --------------------------------------------------------------------- */
+.landing-experience h2 {
+  font-size: clamp(40px, 5vw, 64px);
   font-weight: 550;
-  line-height: 1.9;
-  letter-spacing: 0.12em;
-  color: var(--dash-muted);
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
 }
-.world-coordinate span {
-  color: var(--dash-muted);
-  font-weight: 400;
+.landing-experience p {
+  line-height: 1.65;
 }
-.world-coordinate-north {
-  top: 55px;
-  right: 26px;
+.landing-experience .button {
+  min-height: 52px;
+  padding-inline: 22px;
+  font-size: 17px;
+  gap: 14px;
 }
-.world-coordinate-south {
-  bottom: 55px;
-  left: 28px;
+.experience-text-link,
+.experience-story-link {
+  font-size: 17px;
+  gap: 10px;
+  text-underline-offset: 6px;
 }
-
-/* Hero */
-.experience-hero {
-  position: relative;
-  padding: 54px 0 66px;
-  overflow: hidden;
-}
-.experience-hero-layout {
-  display: grid;
-  grid-template-columns: 1.08fr 1fr;
-  gap: 30px;
-  align-items: center;
-  min-height: 580px;
-}
-.experience-hero-copy {
-  position: relative;
-  z-index: 2;
-  padding: 10px 0 36px;
-}
-.experience-mini-mark {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: #e0f3ed;
-  color: #27796e;
-  display: grid;
-  place-items: center;
-}
-.landing-experience .experience-hero h1 {
-  font-size: clamp(45px, 4.65vw, 67px);
-  font-weight: 550;
-  line-height: 1.08;
-  letter-spacing: -3.3px;
-  margin: 26px 0 23px;
-}
-.experience-hero h1 > span {
-  color: var(--dash-accent);
-}
-.experience-hero-copy > p {
-  font-size: 15px;
-  line-height: 1.9;
-  max-width: 430px;
+.experience-text-link:hover,
+.experience-story-link:hover {
+  text-decoration: underline;
 }
 .experience-actions {
   display: flex;
   align-items: center;
-  gap: 27px;
   flex-wrap: wrap;
-  margin-top: 29px;
+  gap: 28px;
+  margin-top: 36px;
 }
-.experience-hero-trust {
+.experience-section {
+  padding: clamp(88px, 11vw, 140px) 0;
+  scroll-margin-top: 80px;
+}
+.landing-heading-row {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 25px;
-  color: var(--dash-muted);
-  font-size: 10px;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 48px;
 }
-.experience-hero-trust > svg {
-  color: var(--dash-accent);
-  margin-right: 2px;
-}
-.trust-divider {
-  height: 10px;
-  width: 1px;
-  background: var(--dash-line);
-  margin-inline: 4px;
-}
-.experience-hero-stage {
-  position: relative;
-  height: 545px;
-  min-width: 0;
-}
-.hero-art-shape {
-  position: absolute;
-  width: 91%;
-  height: 82%;
-  background: #5eaaa517;
-  border-radius: 43% 57% 58% 42% / 45% 39% 61% 55%;
-  top: 9%;
-  left: 4%;
-  rotate: -14deg;
-}
-html[data-theme="light"] .hero-art-shape {
-  background: #dfefe9;
-}
-.hero-floating-card {
-  position: absolute;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 15px 17px;
-  border: 1px solid var(--dash-line);
-  border-radius: 14px;
-  background: var(--dash-panel);
-  box-shadow: 0 15px 30px #00000012;
-}
-.hero-floating-card > span {
-  width: 35px;
-  height: 35px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #fff0dd;
-  color: #b97730;
-}
-.hero-floating-card > div {
-  display: grid;
-  gap: 5px;
-}
-.hero-floating-card small {
-  font-size: 7px;
-  letter-spacing: 0.1em;
-}
-.hero-floating-card strong {
-  font-size: 11px;
-  font-weight: 550;
-}
-.hero-floating-signal {
-  left: -10px;
-  top: 59px;
-  rotate: -5deg;
-}
-.hero-floating-care {
-  right: -8px;
-  bottom: 65px;
-  rotate: 5deg;
-}
-.hero-floating-care > span {
-  background: #e5f4d8;
-  color: #508345;
-}
-.hero-scene-caption {
-  position: absolute;
-  bottom: 14px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: var(--dash-muted);
-  font-size: 9px;
-}
-.experience-scroll-cue {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin: 12px auto 0;
-  color: var(--dash-muted);
-  font-size: 8px;
-  letter-spacing: 0.12em;
-  width: max-content;
-  min-height: 44px;
+.landing-heading-row > a {
+  flex-shrink: 0;
+  margin-bottom: 6px;
 }
 
-/* Live snapshot */
-.experience-snapshot {
-  background: var(--dash-panel);
-  border-block: 1px solid var(--dash-line);
+/* Hero: real river footage, full bleed. Text sits on a dark scrim, so the
+   hero reads the same in both themes. */
+.landing-experience .experience-nav {
+  position: fixed;
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease;
+}
+.experience-nav[data-over-hero="true"] {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+.experience-nav[data-over-hero="true"] :is(.brand, .experience-nav-links a) {
+  color: #fff;
+}
+.experience-nav[data-over-hero="true"] .experience-nav-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.experience-nav[data-over-hero="true"] .brand .text-primary {
+  color: #bfe9e2;
+}
+.landing-experience .river-hero {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding: 128px 0 104px;
+  overflow: hidden;
+  background: #0c1a20;
+}
+.landing-experience main > :not(.river-hero),
+.landing-experience .experience-footer {
+  position: relative;
+  z-index: 1;
+}
+.river-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.river-hero-media :is(img, video) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.river-hero-media video {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.river-hero-media video[data-playing="true"] {
+  opacity: 1;
+}
+.river-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(6 22 20 / 0.66) 0%,
+      rgb(6 22 20 / 0.3) 50%,
+      transparent 78%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(6 22 20 / 0.45) 0%,
+      transparent 26%,
+      transparent 68%,
+      rgb(6 22 20 / 0.5) 100%
+    );
+}
+.experience-hero-copy {
+  max-width: 900px;
+}
+.landing-experience .river-hero h1 {
+  margin: 0 0 28px;
+  color: #fff;
+  font-size: clamp(56px, 7vw, 104px);
+  font-weight: 550;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.landing-experience .river-hero h1 > span {
+  color: #bfe9e2;
+}
+.landing-experience .river-hero .experience-hero-copy > p {
+  max-width: 34ch;
+  color: rgb(255 255 255 / 0.9);
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.6;
+}
+.river-hero .button {
+  background: #fff;
+  border-color: #fff;
+  color: #10242c;
+}
+.river-hero .button:hover {
+  background: #e6f3f1;
+  border-color: #e6f3f1;
+  color: #10242c;
+}
+.river-hero .experience-story-link {
+  color: #fff;
+}
+/* How it works: heading beside the three steps. Sections stay transparent
+   so the water backdrop shows between them; cards keep solid surfaces. */
+.landing-steps-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(48px, 7vw, 112px);
+  align-items: start;
+}
+.landing-steps-grid > h2 {
+  position: sticky;
+  top: 120px;
+}
+.step-list {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+}
+.step-list li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  column-gap: 16px;
+  padding: 28px 0;
+  border-top: 1px solid var(--dash-line);
+}
+.step-list li:last-child {
+  border-bottom: 1px solid var(--dash-line);
+}
+.step-list li::before {
+  content: counter(step);
+  grid-row: span 2;
+  color: var(--dash-accent);
+  font-size: 17px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  padding-top: 8px;
+}
+.landing-experience .step-list h3 {
+  font-size: clamp(26px, 2.4vw, 32px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.step-list p {
+  margin-top: 8px;
+  max-width: 46ch;
+  font-size: 18px;
+}
+/* The river right now. */
+.landing-live-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 32px;
+  align-items: stretch;
 }
 .landing-experience .landing-stats {
-  padding: 35px 0;
-  grid-template-columns: 1.1fr repeat(4, 1fr);
-  gap: 20px;
-  min-height: 125px;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 0;
+  min-height: 0;
+  padding: 0;
   border: 0;
 }
 .landing-experience .stats-intro {
-  gap: 9px;
-}
-.landing-experience .stats-intro .tiny-label {
-  color: var(--dash-ink);
-  font-size: 8px;
-  letter-spacing: 0.08em;
+  grid-column: 1 / -1;
+  padding-bottom: 20px;
 }
 .landing-experience .stats-source {
   color: var(--dash-muted);
-  font-size: 10px;
-  line-height: 1.6;
+  font-size: 15px;
 }
 .landing-experience .landing-stat {
-  border-color: var(--dash-line);
-  padding-left: 23px;
+  border-left: 0;
+  border-top: 1px solid var(--dash-line);
+  padding: 28px 0;
+  gap: 8px;
 }
 .landing-experience .landing-stat > span:first-child {
   font-family: inherit;
-  font-size: 27px;
-  letter-spacing: -1.1px;
+  font-size: clamp(36px, 3.4vw, 48px);
   font-weight: 550;
+  letter-spacing: -0.03em;
   color: var(--dash-ink);
 }
 .landing-experience .landing-stat small {
   font-family: inherit;
   color: var(--dash-muted);
-  font-size: 8px;
+  font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
 }
 .landing-experience .landing-stat > span:last-child {
   color: var(--dash-muted);
-  font-size: 10px;
-}
-
-/* Project overview and ways to participate. */
-.experience-purpose {
-  background: var(--dash-panel);
-  border-block: 1px solid var(--dash-line);
-}
-.experience-section-heading {
-  max-width: 750px;
-  margin-bottom: 43px;
-}
-.experience-section-heading h2 {
-  margin-top: 19px;
-}
-.experience-section-heading > p {
-  max-width: 540px;
-  font-size: 14px;
-  line-height: 1.9;
-  margin-top: 23px;
-}
-.experience-heading-row {
-  max-width: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 70px;
-}
-.experience-heading-row > p {
-  width: 355px;
-  font-size: 12px;
-  margin-bottom: 3px;
-}
-.experience-heading-row > a {
-  margin-bottom: 4px;
-  flex-shrink: 0;
-}
-.experience-purpose-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-}
-.purpose-card {
-  border: 1px solid var(--dash-line);
-  border-radius: 18px;
-  background: var(--dash-bg);
-  padding: 28px;
-}
-.purpose-card > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.purpose-card > div > span {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: #ffeddf;
-  color: #a3653b;
-}
-.purpose-aqua > div > span {
-  background: #def2ee;
-  color: #2f7f75;
-}
-.purpose-green > div > span {
-  background: #e2f3e7;
-  color: #397b54;
-}
-.purpose-card > div > small {
-  font-size: 11px;
-}
-.purpose-card h3 {
-  font-size: 19px;
-  line-height: 1.3;
-  margin-top: 29px;
-}
-.purpose-card p {
-  font-size: 12px;
-  line-height: 1.9;
-  margin-top: 13px;
-  max-width: 270px;
-}
-.experience-workspace-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
-.experience-workspace-card {
-  padding: 25px;
-  border: 1px solid var(--dash-line);
-  border-radius: 22px;
-  background: var(--dash-panel);
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.workspace-preview-heading {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 25px;
-}
-.workspace-preview-heading > span {
-  width: 41px;
-  height: 41px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: var(--dash-soft);
-  color: var(--dash-accent);
-}
-.workspace-preview-heading h3 {
   font-size: 16px;
 }
-.workspace-preview-heading p {
-  font-size: 10px;
-  margin-top: 6px;
-  line-height: 1.6;
-}
-.experience-workspace-card > .experience-text-link {
-  margin-top: auto;
-  padding-top: 19px;
+.landing-experience .landing-stats > .skeleton-stack,
+.landing-experience .landing-stats > .notice {
+  grid-column: 1 / -1;
 }
 .landing-experience .atlas-preview {
   background: #152b35;
   border: 0;
-  border-radius: 13px;
+  border-radius: 18px;
+}
+.landing-experience .atlas-preview::after {
+  display: none;
 }
 .landing-experience .atlas-preview .badge {
-  background: #ffffff12;
-  color: #d6e3df;
-}
-.landing-experience .preview-river-map {
-  min-height: 270px;
+  background: #ffffff14;
+  color: #e3ece9;
+  font-size: 14px;
 }
 .landing-experience .atlas-preview-top .tiny-label {
-  font-size: 6px;
-  color: #bed0c7;
+  font-size: 13px;
+  margin-right: 44px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #c6d6cf;
 }
-.landing-experience .atlas-preview-caption {
-  background: #11272f;
-  padding: 15px;
-  color: #d9e3dc;
+.landing-experience .preview-river-map {
+  min-height: 100%;
+  height: 100%;
 }
-.landing-experience .atlas-preview-caption strong {
-  font-family: inherit;
-  color: #d9e3dc;
-  font-size: 10px;
-}
-.landing-experience .atlas-preview-caption span {
-  color: #a7beb4;
-  font-size: 8px;
-}
-.landing-experience .atlas-preview-caption .button {
-  background: #ffffff0e;
-  border-color: #ffffff30;
-  color: #fff;
-  padding: 7px;
-  width: 33px;
-  min-height: 33px;
-}
-.landing-experience .observatory-preview {
-  background: var(--dash-bg);
-  border: 0;
-  padding: 22px 20px 15px;
-  border-radius: 13px;
-  flex: 1;
-}
-.landing-experience .observatory-preview .panel-title {
-  margin-bottom: 16px;
-}
-.landing-experience .observatory-preview .tiny-label {
-  color: var(--dash-muted);
-  font-size: 7px;
-}
-.landing-experience .observatory-preview h3 {
-  font-family: inherit;
-  font-size: 20px;
-  margin-top: 5px;
-  color: var(--dash-ink);
-}
-.landing-experience .preview-metrics {
-  border-color: var(--dash-line);
-  margin-bottom: 10px;
-  padding: 17px 0;
-}
-.landing-experience .preview-metrics > div + div {
-  border-color: var(--dash-line);
-}
-.landing-experience .preview-metrics strong {
-  font-family: inherit;
-  color: var(--dash-ink);
-  font-size: 21px;
-  font-weight: 500;
-}
-.landing-experience .preview-metrics :is(span, small) {
-  color: var(--dash-muted);
-  font-size: 8px;
-}
-.landing-experience .readings-chart {
-  height: 175px;
-}
-.landing-experience .chart-source {
-  color: var(--dash-muted);
-  font-size: 9px;
-}
-.experience-quests {
-  padding-top: 15px;
-}
+
+/* Featured quest. */
 .experience-quest-card {
   display: grid;
-  grid-template-columns: 0.86fr 1.4fr;
+  grid-template-columns: 0.8fr 1.4fr;
   border: 1px solid var(--dash-line);
-  border-radius: 24px;
+  border-radius: 22px;
   background: var(--dash-panel);
   overflow: hidden;
 }
 .experience-quest-art {
   position: relative;
-  min-height: 360px;
+  min-height: 380px;
 }
 .experience-quest-art > .abstract-art {
   position: absolute;
   inset: 0;
 }
-.experience-quest-art > span {
-  position: absolute;
-  bottom: 23px;
-  left: 25px;
-  right: 25px;
-  width: fit-content;
-  padding: 7px 9px;
-  border-radius: 6px;
-  background: #ffffffed;
-  color: #2b4c54;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1.7;
-}
 .experience-quest-copy {
-  padding: 36px 39px;
+  padding: clamp(28px, 4vw, 48px);
 }
-.experience-quest-copy h3 {
-  font-size: 27px;
-  letter-spacing: -0.9px;
-  line-height: 1.3;
-  margin-top: 19px;
-  max-width: 500px;
+.landing-experience .experience-quest-copy h3 {
+  font-size: clamp(28px, 2.6vw, 36px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-top: 18px;
+  max-width: 24ch;
 }
 .experience-quest-copy > p {
-  font-size: 12px;
-  line-height: 1.9;
-  margin-top: 15px;
-  max-width: 510px;
+  font-size: 18px;
+  margin-top: 14px;
+  max-width: 54ch;
 }
 .experience-quest-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 21px;
-  margin-top: 19px;
+  gap: 24px;
+  margin-top: 20px;
   color: var(--dash-muted);
-  font-size: 10px;
+  font-size: 15px;
 }
 .experience-quest-meta > span {
   display: inline-flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 .experience-quest-reward {
@@ -1034,63 +557,46 @@ html[data-theme="light"] .hero-art-shape {
   justify-content: space-between;
   gap: 20px;
   align-items: center;
+  flex-wrap: wrap;
   border-top: 1px solid var(--dash-line);
-  margin-top: 28px;
-  padding-top: 23px;
+  margin-top: 32px;
+  padding-top: 26px;
 }
 .experience-quest-reward > div {
   display: grid;
-  gap: 5px;
+  gap: 6px;
 }
 .experience-quest-reward small,
 .experience-quest-reward > div > span {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--dash-muted);
 }
 .experience-quest-reward strong {
-  font-size: 27px;
+  font-size: 36px;
   font-weight: 550;
-  letter-spacing: -0.9px;
+  letter-spacing: -0.02em;
 }
-.experience-funding {
-  border-block: 1px solid var(--dash-line);
+
+/* Donate. */
+.landing-experience main > section.landing-funding {
   background: var(--dash-panel);
+  border-block: 1px solid var(--dash-line);
 }
-.experience-funding-grid {
+.landing-funding-grid {
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 110px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(48px, 8vw, 120px);
   align-items: center;
 }
-.experience-funding h2 {
-  margin-top: 20px;
-}
-.experience-funding-grid > div:first-child > p {
-  font-size: 13px;
-  line-height: 1.9;
-  margin-top: 23px;
-  max-width: 440px;
-}
-.funding-principles {
-  display: grid;
-  gap: 15px;
-  margin: 28px 0;
-}
-.funding-principles > span {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  font-size: 11px;
-  color: var(--dash-muted);
-}
-.funding-principles svg {
-  color: var(--dash-accent);
+.landing-funding-grid > div:first-child > p {
+  margin: 24px 0 36px;
+  max-width: 44ch;
+  font-size: 19px;
 }
 .funding-honesty {
   display: block;
-  font-size: 8px;
-  line-height: 1.8;
-  margin-top: 17px;
+  margin-top: 18px;
+  font-size: 14px;
 }
 .landing-experience .treasury-receipt {
   background: var(--dash-bg);
@@ -1104,166 +610,78 @@ html[data-theme="light"] .hero-art-shape {
   border-color: var(--dash-line);
   color: var(--dash-accent);
 }
-.landing-experience .receipt-head > span {
+.landing-experience .receipt-head > span:not(.badge),
+.landing-experience .receipt-total > span {
   color: var(--dash-muted);
+  font-size: 15px;
+  letter-spacing: 0;
 }
 .landing-experience .receipt-total > strong {
   color: var(--dash-ink);
   font-family: inherit;
-  font-size: 47px;
+  font-size: clamp(44px, 4.4vw, 60px);
   font-weight: 550;
-  letter-spacing: -2px;
+  letter-spacing: -0.03em;
 }
-.landing-experience
-  :is(
-    .receipt-total > span,
-    .receipt-total p,
-    .receipt-lines > div,
-    .receipt-note
-  ) {
+.landing-experience :is(.receipt-total p, .receipt-lines > div) {
   color: var(--dash-muted);
+  font-size: 15px;
 }
 .landing-experience .receipt-lines {
   border-color: var(--dash-line);
+  margin-bottom: 0;
 }
 .landing-experience .receipt-lines strong {
   color: var(--dash-ink);
   font-weight: 500;
 }
 .landing-experience .receipt-link {
+  margin-top: 24px;
   background: var(--dash-soft);
   color: var(--dash-accent);
+  font-size: 15px;
 }
-.landing-experience .river-diary {
-  max-width: 760px;
-}
-.landing-experience .river-diary .diary-symbol {
-  color: var(--dash-accent);
-}
-.landing-experience .river-diary .eyebrow {
-  color: var(--dash-muted);
-  font-size: 8px;
-  justify-content: center;
-}
-.landing-experience .river-diary .eyebrow-line {
-  display: none;
-}
-.landing-experience .river-diary blockquote {
-  color: var(--dash-ink);
-  font-family: inherit;
-  font-size: 25px;
-  font-weight: 400;
-  letter-spacing: -0.6px;
-  line-height: 1.6;
-}
-.landing-experience .diary-meta {
-  color: var(--dash-muted);
-  font-size: 8px;
-}
-.experience-faq {
-  background: var(--dash-panel);
-  border-block: 1px solid var(--dash-line);
-}
-.experience-faq-layout {
+
+/* FAQ. */
+.landing-faq-layout {
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 110px;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(40px, 7vw, 110px);
   align-items: start;
-}
-.experience-faq h2 {
-  margin-top: 20px;
-}
-.experience-faq-layout > div:first-child > p {
-  font-size: 12px;
-  line-height: 1.9;
-  margin-top: 21px;
-  max-width: 300px;
-}
-.experience-faq-layout > div:first-child > .experience-text-link {
-  margin-top: 14px;
 }
 .landing-experience .faq-list details {
   border-color: var(--dash-line);
 }
 .landing-experience .faq-list summary {
   color: var(--dash-ink);
-  font-size: 12px;
-  line-height: 1.7;
-  min-height: 65px;
-  padding: 18px 0;
+  font-size: clamp(19px, 1.6vw, 22px);
+  font-weight: 500;
+  line-height: 1.4;
+  min-height: 72px;
+  padding: 22px 0;
 }
 .landing-experience .faq-list .faq-plus {
   color: var(--dash-accent);
-  font-size: 22px;
+  font-size: 28px;
 }
 .landing-experience .faq-list details > p {
   color: var(--dash-muted);
-  font-size: 11px;
-  line-height: 1.9;
-  padding-bottom: 23px;
+  font-size: 18px;
+  max-width: 60ch;
+  padding-bottom: 26px;
 }
-.experience-invitation {
-  padding: 75px 0;
-}
-.experience-invitation > .experience-container {
-  position: relative;
-  overflow: hidden;
-  background: #dceff1;
-  border-radius: 27px;
-  min-height: 375px;
-}
-.invitation-art {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 48%;
-}
-.experience-invitation-copy {
-  position: relative;
-  z-index: 2;
-  padding: 51px 55px;
-  width: 70%;
-}
-.experience-invitation-copy::before {
-  content: "";
-  position: absolute;
-  inset: 0 -20% 0 0;
-  z-index: -1;
-  background: linear-gradient(90deg, #dceff1 63%, #dceff100);
-}
-.experience-invitation-copy .experience-kicker {
-  color: #4d7379;
-}
-.landing-experience .experience-invitation h2 {
-  color: #21454f;
-  margin-top: 18px;
-  font-size: clamp(38px, 4.2vw, 59px);
-  letter-spacing: -2.5px;
-}
-.experience-invitation-copy > p {
-  color: #4d7379;
-  font-size: 12px;
-  margin-top: 19px;
-}
-.experience-invitation-copy .button {
-  background: #21454f;
-  border-color: #21454f;
-  color: #fff;
-}
-.experience-invitation-copy .experience-story-link {
-  color: #21454f;
-}
+
+/* Footer. */
 .experience-footer {
   border-top: 1px solid var(--dash-line);
-  padding-top: 48px;
+  padding-top: 56px;
   background: var(--dash-panel);
 }
 .experience-footer-top {
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
   gap: 45px;
-  padding-bottom: 40px;
+  padding-bottom: 44px;
 }
 .experience-footer-top > div {
   display: flex;
@@ -1272,96 +690,35 @@ html[data-theme="light"] .hero-art-shape {
 }
 .experience-footer h3 {
   color: var(--dash-ink);
-  font-size: 11px;
-  margin-bottom: 18px;
+  font-size: 16px;
+  margin-bottom: 16px;
 }
 .experience-footer-top > div:not(:first-child) > :is(a, span) {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-height: 32px;
   color: var(--dash-muted);
-  font-size: 10px;
-  line-height: 1.7;
-  margin-bottom: 12px;
+  font-size: 16px;
+  margin-bottom: 6px;
 }
-.experience-footer-top > div:first-child > p {
-  font-size: 11px;
-  line-height: 1.8;
-  margin-top: 16px;
+.experience-footer-top a:hover {
+  color: var(--dash-ink);
 }
 .experience-footer-bottom {
   border-top: 1px solid var(--dash-line);
-  padding-block: 20px;
+  padding-block: 22px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  font-size: 9px;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  font-size: 14px;
   color: var(--dash-muted);
 }
-.experience-footer-bottom a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-@media (min-width: 1680px) {
-  .experience-hero {
-    padding-top: 70px;
-  }
-  .experience-hero-layout {
-    min-height: 660px;
-  }
-  .experience-hero-stage {
-    height: 600px;
-  }
-  .experience-hero-stage .world-platform {
-    scale: 1.12;
-  }
-}
 @media (max-width: 1100px) {
   .experience-container {
     width: calc(100% - 72px);
-  }
-  .experience-hero-layout {
-    grid-template-columns: 1.05fr 1fr;
-    gap: 10px;
-    min-height: 530px;
-  }
-  .landing-experience .experience-hero h1 {
-    font-size: 51px;
-    letter-spacing: -2.6px;
-  }
-  .experience-hero-copy > p {
-    font-size: 13px;
-  }
-  .experience-hero-stage {
-    height: 480px;
-  }
-  .hero-floating-card {
-    padding: 12px;
-    gap: 8px;
-  }
-  .hero-floating-card > span {
-    width: 29px;
-    height: 29px;
-  }
-  .hero-floating-card small {
-    font-size: 6px;
-  }
-  .hero-floating-card strong {
-    font-size: 9px;
-  }
-  .hero-floating-signal {
-    left: -20px;
-    top: 48px;
-  }
-  .hero-floating-care {
-    right: -6px;
-    bottom: 51px;
-  }
-  .experience-hero-stage .world-platform {
-    scale: 0.9;
   }
   .experience-nav-inner {
     width: calc(100% - 54px);
@@ -1371,49 +728,36 @@ html[data-theme="light"] .hero-art-shape {
     gap: 23px;
   }
   .experience-nav-links a {
-    font-size: 11px;
+    font-size: 14px;
   }
-  .world-coordinate-south {
-    left: 15px;
+}
+@media (max-width: 900px) {
+  .landing-steps-grid > h2 {
+    position: static;
   }
-  .experience-funding-grid,
-  .experience-faq-layout {
-    gap: 65px;
+  .landing-steps-grid,
+  .landing-live-grid,
+  .landing-funding-grid,
+  .landing-faq-layout,
+  .experience-quest-card {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .experience-quest-copy {
-    padding: 29px;
+  .experience-quest-art {
+    min-height: 220px;
   }
-  .experience-quest-copy h3 {
-    font-size: 24px;
+  .landing-experience .preview-river-map {
+    min-height: 320px;
   }
-  .experience-workspace-grid {
-    gap: 20px;
+  .experience-footer-top {
+    grid-template-columns: 1fr 1fr;
   }
-  .experience-workspace-card {
-    padding: 21px;
-  }
-  .landing-experience .observatory-preview {
-    padding-inline: 15px;
-  }
-  .landing-experience .preview-metrics > div + div {
-    padding-left: 12px;
-  }
-  .landing-experience .landing-stats {
-    gap: 14px;
-  }
-  .landing-experience .landing-stat {
-    padding-left: 17px;
-  }
-  .landing-experience .landing-stat > span:first-child {
-    font-size: 25px;
+  .experience-footer-top > div:first-child {
+    grid-column: 1 / -1;
   }
 }
 @media (max-width: 800px) {
   .experience-container {
     width: calc(100% - 48px);
-  }
-  .experience-section {
-    padding-block: 75px;
   }
   .experience-nav-inner {
     width: calc(100% - 48px);
@@ -1429,190 +773,33 @@ html[data-theme="light"] .hero-art-shape {
   .experience-nav-actions {
     gap: 10px;
   }
-  .experience-hero {
-    padding-top: 30px;
-    padding-bottom: 35px;
+  .landing-experience .river-hero {
+    padding: 112px 0 96px;
   }
-  .experience-hero-layout {
-    grid-template-columns: 1fr;
-    min-height: 0;
-    gap: 0;
+  .river-hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgb(8 18 24 / 0.62) 0%,
+      rgb(8 18 24 / 0.48) 55%,
+      rgb(8 18 24 / 0.7) 100%
+    );
   }
-  .experience-hero-copy {
-    padding: 22px 0 0;
-    max-width: 560px;
-  }
-  .landing-experience .experience-hero h1 {
-    font-size: 59px;
-    max-width: 580px;
-    letter-spacing: -3px;
-  }
-  .experience-hero-copy > p {
-    max-width: 420px;
-    font-size: 14px;
-  }
-  .experience-hero-stage {
-    width: min(520px, 100%);
-    height: 455px;
-    margin: 14px auto 0;
-  }
-  .hero-floating-signal {
-    top: 37px;
-    left: 12px;
-  }
-  .hero-floating-care {
-    bottom: 48px;
-    right: 10px;
-  }
-  .hero-art-shape {
-    height: 86%;
-  }
-  .experience-hero-stage .world-platform {
-    scale: 0.96;
-  }
-  .experience-scroll-cue {
-    margin-top: 7px;
-  }
-  .landing-experience .landing-stats {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 17px;
-    padding-block: 26px;
-  }
-  .landing-experience .stats-intro {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .landing-experience .landing-stat {
-    padding-left: 15px;
-  }
-  .landing-experience .landing-stat:nth-child(2) {
-    padding-left: 0;
-    border: 0;
-  }
-  .landing-experience .landing-stat > span:first-child {
-    font-size: 25px;
-  }
-  .landing-experience .landing-stat > span:last-child {
-    font-size: 9px;
-  }
-  .experience-heading-row {
-    gap: 35px;
-  }
-  .experience-heading-row > p {
-    max-width: 280px;
-    font-size: 11px;
-  }
-  .experience-purpose-grid {
-    gap: 15px;
-  }
-  .purpose-card {
-    padding: 21px;
-  }
-  .purpose-card h3 {
-    font-size: 17px;
-  }
-  .purpose-card p {
-    font-size: 11px;
-  }
-  .experience-workspace-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-  .experience-workspace-card {
-    padding: 25px;
-  }
-  .landing-experience .preview-river-map {
-    max-height: 360px;
-  }
-  .experience-quests {
-    padding-top: 0;
-  }
-  .experience-quest-card {
-    grid-template-columns: 0.68fr 1fr;
-  }
-  .experience-quest-copy {
-    padding: 25px;
-  }
-  .experience-quest-copy h3 {
-    font-size: 21px;
-  }
-  .experience-quest-copy > p {
-    font-size: 11px;
-  }
-  .experience-quest-reward {
-    gap: 14px;
-    align-items: flex-start;
+  .landing-heading-row {
     flex-direction: column;
-  }
-  .experience-quest-meta {
-    font-size: 9px;
-    gap: 12px;
-  }
-  .experience-funding-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 35px;
-  }
-  .experience-funding h2 {
-    font-size: 37px;
-  }
-  .experience-funding-grid > div:first-child > p {
-    font-size: 12px;
-  }
-  .funding-principles > span {
-    font-size: 9px;
     align-items: flex-start;
-    line-height: 1.8;
-  }
-  .landing-experience .treasury-receipt {
-    padding-inline: 24px;
-  }
-  .landing-experience .receipt-link {
-    margin-inline: -24px;
-    padding-inline: 24px;
-  }
-  .landing-experience .receipt-total > strong {
-    font-size: 37px;
-  }
-  .landing-experience .receipt-note {
-    line-height: 1.7;
-  }
-  .experience-faq-layout {
-    gap: 45px;
-    grid-template-columns: 0.8fr 1.2fr;
-  }
-  .experience-faq h2 {
-    font-size: 35px;
-  }
-  .experience-invitation-copy {
-    padding: 40px 34px;
-  }
-  .experience-invitation-copy .experience-actions {
-    gap: 18px;
-  }
-  .experience-footer-top {
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 30px;
-  }
-  .experience-footer-top > div:last-child {
-    display: none;
+    gap: 12px;
   }
 }
 @media (max-width: 540px) {
   .experience-container {
-    width: calc(100% - 38px);
-  }
-  .experience-section {
-    padding-block: 59px;
-    scroll-margin-top: 72px;
+    width: calc(100% - 40px);
   }
   .experience-nav-inner {
     width: calc(100% - 38px);
     gap: 14px;
   }
   .landing-experience .brand {
-    font-size: 24px;
+    font-size: 26px;
   }
   .landing-experience .brand-mark {
     width: 30px;
@@ -1630,391 +817,17 @@ html[data-theme="light"] .hero-art-shape {
     height: 37px;
     min-height: 37px;
   }
-  .experience-hero {
-    padding-top: 21px;
-    padding-bottom: 23px;
-  }
-  .experience-hero-copy {
-    padding-top: 15px;
-  }
-  .experience-hero-copy > .experience-kicker {
-    font-size: 7px;
-    letter-spacing: 0.08em;
-  }
-  .experience-mini-mark {
-    width: 23px;
-    height: 23px;
-    border-radius: 7px;
-  }
-  .landing-experience .experience-hero h1 {
-    font-size: clamp(41px, 10.8vw, 53px);
-    line-height: 1.09;
-    letter-spacing: -2.5px;
-    margin: 23px 0 20px;
-  }
-  .experience-hero-copy > p {
-    font-size: 12px;
-    max-width: 310px;
-  }
-  .experience-actions {
-    gap: 19px;
-    margin-top: 25px;
-  }
-  .landing-experience .experience-hero .button {
-    padding: 12px 14px;
-    font-size: 10px;
-    gap: 10px;
-  }
-  .experience-story-link {
-    font-size: 11px;
-    gap: 9px;
-  }
-  .experience-hero-trust {
-    font-size: 8px;
-    gap: 6px;
-    margin-top: 19px;
-  }
-  .trust-divider {
-    margin-inline: 1px;
-  }
-  .experience-hero-stage {
-    height: 355px;
-    margin-top: 7px;
-  }
-  .experience-hero-stage .world-platform {
-    scale: 0.77;
-  }
-  .world-coordinate {
-    display: none;
-  }
-  .hero-floating-card {
-    border-radius: 11px;
-    padding: 10px;
-    gap: 7px;
-  }
-  .hero-floating-card > span {
-    width: 27px;
-    height: 27px;
-    border-radius: 8px;
-  }
-  .hero-floating-card svg {
-    width: 15px;
-  }
-  .hero-floating-card small {
-    font-size: 5px;
-  }
-  .hero-floating-card strong {
-    font-size: 8px;
-  }
-  .hero-floating-signal {
-    top: 15px;
-    left: 3px;
-  }
-  .hero-floating-care {
-    right: 1px;
-    bottom: 26px;
-  }
-  .hero-scene-caption {
-    bottom: 0;
-    font-size: 7px;
-  }
-  .world-ground-shadow {
-    width: 230px;
-    left: calc(50% - 115px);
-    height: 65px;
-    filter: blur(25px);
-  }
-  .experience-scroll-cue {
-    font-size: 6px;
-    margin-top: 14px;
-    gap: 10px;
-  }
-  .landing-experience .landing-stats {
-    grid-template-columns: 1fr 1fr;
-    gap: 23px 18px;
-    padding: 25px 0;
-  }
-  .landing-experience .stats-intro {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding-bottom: 2px;
-  }
-  .landing-experience .stats-intro .tiny-label {
-    font-size: 8px;
-  }
-  .landing-experience .stats-source {
-    font-size: 9px;
-  }
-  .landing-experience .landing-stat {
-    min-height: 52px;
-    gap: 7px;
-  }
-  .landing-experience .landing-stat:nth-child(4) {
-    padding-left: 0;
-    border: 0;
+  .landing-experience .river-hero h1 {
+    font-size: clamp(44px, 12.5vw, 56px);
   }
   .landing-experience .landing-stat > span:first-child {
-    font-size: 26px;
-  }
-  .landing-experience .landing-stat small {
-    font-size: 8px;
-  }
-  .experience-section-heading {
-    margin-bottom: 28px;
-  }
-  .experience-section-heading h2 {
-    margin-top: 15px;
-    font-size: 34px;
-    letter-spacing: -1.5px;
-  }
-  .experience-section-heading > p {
-    font-size: 11px;
-    margin-top: 20px;
-  }
-  .experience-heading-row {
-    display: block;
-  }
-  .experience-heading-row > p {
-    width: auto;
-    max-width: 310px;
-    margin-top: 20px;
-  }
-  .experience-heading-row > a {
-    margin-top: 15px;
-    margin-bottom: 0;
-  }
-  .experience-purpose-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  .purpose-card {
-    padding: 23px;
-  }
-  .purpose-card > div > span {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-  }
-  .purpose-card h3 {
-    margin-top: 22px;
-    font-size: 19px;
-  }
-  .purpose-card p {
-    font-size: 11px;
-    max-width: 275px;
-  }
-  .experience-workspace-card {
-    padding: 20px;
-    border-radius: 18px;
-  }
-  .workspace-preview-heading {
-    gap: 9px;
-    margin-bottom: 20px;
-  }
-  .workspace-preview-heading > span {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-  }
-  .workspace-preview-heading h3 {
-    font-size: 14px;
-  }
-  .workspace-preview-heading p {
-    font-size: 8px;
-  }
-  .landing-experience .atlas-preview-top {
-    inset: 12px 12px auto;
-  }
-  .landing-experience .atlas-preview-top > .tiny-label {
-    display: none;
-  }
-  .landing-experience .atlas-preview-top .badge {
-    font-size: 8px;
-  }
-  .landing-experience .preview-river-map {
-    min-height: 240px;
-  }
-  .landing-experience .atlas-preview-caption {
-    padding: 12px;
-    gap: 8px;
-  }
-  .landing-experience .atlas-preview-caption strong {
-    font-size: 9px;
-  }
-  .landing-experience .atlas-preview-caption span {
-    font-size: 7px;
-    line-height: 1.6;
-  }
-  .landing-experience .observatory-preview {
-    padding-inline: 14px;
-  }
-  .landing-experience .observatory-preview h3 {
-    font-size: 18px;
-  }
-  .landing-experience .preview-metrics strong {
-    font-size: 19px;
-  }
-  .landing-experience .preview-metrics small {
-    font-size: 7px;
-    margin-left: 2px;
-  }
-  .landing-experience .preview-metrics > div + div {
-    padding-left: 9px;
-  }
-  .landing-experience .readings-chart {
-    height: 160px;
-  }
-  .experience-quests {
-    padding-top: 0;
-  }
-  .experience-quest-card {
-    grid-template-columns: 1fr;
-    border-radius: 20px;
-  }
-  .experience-quest-art {
-    min-height: 210px;
-  }
-  .experience-quest-art > span {
-    font-size: 6px;
-    bottom: 16px;
-    left: 21px;
-  }
-  .experience-quest-copy {
-    padding: 24px;
-  }
-  .experience-quest-copy h3 {
-    font-size: 23px;
-  }
-  .experience-quest-reward {
-    flex-direction: row;
-    align-items: center;
-    gap: 13px;
+    font-size: 32px;
   }
   .experience-quest-reward .button {
-    padding: 11px 12px;
-    font-size: 10px;
-    gap: 7px;
-  }
-  .experience-quest-reward strong {
-    font-size: 24px;
-  }
-  .experience-quest-reward small,
-  .experience-quest-reward > div > span {
-    font-size: 7px;
-  }
-  .experience-funding-grid {
-    grid-template-columns: 1fr;
-    gap: 35px;
-  }
-  .experience-funding h2 {
-    font-size: 35px;
-    letter-spacing: -1.6px;
-  }
-  .funding-principles > span {
-    font-size: 10px;
-  }
-  .landing-experience .treasury-receipt {
-    padding: 24px 26px 0;
-  }
-  .landing-experience .receipt-link {
-    margin-inline: -26px;
-    padding-inline: 26px;
-  }
-  .landing-experience .receipt-total > strong {
-    font-size: 42px;
-  }
-  .landing-experience .river-diary blockquote {
-    font-size: 20px;
-    line-height: 1.7;
-    letter-spacing: -0.5px;
-  }
-  .landing-experience .diary-meta {
-    flex-direction: column;
-    gap: 6px;
-    font-size: 7px;
-  }
-  .experience-faq-layout {
-    grid-template-columns: 1fr;
-    gap: 23px;
-  }
-  .experience-faq h2 {
-    font-size: 34px;
-  }
-  .landing-experience .faq-list summary {
-    font-size: 11px;
-    min-height: 65px;
-  }
-  .landing-experience .faq-list details > p {
-    font-size: 10px;
-  }
-  .experience-invitation {
-    padding-block: 42px;
-  }
-  .experience-invitation > .experience-container {
-    min-height: 0;
-    border-radius: 20px;
-  }
-  .experience-invitation-copy {
     width: 100%;
-    padding: 35px 26px 165px;
-  }
-  .experience-invitation-copy::before {
-    inset: 0;
-    background: linear-gradient(180deg, #dceff1 68%, #dceff100);
-  }
-  .experience-invitation-copy .experience-kicker {
-    font-size: 6px;
-  }
-  .landing-experience .experience-invitation h2 {
-    font-size: 44px;
-    letter-spacing: -2px;
-  }
-  .experience-invitation-copy > p {
-    font-size: 10px;
-  }
-  .experience-invitation-copy .experience-actions {
-    gap: 12px;
-  }
-  .experience-invitation-copy .button {
-    padding: 12px;
-    font-size: 10px;
-    gap: 9px;
-  }
-  .experience-invitation-copy .experience-story-link {
-    font-size: 10px;
-    gap: 7px;
-  }
-  .invitation-art {
-    width: 100%;
-    height: 190px;
-    top: auto;
-    bottom: 0;
-  }
-  .experience-footer {
-    padding-top: 35px;
   }
   .experience-footer-top {
-    grid-template-columns: 1fr 1fr;
-    gap: 30px 25px;
-    padding-bottom: 27px;
-  }
-  .experience-footer-top > div:first-child {
-    grid-column: 1 / -1;
-  }
-  .experience-footer-top > div:first-child > p {
-    font-size: 10px;
-  }
-  .experience-footer-top > div:not(:first-child) > :is(a, span) {
-    font-size: 10px;
-  }
-  .experience-footer-bottom {
-    font-size: 8px;
-    align-items: flex-start;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .world-platform {
-    will-change: auto;
+    grid-template-columns: 1fr;
+    gap: 28px;
   }
 }

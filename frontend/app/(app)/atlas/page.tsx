@@ -2,10 +2,8 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, Compass, MapPin } from "lucide-react";
-import { api } from "@/lib/api";
-import { useBounties } from "@/lib/queries";
+import { useBounties, useEvents } from "@/lib/queries";
 import { dateTime, money, statusLabels } from "@/lib/format";
 import type { AtlasPoint } from "@/components/river-map";
 import {
@@ -18,7 +16,7 @@ import {
   Skeleton,
 } from "@/components/ui/shared";
 import { Button } from "@/components/ui/button";
-const Map = dynamic(() => import("@/components/river-map"), {
+const RiverMap = dynamic(() => import("@/components/river-map"), {
   ssr: false,
   loading: () => (
     <div className="map-loading">
@@ -29,11 +27,7 @@ const Map = dynamic(() => import("@/components/river-map"), {
 });
 export default function AtlasPage() {
   const bounties = useBounties(),
-    events = useQuery({
-      queryKey: ["events"],
-      queryFn: ({ signal }) => api.getEvents({}, { signal }),
-      refetchInterval: 5_000,
-    });
+    events = useEvents();
   const [filter, setFilter] = useState("all"),
     [selected, setSelected] = useState<string>();
   const onSelect = useCallback((id: string) => setSelected(id), []);
@@ -65,9 +59,9 @@ export default function AtlasPage() {
   return (
     <>
       <PageHeading
-        chapter="Chapter 02 / The river atlas"
+        chapter="Atlas"
         title="River atlas"
-        description="Explore pollution signals and cleanup opportunities along the Yamuna’s Delhi reach."
+        description="Pollution signals and cleanup quests along the Yamuna’s Delhi reach."
         action={
           <Badge tone="aqua">
             <MapPin size={12} />
@@ -76,7 +70,7 @@ export default function AtlasPage() {
         }
       />
       <div className="atlas-toolbar">
-        <div className="segmented-control" aria-label="Map layers">
+        <div className="segmented-control" role="group" aria-label="Map layers">
           {[
             ["all", "All locations"],
             ["quest", "Cleanup quests"],
@@ -94,16 +88,16 @@ export default function AtlasPage() {
             </button>
           ))}
         </div>
-        <span className="tiny-label">
-          {points.length} LOCATIONS IN THIS VIEW
-        </span>
+        <span className="tiny-label">{points.length} locations shown</span>
       </div>
       <AsyncView query={bounties}>
-        {() => <Map points={points} selected={selected} onSelect={onSelect} />}
+        {() => (
+          <RiverMap points={points} selected={selected} onSelect={onSelect} />
+        )}
       </AsyncView>
       <div className="atlas-detail-grid">
         <Panel>
-          <PanelTitle>Field notes</PanelTitle>
+          <PanelTitle>Selected location</PanelTitle>
           {point ? (
             <div className="atlas-selection">
               <Badge tone={point.kind === "quest" ? "gold" : "aqua"}>
@@ -117,25 +111,24 @@ export default function AtlasPage() {
               {point.bountyId && (
                 <Button asChild>
                   <Link href={`/bounties/${point.bountyId}`}>
-                    Open field journal
+                    Open quest
                     <ArrowUpRight size={15} />
                   </Link>
                 </Button>
               )}
             </div>
           ) : (
-            <EmptyState title="A place to begin.">
+            <EmptyState title="Nothing selected.">
               <span>
-                Select a marker or a location from the list to read its field
-                notes. Locations come from event and bounty data; no monitoring
-                station locations are inferred.
+                Pick a marker or a location from the list. Locations come from
+                event and quest data only.
               </span>
             </EmptyState>
           )}
         </Panel>
         <Panel>
           <PanelTitle aside={<Compass size={17} className="text-primary" />}>
-            Location journal
+            Locations
           </PanelTitle>
           <AsyncView query={events}>
             {() =>

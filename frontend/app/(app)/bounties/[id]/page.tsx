@@ -2,7 +2,13 @@
 import { use } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, ShieldCheck, TimerOff } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  MapPin,
+  ShieldCheck,
+  TimerOff,
+} from "lucide-react";
 import { api } from "@/lib/api";
 import { dateTime, money } from "@/lib/format";
 import {
@@ -30,13 +36,13 @@ export default function BountyPage({
     <>
       <Link className="back-link" href="/bounties">
         <ArrowLeft size={14} />
-        Back to the quest journal
+        Back to quests
       </Link>
       <AsyncView query={query}>
         {(b) => (
           <>
             <PageHeading
-              chapter="The field journal / Cleanup quest"
+              chapter="Quest"
               title={b.title}
               description={b.description}
               action={<StatusBadge status={b.status} />}
@@ -47,7 +53,7 @@ export default function BountyPage({
               </div>
               <aside className="bounty-aside">
                 <Panel>
-                  <span className="tiny-label">YOUR CLEANUP REWARD</span>
+                  <span className="tiny-label">Reward</span>
                   <div className="bounty-amount numeric">
                     {money(b.amount_cents)}
                     <span>USD</span>
@@ -85,23 +91,22 @@ export default function BountyPage({
                     {b.lon.toFixed(5)}° E
                   </p>
                   <Link className="text-link" href="/atlas">
-                    Find it in the atlas ↗
+                    Find it in the atlas
+                    <ArrowUpRight size={14} />
                   </Link>
                 </Panel>
                 <Panel>
                   <PanelTitle>Why this quest?</PanelTitle>
                   <p className="agent-rationale">{b.agent_rationale}</p>
                   <p className="chart-source">
-                    Agent proposal · Backend budget rules decide the final
-                    amount.
+                    Agent proposal · backend budget rules set the final amount.
                   </p>
                 </Panel>
                 <div className="worker-safety">
                   <ShieldCheck size={18} />
                   <p>
-                    Stay on accessible riverbanks. Avoid entering the water,
-                    handling hazardous materials, or taking personal risks to
-                    complete a quest.
+                    Stay on accessible banks. Do not enter the water or handle
+                    hazardous materials.
                   </p>
                 </div>
               </aside>

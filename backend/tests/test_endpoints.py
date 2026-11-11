@@ -11,7 +11,7 @@ from app.models import Bounty, LedgerEntry, Payout, WebhookEvent, utcnow
 from PIL import Image
 from sqlalchemy import func, select
 
-from tests.conftest import COUNCIL, DEVICE, ai_impl, jpeg
+from tests.conftest import COUNCIL, DEVICE, REAL_AI, ai_impl, jpeg, worker_headers
 
 API = "/api/v1"
 SPOT = (28.5440, 77.3070)  # Kalindi Kunj: > 2 km from every seed point
@@ -45,7 +45,8 @@ def make_bounty(c, amount=1500, lat=SPOT[0], seed=1, monkeypatch=None):
 
 
 def claim(c, bounty_id, email="asha-personal@example.com"):
-    r = c.post(f"{API}/bounties/{bounty_id}/claim", json={"worker_name": "Asha", "paypal_email": email})
+    r = c.post(f"{API}/bounties/{bounty_id}/claim", json={"worker_name": "Asha", "paypal_email": email},
+               headers=worker_headers(c))
     assert r.status_code == 200, r.text
     return r.json()["claim_token"]
 
@@ -53,7 +54,7 @@ def claim(c, bounty_id, email="asha-personal@example.com"):
 def proof(c, bounty_id, token, before=101, after=202, lat=SPOT[0], lon=SPOT[1], before_img=None):
     now = utcnow()
     return c.post(
-        f"{API}/bounties/{bounty_id}/proof", headers={"X-Claim-Token": token} if token else {},
+        f"{API}/bounties/{bounty_id}/proof", headers=worker_headers(c) | ({"X-Claim-Token": token} if token else {}),
         files={"before": ("b.jpg", before_img or jpeg(before), "image/jpeg"),
                "after": ("a.jpg", jpeg(after), "image/jpeg")},
         data={"lat": lat, "lon": lon, "before_captured_at": (now + timedelta(seconds=1)).isoformat(),
@@ -70,7 +71,8 @@ def test_reset_needs_council(client):
 def test_diary(client):
     err(client.get(f"{API}/diary/latest"), 404, "NOT_FOUND")
     client.post(f"{API}/demo/reset", headers=COUNCIL)
-    assert client.get(f"{API}/diary/latest").json()["model_version"] in ("standin-mock", "mock-1")  # written on reset
+    assert client.get(f"{API}/diary/latest").json()["model_version"] in (
+        ("rules-v1",) if REAL_AI else ("standin-mock", "mock-1"))  # written on reset
 
 
 def test_diary_falls_back_to_seed_when_ai_down(client, monkeypatch):
@@ -100,6 +102,8 @@ def test_readings_validation(seeded, bad):
     assert e["details"]["fields"]
 
 
+@pytest.mark.skipif(REAL_AI, reason="asserts the mock anomaly rule (2x median after 4 readings, severity 3); real "
+                    "anomaly-v1 needs 8 readings and is unit-tested in ai/tests/test_anomaly.py")
 def test_readings_duplicate_and_spike_opens_event_and_bounty(seeded):
     for seq in range(1, 5):
         r = seeded.post(f"{API}/readings", json=reading(seq), headers=DEVICE).json()
@@ -197,15 +201,18 @@ def test_bounty_list_get(seeded):
 
 def test_claim_rules(seeded, db):
     bid = seeded.get(f"{API}/bounties").json()["items"][0]["id"]
-    err(seeded.post(f"{API}/bounties/{bid}/claim", json={"worker_name": "A", "paypal_email": "no-at-sign"}),
+    err(seeded.post(f"{API}/bounties/{bid}/claim", json={"worker_name": "A", "paypal_email": "no-at-sign"},
+                    headers=worker_headers(seeded)),
         422, "VALIDATION_ERROR")
-    err(seeded.post(f"{API}/bounties/{uuid.uuid4()}/claim", json={"worker_name": "A", "paypal_email": "a@b.co"}),
+    err(seeded.post(f"{API}/bounties/{uuid.uuid4()}/claim", json={"worker_name": "A", "paypal_email": "a@b.co"},
+                    headers=worker_headers(seeded)),
         404, "NOT_FOUND")
     token = claim(seeded, bid)
     assert token.startswith("ct_")
     b = seeded.get(f"{API}/bounties/{bid}").json()
     assert b["status"] == "CLAIMED" and b["worker_name"] == "Asha" and "asha" not in str(b).replace("Asha", "")
-    err(seeded.post(f"{API}/bounties/{bid}/claim", json={"worker_name": "B", "paypal_email": "b@b.co"}),
+    err(seeded.post(f"{API}/bounties/{bid}/claim", json={"worker_name": "B", "paypal_email": "b@b.co"},
+                    headers=worker_headers(seeded)),
         409, "INVALID_STATE")
 
     # claims never lapse: a day-old claim is still held by the same worker
@@ -345,11 +352,12 @@ def test_budget_exhausted_means_no_bounty(seeded, db):
 
 # --- 15-17 donations ---
 def test_donation_flow(seeded):
-    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 500}), 422, "VALIDATION_ERROR")  # no IK
-    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 99}, headers=IK()), 422, "VALIDATION_ERROR")
-    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 500, "x": 1}, headers=IK()), 422,
+    h = worker_headers(seeded)
+    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 500}, headers=h), 422, "VALIDATION_ERROR")  # no IK
+    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 99}, headers=h | IK()), 422, "VALIDATION_ERROR")
+    err(seeded.post(f"{API}/donations/orders", json={"amount_cents": 500, "x": 1}, headers=h | IK()), 422,
         "VALIDATION_ERROR")
-    key = IK()
+    key = h | IK()
     order = seeded.post(f"{API}/donations/orders", json={"amount_cents": 500, "donor_name": "Meera"}, headers=key)
     assert seeded.post(f"{API}/donations/orders", json={"amount_cents": 500, "donor_name": "Meera"},
                        headers=key).json() == order.json()
@@ -398,4 +406,5 @@ def test_fundraise(seeded, monkeypatch):
     r = seeded.post(f"{API}/agent/fundraise", json=body, headers=COUNCIL).json()
     assert r["status"] == "SENT" and r["invoice_id"].startswith("MOCK-")
     monkeypatch.setattr(get_settings(), "MAX_INVOICE_CENTS", 2500)
-    assert seeded.post(f"{API}/agent/fundraise", json=body, headers=COUNCIL).json()["amount_cents"] == 2500
+    amount = seeded.post(f"{API}/agent/fundraise", json=body, headers=COUNCIL).json()["amount_cents"]
+    assert amount == 2500 if not REAL_AI else 0 < amount <= 2500  # real rules-v1 asks half the cap

@@ -3,7 +3,7 @@ from app.models import DiaryEntry, LedgerEntry, Payout
 from app.services import payouts
 from sqlalchemy import func, select
 
-from tests.conftest import ai_impl
+from tests.conftest import ai_impl, worker_headers
 from tests.test_endpoints import API, IK, claim, make_bounty, proof
 from tests.test_paypal import FlakyPayPal
 
@@ -76,7 +76,8 @@ def test_webhook_for_unknown_payout_is_ignored(seeded):
 
 
 def test_capture_webhook_records_donation_once(seeded, db):
-    oid = seeded.post(f"{API}/donations/orders", json={"amount_cents": 700}, headers=IK()).json()["order_id"]
+    oid = seeded.post(f"{API}/donations/orders", json={"amount_cents": 700},
+                       headers=worker_headers(seeded) | IK()).json()["order_id"]
     ev = {"id": "WH-E", "event_type": "PAYMENT.CAPTURE.COMPLETED",
           "resource": {"id": "CAP-77", "status": "COMPLETED", "supplementary_data": {"related_ids": {"order_id": oid}}}}
     seeded.post(f"{API}/webhooks/paypal", json=ev)

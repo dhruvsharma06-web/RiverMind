@@ -1,0 +1,2 @@
+# Fake credentials in tests (not secrets). One fingerprint per line.
+7a4397360c3857fd6e50977eae4aef9aa44fd4ca:frontend/tests/mock-workflow.test.ts:generic-api-key:156

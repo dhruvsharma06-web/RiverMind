@@ -14,7 +14,7 @@ from app.errors import ApiError, error_json, error_responses
 from app.hardening import rate_limit
 from app.idempotency import check_key, run_once
 from app.models import WebhookEvent
-from app.security import require_council
+from app.security import current_user, require_council
 from app.services import donations, payouts, river
 
 log = logging.getLogger("rivermind")
@@ -52,8 +52,9 @@ def retry(payout_id: str, db: Db, idempotency_key: IdemKey):
     return run_once(db, idempotency_key, f"retry:{payout_id}", {}, lambda: payouts.retry(db, payout_id))
 
 
-@router.post("/donations/orders", response_model=schemas.DonationOrderResponse, dependencies=DonationLimit,
-             responses=error_responses("VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "PAYPAL_ERROR", "RATE_LIMITED"))
+@router.post("/donations/orders", response_model=schemas.DonationOrderResponse,
+             dependencies=[*DonationLimit, Depends(current_user)],
+             responses=error_responses("UNAUTHORIZED", "VALIDATION_ERROR", "IDEMPOTENCY_CONFLICT", "PAYPAL_ERROR", "RATE_LIMITED"))
 def create_donation_order(body: schemas.DonationOrderIn, db: Db, idempotency_key: IdemKey):
     key = check_key(idempotency_key)
     return run_once(db, key, "donation_order", body.model_dump(), lambda: donations.create_order(db, body, key))
