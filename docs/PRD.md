@@ -9,7 +9,7 @@ Rivers like the Yamuna in Delhi carry visible plastic, foam and sewage. Nobody i
 - **Donor / council member:** a resident, NGO or company that funds the river and wants proof that every dollar paid for real cleanup.
 
 ## Primary journey
-1. A camera frame (from the camera node) or a sensor reading (from the ESP32 node or the simulator) arrives for one river point.
+1. A camera frame (from the camera node) or a sensor reading (from the labelled simulator) arrives for one river point.
 2. The AI detects floating waste or a water-quality spike and opens a pollution event.
 3. The river's agent proposes a bounty (title, amount, reason). Backend code enforces the budget rules.
 4. A worker claims the bounty and uploads before/after photos taken in the app, with browser location and time.
@@ -17,7 +17,7 @@ Rivers like the Yamuna in Delhi carry visible plastic, foam and sewage. Nobody i
 6. The backend pays the worker through PayPal Payouts (sandbox). Payouts above $20 wait for one-tap council approval.
 7. The public dashboard updates: river health, bounties, payout ledger, donations (PayPal checkout) and the river's diary.
 
-**Wow moment:** someone dirties a glass tank of water on camera. Within seconds the river posts a bounty. A teammate cleans the tank, the AI verifies it, and the PayPal sandbox payout appears live. Then a reused photo is submitted and the AI rejects it, showing why.
+**Delivery:** a standalone website; there is no live or physical demo. Key product moment: a cleanup is verified by AI and the PayPal sandbox payout appears on the dashboard, and a reused photo is rejected with the reason shown.
 
 ## Requirements (Devpost, paraphrased — exact wording goes in PROJECT.md)
 | ID | Requirement | MUST/SHOULD | Covered by |
@@ -27,15 +27,15 @@ Rivers like the Yamuna in Delhi carry visible plastic, foam and sewage. Nobody i
 | R3 | Meaningfully incorporate AI | MUST | F2, F3, F4, F6 |
 | R4 | Working prototype; mockups and static or non-functional demos do not qualify | MUST | All P0 on the live URL |
 | R5 | Public repo with source and an open-source licence visible in the About section | MUST | P1 S0 |
-| R6 | Demo video under 3 minutes, public on YouTube | MUST | P1 S5 |
+| R6 | Video under 3 minutes, public on YouTube (screen recording of the website) | MUST | P1 S5 |
 | R7 | Hosted URL or run instructions, plus a list of AI tools/models used | MUST | P1 S3–S5 |
 | R8 | Project significantly built during the hackathon period; English; free access for judges | MUST | Repo history from today |
 
 ## Features
 | ID | Feature | Priority | Owner | Acceptance check |
 |---|---|---|---|---|
-| F1 | Sensor ingest from the ESP32 (or a labelled simulator), with a live chart | P0 | P1 device, P3 API, P4 UI | A reading posted with the device token appears on the dashboard within 5 s |
-| F2 | Waste detection on camera frames and uploaded images: counts by class plus boxes | P0 | P2 | The demo frame shows counts and boxes within 30 s |
+| F1 | Sensor ingest from the labelled simulator, with a live chart | P0 | P1 device, P3 API, P4 UI | A reading posted with the device token appears on the dashboard within 5 s |
+| F2 | Waste detection on camera frames and uploaded images: counts by class plus boxes | P0 | P2 | An uploaded image shows counts and boxes within 30 s |
 | F3 | Sensor anomaly detection opens a pollution event | P0 | P2, P3 | A turbidity spike from the simulator opens an event with a reason |
 | F4 | The agent proposes a bounty with an amount and reason; caps are enforced in code | P0 | P2 proposal, P3 enforcement | The amount stays within [MIN, MAX]; a request above the available treasury returns BUDGET_EXCEEDED |
 | F5 | A worker claims a bounty and uploads before/after photos with browser location | P0 | P3, P4 | Claiming and uploading 2 photos moves the bounty to PROOF_SUBMITTED |

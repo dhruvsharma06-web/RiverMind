@@ -43,7 +43,7 @@ make smoke      # full journey test (from Stage 1)
 | `backend/` | FastAPI API, database, PayPal client, spending rules | P3 |
 | `ai/` | `rivermind_ai` package: detection, anomalies, bounty agent, verification, diary | P2 |
 | `frontend/` | Next.js dashboard, worker claim page, council page, donate page | P4 |
-| `firmware/` | ESP32 water-quality sensor node | P1 |
+| `firmware/` | ESP32 sensor node (not used: readings come from the labelled simulator) | P1 |
 | `scripts/` | simulator, camera node, smoke test, dev helpers | P1 |
 | `fixtures/` | contract example responses used by mocks and tests | P1 |
 | `docs/` | PRD, Master Prompts, security notes | P1 |
