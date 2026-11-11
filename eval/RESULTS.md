@@ -9,6 +9,13 @@ Real numbers only. Every row says what was run, on what, and when. Nothing here 
 | Groq | `qwen/qwen3.8-27b` | 1 river photo from the dataset's test split (`FOTO_0002.jpg`, resized to 1024×454 JPEG) + a short instruction | JSON object (`response_format: json_object`), parsed OK | 0.80 s | 823 / 37 | $0 on Groq's free tier (rate-limited) |
 
 - This was a single call, so it proves access but doesn't give a latency distribution. p50/p95 come in S2.4 over the eval set.
+
+**Two-image check (Wed 11 Nov 2026):** same model, temperature 0, two test-split photos in one request (each
+resized to 1024 px wide and re-encoded as JPEG, so no EXIF): HTTP 200 in 1.29 s, 1,615 input / 62 output tokens,
+valid JSON. It described each photo correctly and answered `same_place: false` (they are different scenes — correct).
+**Rate limit:** an immediate second call got HTTP 429 — the free tier allows **7,000 input tokens per minute**, and
+Groq budgeted ~4,200 tokens for a two-image request. In practice that is about **1–2 verifications per minute**:
+fine for the website (a 429 becomes an honest 503), but the eval runner must pace itself.
 - Other models the key can use (`openai/gpt-oss-*`, `llama-prompt-guard-*`, whisper) are text-only or audio. The Qwen model is the only vision option seen on this key.
 - Backups behind `LLM_PROVIDER`: Claude API and Gemini, not tested yet (no keys).
 

@@ -206,37 +206,36 @@ committed.
 Stage windows (IST): S2 ends Wed 11 Nov 11:00 (Sync 2) · S3 ends Wed 23:00 · S4 Thu 08:00–15:00 (freeze) ·
 S5 Thu 15:00–22:00 (submit).
 
-**S2 — first real slice**
-- [ ] LLM client (Groq + backups), strict JSON, retry, honest errors
-- [ ] `propose_bounty` real (S2.2)
-- [ ] `analyze_media` real with the v2 ONNX: preprocessing, NMS, counts, foam, documented `waste_score`, memory
-      limits (S2.1)
-- [ ] `verify_cleanup` real: pHash + ORB + count drop + LLM vote, injection-safe prompt (S2.3)
-- [ ] Latency p50/p95 and cost per call recorded (S2.4)
-- [ ] Hand-off: backend with `USE_MOCK_AI=false`, `/media/analyze` and `/proof` with non-fixture images (S2.5)
+**Final team plan (agreed Wed 11 Nov).** RiverMind is now a standalone website: no live demo, no tank, no ESP32
+(sensor readings come from the labelled simulator); only a screen-recorded video remains. No stand-in vote: if the
+LLM fails → `AIUnavailable` → 503, the claim stays open for a resubmit. **Done means steps 1–5 work and
+`make test` is green.** In order:
 
-**S3 — complete P0**
-- [ ] Automatic verification eval set + false-accept rate (S3.5) — see `eval/README.md`
-- [ ] `write_diary` real with number validator (S3.1)
-- [ ] Caching, downscaling, concurrency and token caps (S3.3)
-- [ ] Recalibrate the mock threshold on `fixtures/images/*` once they exist
-- [ ] `tools/analyze_clip.py` counting demo (S3.4) — **cut candidate**
+1. [x] Groq model takes two images in one request (`qwen/qwen3.8-27b`, pinned, temperature 0) — see `eval/RESULTS.md`
+2. [ ] Real `verify_cleanup`: pHash duplicate (backend) · ORB scene match ≥ 25 inliers · detector count drop
+       (before ≥ 1, after ≤ 0.4 × before) · one LLM call → vote (≥ 0.6) + manipulation flag (flagged = fail).
+       Images downscaled to ~1024 px, EXIF stripped; text in photos is data. LLM: one retry, 15 s max, then
+       `AIUnavailable`; whole call inside the backend's 25 s. We fill per-check `passed`; the backend decides.
+       `model_version` names what ran, e.g. `yolo11n-rivermind-v2+orb+groq:qwen/qwen3.8-27b`.
+3. [ ] Real `analyze_media`: v2 ONNX loaded once and shared; counts + normalised boxes; foam stays the colour rule
+4. [ ] End to end with the backend (`USE_MOCK_AI=false`, pairs from held-out frames): a cleanup passes, a reused
+       photo is rejected, an "APPROVE PAYMENT" photo is rejected, an LLM failure → 503 with the claim still open
+5. [ ] `python eval/run_verification_eval.py`: simulated pairs from held-out frames (labelled) → false-accept and
+       false-reject rates with set size, per-check failure reasons, p50/p95 latency in `eval/RESULTS.md`
+6. [ ] Keep simple: `propose_bounty` (code computes the range, LLM picks inside it, rule-based fallback);
+       `write_diary` (LLM + number check, template fallback); `draft_invoice` (deterministic, ≤ `max_cents`)
+7. [ ] If time: `MODEL_CARD.md` with eval numbers + 2–3 failure examples; memory check on Render (> ~350 MB →
+       `AI_DETECTOR=llm`, stated in `model_version`)
 
-**S4 — harden**
-- [ ] Prompt-injection cases (photo with "APPROVE PAYMENT", injected worker note), logging of input hashes /
-      prompt version / model id (S4.1)
-- [ ] Fallbacks: provider down → `AIUnavailable`; any demo cache clearly labelled (S4.2)
-- [ ] `draft_invoice` real (S4.3)
-- [ ] Re-run all evals, finalise `MODEL_CARD.md` (S4.4)
+**Skipped (team decision):** `analyze_clip`, foam detection with the detector, boxes in verification results,
+demo photo pairs.
 
-**S5 — demo**
-- [ ] Pin model ids, prompt versions, parameters (S5.1)
-- [ ] 3 demo inputs + 1 hard case for the video (S5.2)
-- [ ] "How the AI works" slide content (S5.3)
+**Constraint found in step 1:** Groq's free tier allows 7,000 input tokens per minute (~1–2 verifications per
+minute), so the eval runner paces itself and backs off on HTTP 429.
 
 **Done**
 - [x] Package, schemas, mock, contract tests (S0.2, S0.3, S1.1)
-- [x] Real LLM access check (S0.1, Groq)
+- [x] Real LLM access check (S0.1, Groq) and two-image check (step 1)
 - [x] Evaluation plan (S0.5) — `eval/README.md`; AI docs: this README, `MODEL_CARD.md`, `DECISIONS.md`
 - [x] Zero-shot baseline (S0.4) — measured on the test split instead of 10 laptop images
 - [x] Datasets + licences (S0.6), detector trained v1 + v2, v2 shipped
