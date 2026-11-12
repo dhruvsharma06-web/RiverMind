@@ -56,7 +56,7 @@ export default function BountyPage({
                   <span className="tiny-label">Reward</span>
                   <div className="bounty-amount numeric">
                     {money(b.amount_cents)}
-                    <span>USD</span>
+                    <span>INR estimate · payout in USD</span>
                   </div>
                   <Badge>
                     {api.mode === "fixture"

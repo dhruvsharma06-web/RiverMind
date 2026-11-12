@@ -68,6 +68,7 @@ export function SignalActivity({ events }: { events: RiverEvent[] }) {
 }
 
 export function TreasuryAllocation({ treasury }: { treasury: Treasury }) {
+  const [active, setActive] = useState<string | null>(null);
   const values = [
     {
       label: "Available",
@@ -82,20 +83,32 @@ export function TreasuryAllocation({ treasury }: { treasury: Treasury }) {
     { label: "Paid", value: treasury.paid_cents, color: "var(--viz-leaf)" },
   ];
   const total = values.reduce((sum, item) => sum + item.value, 0);
+  const largest = values.reduce(
+    (largest, item) => (item.value > largest.value ? item : largest),
+    values[0],
+  );
+  const selected = values.find((item) => item.label === active) ?? largest;
   let offset = 0;
   return (
     <Panel className="treasury-analytics">
       <PanelTitle
-        aside={<span className="analytics-period">Current allocation</span>}
+        aside={
+          <span
+            className="analytics-period"
+            title="Available + reserved + paid. Includes seed funding and captured donations."
+          >
+            Allocation info ⓘ
+          </span>
+        }
       >
-        Every dollar, accounted for
+        Treasury allocation
       </PanelTitle>
       {total ? (
         <div className="allocation-layout">
-          <div className="allocation-ring">
+          <div className="allocation-ring" onMouseLeave={() => setActive(null)}>
             <svg
               viewBox="0 0 160 160"
-              role="img"
+              role="group"
               aria-label={values
                 .map((item) => `${item.label}: ${money(item.value)}`)
                 .join(", ")}
@@ -127,21 +140,38 @@ export function TreasuryAllocation({ treasury }: { treasury: Treasury }) {
                       strokeDasharray={`${percentage} ${100 - percentage}`}
                       strokeDashoffset={-start}
                       transform="rotate(-90 80 80)"
+                      onMouseEnter={() => setActive(item.label)}
+                      onFocus={() => setActive(item.label)}
+                      onBlur={() => setActive(null)}
+                      tabIndex={0}
+                      role="img"
+                      data-muted={
+                        active !== null && selected.label !== item.label
+                      }
+                      data-selected={
+                        active !== null && selected.label === item.label
+                      }
+                      aria-label={`${item.label}: ${Math.round(percentage)}%, ${money(item.value)}`}
                     />
                   );
                 })}
             </svg>
-            <div>
-              <strong>
-                {Math.round((treasury.available_cents / total) * 100)}%
-              </strong>
-              <span>available</span>
+            <div key={selected.label} className="allocation-center">
+              <strong>{Math.round((selected.value / total) * 100)}%</strong>
+              <span>{selected.label.toLowerCase()}</span>
             </div>
           </div>
           <dl className="allocation-legend">
             {values.map((item) => (
               <div key={item.label}>
-                <dt>
+                <dt
+                  tabIndex={0}
+                  onMouseEnter={() => setActive(item.label)}
+                  onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(item.label)}
+                  onBlur={() => setActive(null)}
+                  aria-label={`${item.label}: ${money(item.value)}`}
+                >
                   <i style={{ background: item.color }} />
                   {item.label}
                 </dt>
@@ -149,6 +179,10 @@ export function TreasuryAllocation({ treasury }: { treasury: Treasury }) {
               </div>
             ))}
           </dl>
+          <div className="allocation-caption" aria-live="polite">
+            <span>{selected.label}</span>
+            <strong key={selected.label}>{money(selected.value)}</strong>
+          </div>
         </div>
       ) : (
         <EmptyState
@@ -157,7 +191,7 @@ export function TreasuryAllocation({ treasury }: { treasury: Treasury }) {
           action="Visit the treasury"
         />
       )}
-      <p className="analytics-footnote">
+      <p className="analytics-footnote allocation-description">
         Current treasury: available + reserved + paid. Includes seed funding and
         captured donations.
       </p>

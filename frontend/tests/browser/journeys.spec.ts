@@ -26,16 +26,14 @@ async function signInCouncil(page: Page) {
     .click();
   await expect(page).toHaveURL(/\/council$/);
 }
-test("signed-out visitors reach / and /river but are redirected from protected pages", async ({
+test("the landing is public and overview redirects signed-out visitors to sign in", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page).toHaveURL(/localhost:\d+\/$/);
   await page.goto("/river");
-  await expect(page).toHaveURL(/\/river$/);
-  await expect(
-    page.getByRole("link", { name: "Sign in" }).first(),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/login\?next=%2Friver$/);
+  await expect(page.locator(".overview-summary")).toHaveCount(0);
   await page.goto("/bounties");
   await expect(page).toHaveURL(/\/login\?next=%2Fbounties$/);
   await page.goto("/council");
@@ -61,6 +59,71 @@ test("a worker is told council pages are council-only and can sign out", async (
   await expect(page.getByText("Worker", { exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByText("Worker", { exact: true })).toBeHidden();
+});
+test("overview and guide fit a laptop viewport, with fixed navigation and a responsive allocation chart", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await signUp(page, "/river");
+  await expect(page.locator(".overview-stats .metric-card")).toHaveCount(6);
+  await expect(page.locator(".app-topbar")).toHaveCSS("position", "fixed");
+  await expect(page.locator(".water-backdrop, .overview-deck")).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollHeight <= innerHeight + 1,
+      ),
+    )
+    .toBe(true);
+  await page.locator(".allocation-legend dt").nth(1).hover();
+  await expect(page.locator(".allocation-center")).toContainText("reserved");
+  await page.mouse.move(200, 100);
+  await expect(page.locator(".allocation-center")).toContainText("available");
+  await page.goto("/about");
+  await expect(page.locator(".workflow-phone")).toHaveCount(3);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollHeight <= innerHeight + 1,
+      ),
+    )
+    .toBe(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "How RiverMind works" }),
+  ).toBeVisible();
+  await page.locator(".auth-trigger").click();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page).toHaveURL(/\/login\?next=%2Fabout$/);
+});
+test("quest pagination bounds rendered cards and debounced search resets the page", async ({
+  page,
+}) => {
+  await page.route("**/fixtures/bounties.ok.json", async (route) => {
+    const response = await route.fetch();
+    const data = await response.json();
+    const base = data.items[0];
+    await route.fulfill({
+      json: {
+        items: Array.from({ length: 18 }, (_, index) => ({
+          ...base,
+          id: `11111111-1111-4111-8111-${String(index + 1).padStart(12, "0")}`,
+          title: `Pagination test quest ${index + 1}`,
+        })),
+      },
+    });
+  });
+  await signUp(page, "/bounties");
+  await expect(page.locator(".quest-card")).toHaveCount(6);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(
+    page.getByRole("navigation", { name: "Quest pages" }),
+  ).toContainText("Page 2");
+  await page.getByLabel("Search cleanup quests").fill("quest 17");
+  await expect(page.locator(".quest-card")).toHaveCount(1);
+  await expect(page.locator(".quest-card")).toContainText(
+    "Pagination test quest 17",
+  );
 });
 test("the icon rail expands, navigates, and collapses without an active dot", async ({
   page,
@@ -122,7 +185,7 @@ test("monthly reports download their selected data and handle empty months", asy
     page.getByRole("heading", { name: "Signals over time" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Every dollar, accounted for" }),
+    page.getByRole("heading", { name: "Treasury allocation" }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

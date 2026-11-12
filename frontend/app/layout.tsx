@@ -5,6 +5,10 @@ import "./globals.css";
 import "./dashboard.css";
 import "./landing.css";
 import "./reports.css";
+import "./overview.css";
+import "./phone-workflow.css";
+import "./report-document.css";
+import "./workspace-polish.css";
 
 export const metadata: Metadata = {
   title: { default: "RiverMind", template: "%s · RiverMind" },

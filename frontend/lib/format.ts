@@ -1,7 +1,15 @@
+import { INR_REFERENCE_RATE } from "./currency";
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+const inr = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+});
+export const usdMoney = (cents: number) => usd.format(cents / 100);
 export const money = (cents: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
-    cents / 100,
-  );
+  inr.format((cents * INR_REFERENCE_RATE) / 100);
 export function dateTime(value: string) {
   return (
     new Intl.DateTimeFormat("en-IN", {

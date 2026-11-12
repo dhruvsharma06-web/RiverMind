@@ -1,7 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
+import { MonthlyReportDocument } from "./monthly-report-document";
+import { ReportBodyPlaceholder } from "./workspace-placeholder";
 import { useQuery } from "@tanstack/react-query";
 import { Download, FileChartColumn, Printer, RefreshCw } from "lucide-react";
 import { api } from "@/lib/api";
@@ -46,6 +49,17 @@ function downloadCsv(text: string, filename: string) {
 }
 
 export function ReportsWorkspace() {
+  const [printing, setPrinting] = useState(false);
+  useEffect(() => {
+    const before = () => flushSync(() => setPrinting(true));
+    const after = () => setPrinting(false);
+    window.addEventListener("beforeprint", before);
+    window.addEventListener("afterprint", after);
+    return () => {
+      window.removeEventListener("beforeprint", before);
+      window.removeEventListener("afterprint", after);
+    };
+  }, []);
   const [month, setMonth] = useState(() => istDay(new Date()).slice(0, 7));
   const query = useQuery({
     queryKey: ["report-records"],
@@ -107,7 +121,7 @@ export function ReportsWorkspace() {
           {query.isFetching ? "Refreshing…" : "Refresh records"}
         </Button>
       </div>
-      <AsyncView query={query}>
+      <AsyncView query={query} loading={<ReportBodyPlaceholder />}>
         {(records) => {
           if (!validMonth(month))
             return (
@@ -132,6 +146,13 @@ export function ReportsWorkspace() {
             .reverse();
           return (
             <>
+              {printing && report.totalRecords > 0 && (
+                <MonthlyReportDocument
+                  report={report}
+                  source={records.source}
+                  generatedAt={records.generatedAt}
+                />
+              )}
               <Panel className="report-cover">
                 <div className="report-cover-heading">
                   <div>
@@ -213,7 +234,7 @@ export function ReportsWorkspace() {
                       [
                         "Captured donations",
                         money(report.donatedCents),
-                        `${report.donations.length} returned contributions · USD`,
+                        `${report.donations.length} returned contributions · INR estimate`,
                       ],
                     ].map(([label, value, caption]) => (
                       <div className="metric-card" key={label}>
@@ -324,7 +345,7 @@ export function ReportsWorkspace() {
                           <dt>Successful payouts</dt>
                           <dd>
                             {money(report.succeededPayoutCents)}{" "}
-                            <small>USD</small>
+                            <small>INR estimate</small>
                           </dd>
                         </div>
                       </dl>

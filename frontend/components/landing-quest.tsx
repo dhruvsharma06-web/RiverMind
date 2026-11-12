@@ -36,7 +36,7 @@ export function LandingQuest() {
               </div>
               <div className="experience-quest-reward">
                 <div>
-                  <small>Cleanup reward · USD</small>
+                  <small>Cleanup reward · INR estimate</small>
                   <strong>{money(quest.amount_cents)}</strong>
                   <span>
                     {api.mode === "fixture"

@@ -6,26 +6,21 @@ import { ShieldCheck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/shared";
-
-/** Routes under app/(app) that stay public. */
-const isPublic = (path: string) => path === "/river" || path === "/river/";
+import { WorkspacePlaceholder } from "./workspace-placeholder";
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const { status } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const open = isPublic(pathname);
   useEffect(() => {
-    if (!open && status === "signed-out")
+    if (status === "signed-out")
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-  }, [open, status, pathname, router]);
-  if (open) return <>{children}</>;
+  }, [status, pathname, router]);
+  if (status === "loading") return <WorkspacePlaceholder />;
   if (status !== "signed-in")
     return (
       <div className="auth-loading" role="status" aria-live="polite">
-        {status === "loading"
-          ? "Checking your session…"
-          : "Redirecting to sign in…"}
+        Redirecting to sign in…
       </div>
     );
   return <>{children}</>;

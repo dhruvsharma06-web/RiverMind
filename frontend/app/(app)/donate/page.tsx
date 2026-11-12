@@ -4,6 +4,7 @@ import { useDonations, useRiver } from "@/lib/queries";
 import { dateTime, money } from "@/lib/format";
 import { DonationForm } from "@/components/donation-form";
 import { PayoutLedger } from "@/components/payout-ledger";
+import { TreasuryMetricPlaceholder } from "@/components/workspace-placeholder";
 import {
   AsyncView,
   Badge,
@@ -28,7 +29,7 @@ export default function TreasuryPage() {
           </Badge>
         }
       />
-      <AsyncView query={river}>
+      <AsyncView query={river} loading={<TreasuryMetricPlaceholder />}>
         {(r) => (
           <div className="metric-grid">
             {[
@@ -40,7 +41,7 @@ export default function TreasuryPage() {
               <div className="metric-card" key={label}>
                 <span>{label}</span>
                 <strong className="numeric">{money(Number(value))}</strong>
-                <p>USD</p>
+                <p>INR estimate</p>
               </div>
             ))}
           </div>
@@ -108,7 +109,7 @@ export default function TreasuryPage() {
                     </div>
                     <strong className="numeric">
                       {money(d.amount_cents)}
-                      <small>USD</small>
+                      <small>INR estimate</small>
                     </strong>
                   </article>
                 ))}

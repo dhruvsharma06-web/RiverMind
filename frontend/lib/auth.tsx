@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api";
 import type { User } from "@/lib/contracts";
+import { toast } from "./toasts";
 import {
   clearSessionToken,
   getSessionToken,
@@ -80,13 +81,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return session.user;
   }, []);
   const signIn = useCallback(
-    async (input: { email: string; password: string }) =>
-      start(await api.login(input)),
+    async (input: { email: string; password: string }) => {
+      try {
+        const user = start(await api.login(input));
+        toast("Welcome back. You’re signed in.");
+        return user;
+      } catch (error) {
+        toast(
+          error instanceof Error ? error.message : "Sign-in failed.",
+          "error",
+        );
+        throw error;
+      }
+    },
     [start],
   );
   const signUp = useCallback(
-    async (input: { name: string; email: string; password: string }) =>
-      start(await api.register(input)),
+    async (input: { name: string; email: string; password: string }) => {
+      try {
+        const user = start(await api.register(input));
+        toast("Your account is ready. Welcome to RiverMind.");
+        return user;
+      } catch (error) {
+        toast(
+          error instanceof Error ? error.message : "Account creation failed.",
+          "error",
+        );
+        throw error;
+      }
+    },
     [start],
   );
   const signOut = useCallback(async () => {
@@ -99,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setStatus("signed-out");
     cache.clear();
+    toast("You’re signed out.", "info");
   }, [cache]);
 
   const value = useMemo(

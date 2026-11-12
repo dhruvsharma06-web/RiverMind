@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { MarketingNav } from "@/components/marketing-nav";
+import { PhoneWorkflow } from "@/components/phone-workflow";
+import { LandingWelcome } from "@/components/landing-welcome";
 import {
   LandingStats,
   AtlasPreview,
@@ -11,21 +13,6 @@ import { RiverHeroMedia } from "@/components/river-hero-media";
 import { WaterBackdrop } from "@/components/water-backdrop";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/shared";
-
-const steps = [
-  [
-    "Spot",
-    "Cameras and water sensors flag waste or a bad reading at a point on the river.",
-  ],
-  [
-    "Fund",
-    "A cleanup quest opens with a location, a scope and a reward already set aside from the treasury.",
-  ],
-  [
-    "Prove",
-    "You upload before and after photos. Location, timing and AI checks decide, then PayPal pays you.",
-  ],
-];
 
 const questions = [
   [
@@ -49,6 +36,7 @@ const questions = [
 export default function LandingPage() {
   return (
     <div className="landing-experience">
+      <LandingWelcome />
       <MarketingNav />
       <WaterBackdrop startAfter={240} />
       <main id="main-content">
@@ -83,16 +71,12 @@ export default function LandingPage() {
         </section>
 
         <section id="story" className="landing-steps experience-section">
-          <div className="experience-container landing-steps-grid">
-            <h2>How it works</h2>
-            <ol className="step-list">
-              {steps.map(([title, text]) => (
-                <li key={title}>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
-                </li>
-              ))}
-            </ol>
+          <div className="experience-container">
+            <div className="landing-heading-row">
+              <h2>How it works</h2>
+              <p>Three steps from a signal to a verified cleanup.</p>
+            </div>
+            <PhoneWorkflow />
           </div>
         </section>
 

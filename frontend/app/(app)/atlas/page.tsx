@@ -40,7 +40,7 @@ export default function AtlasPage() {
           lon: b.lon,
           title: b.title,
           kind: "quest" as const,
-          detail: `${statusLabels[b.status]} · ${money(b.amount_cents)} USD`,
+          detail: `${statusLabels[b.status]} · ${money(b.amount_cents)} INR estimate`,
           bountyId: b.id,
         })),
         ...(events.data?.items ?? []).map((e) => ({

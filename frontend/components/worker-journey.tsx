@@ -21,7 +21,7 @@ import type { Bounty } from "@/lib/contracts";
 import { api, ApiError } from "@/lib/api";
 import { readClaim, saveClaim, subscribeClaims } from "@/lib/claims";
 import { browserLocation, preparePhoto, type CapturedPhoto } from "@/lib/photo";
-import { dateTime, money } from "@/lib/format";
+import { dateTime, usdMoney as money } from "@/lib/format";
 import { Button } from "./ui/button";
 import { Notice, Panel, PanelTitle, StatusBadge } from "./ui/shared";
 import { VerificationCard } from "./verification-card";
@@ -58,6 +58,10 @@ export function WorkerJourney({
       void cache.invalidateQueries({ queryKey: [key] });
   };
   const claim = useMutation({
+    meta: {
+      successMessage:
+        "Quest claimed. Review the session token and recovery options below.",
+    },
     mutationFn: () =>
       api.claimBounty(b.id, {
         worker_name: workerName.trim(),
@@ -81,6 +85,10 @@ export function WorkerJourney({
     },
   });
   const proof = useMutation({
+    meta: {
+      successMessage:
+        "Evidence reviewed. Check the verification and payout details below.",
+    },
     mutationFn: () => {
       if (!before || !after) throw new Error("Capture both photos first.");
       return api.submitProof(

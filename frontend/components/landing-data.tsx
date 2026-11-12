@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRiver } from "@/lib/queries";
 import { dateTime, money } from "@/lib/format";
+import { INR_RATE_NOTE } from "@/lib/currency";
 import { AsyncView, Badge } from "./ui/shared";
 export function LandingStats() {
   const river = useRiver();
@@ -23,8 +24,8 @@ export function LandingStats() {
             {[
               ["River indicator", `${r.health_score}`, "/100"],
               ["Open quests", String(r.open_bounties), ""],
-              ["Paid out", money(r.treasury.paid_cents), "USD"],
-              ["Available", money(r.treasury.available_cents), "USD"],
+              ["Paid out", money(r.treasury.paid_cents), "INR estimate"],
+              ["Available", money(r.treasury.available_cents), "INR estimate"],
             ].map(([label, value, unit]) => (
               <div className="landing-stat" key={label}>
                 <span className="numeric">
@@ -128,10 +129,10 @@ export function TreasuryPreview() {
   const river = useRiver();
   return (
     <div className="treasury-receipt">
-      <div className="receipt-head">
+      <div className="receipt-head" title={INR_RATE_NOTE}>
         <Waves size={24} strokeWidth={1} />
         <span>River treasury</span>
-        <Badge>USD</Badge>
+        <Badge>INR estimate</Badge>
       </div>
       <AsyncView query={river}>
         {(r) => (

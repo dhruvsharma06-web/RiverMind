@@ -3,6 +3,7 @@ import { FlaskConical, Radio } from "lucide-react";
 import { api } from "@/lib/api";
 import { useHealth } from "@/lib/queries";
 import { Badge } from "./ui/shared";
+import { INR_RATE_NOTE, INR_RATE_SOURCE } from "@/lib/currency";
 export function ModeStatus({ detailed = false }: { detailed?: boolean }) {
   const health = useHealth();
   return (
@@ -31,13 +32,21 @@ export function ModeStatus({ detailed = false }: { detailed?: boolean }) {
   );
 }
 export function DemoNotice() {
-  return api.mode === "fixture" ? (
+  return (
     <div className="demo-banner">
       <FlaskConical size={15} />
       <span>
-        Interactive demo · Simulated readings, verification, and payments. No
-        real money moves.
+        {api.mode === "fixture" &&
+          "Simulated readings, verification and payments · "}
+        <a
+          href={INR_RATE_SOURCE}
+          target="_blank"
+          rel="noreferrer"
+          title={INR_RATE_NOTE}
+        >
+          INR estimates · USD checkout
+        </a>
       </span>
     </div>
-  ) : null;
+  );
 }

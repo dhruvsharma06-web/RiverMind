@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, RefreshCw, ShieldCheck, X } from "lucide-react";
 import { api } from "@/lib/api";
 import { usePayouts } from "@/lib/queries";
-import { money } from "@/lib/format";
+import { usdMoney as money } from "@/lib/format";
 import type { Payout } from "@/lib/contracts";
 import { useCouncilSession } from "@/components/session";
 import {
@@ -36,6 +36,10 @@ export default function CouncilPage() {
     if (confirmOpen) reasonRef.current?.focus();
   }, [confirmOpen]);
   const mutation = useMutation({
+    meta: {
+      successMessage:
+        "Council decision accepted. The payment queue has been refreshed.",
+    },
     mutationFn: async ({
       payout,
       action,

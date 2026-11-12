@@ -8,7 +8,13 @@ The application uses a clean card dashboard with an expandable icon rail and a r
 
 `app/dashboard.css` owns the shared dashboard palette and component styles for both themes. The landing page shares those tokens through `app/landing.css`.
 
-The landing hero plays real river footage (`components/river-hero-media.tsx`): a poster still loads first, and a muted 9-second loop starts once the page is idle. The loop pauses off-screen and is skipped for reduced-motion and data-saver visitors. The Overview page reuses the still behind its "River now" card and adds a schematic of the Delhi reach (`components/river-reach.tsx`) that places returned events and open quests by latitude.
+The landing hero plays river footage (`components/river-hero-media.tsx`): a poster still loads first, and a muted loop starts once the page is idle. The loop pauses off-screen and is skipped for reduced-motion and data-saver visitors. A short blurred welcome appears on landing-page reloads, and illustrated phone previews explain the cleanup workflow.
+
+The protected overview uses the standard workspace background and a compact desktop viewport layout. Its charts grow with their panels; longer records scroll inside their panels. The top bar stays fixed, and mobile layouts stack normally. The treasury ring supports pointer and keyboard selection and defaults to its largest allocation. Workspace placeholders follow the current route's sections.
+
+Quest search is debounced by 200 ms and renders six cards per page; payout ledgers render ten rows per page. Query results remain fresh for 15 seconds and cached in memory for 15 minutes; active monitoring still polls every five seconds. Charts load lazily and reuse sorted reading data. Notifications cover authentication and submitted actions without announcing background polling.
+
+Display amounts use approximate INR at a dated ECB reference of ₹94.05/USD on 12 Nov 2026, verified through [Frankfurter's ECB endpoint](https://api.frankfurter.dev/v2/providers/ecb/rate/usd/inr). The reference is bundled, so no exchange-rate network request delays the interface. Checkout, approval amounts, API requests and CSV source amounts remain USD cents. `lib/currency.ts` records the rate, date and disclosure. The print action creates a dedicated A4 report with scope, executive summary, water statistics, current status breakdowns, source values and methodology.
 
 The footage is illustrative stock footage of a river, not the Yamuna, and is labelled so in the interface. Source and licence are in `public/hero/CREDITS.md`; that media is not covered by the repository's MIT licence. `components/abstract-art.tsx` contains decorative SVG artwork for quest cards; neither is monitoring imagery or cleanup evidence.
 

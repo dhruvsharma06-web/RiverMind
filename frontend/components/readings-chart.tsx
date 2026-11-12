@@ -8,20 +8,19 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useId } from "react";
+import { memo, useId, useMemo } from "react";
 import type { Reading } from "@/lib/contracts";
 import { EmptyState } from "./ui/shared";
-export type ReadingParameter = "turbidity_ntu" | "ph" | "tds_ppm" | "temp_c";
-export const parameters: Record<
-  ReadingParameter,
-  { label: string; unit: string }
-> = {
-  turbidity_ntu: { label: "Turbidity", unit: "NTU" },
-  ph: { label: "pH", unit: "pH" },
-  tds_ppm: { label: "Total dissolved solids", unit: "ppm" },
-  temp_c: { label: "Temperature", unit: "°C" },
-};
-export default function ReadingsChart({
+import { parameters, type ReadingParameter } from "@/lib/reading-parameters";
+export { parameters, type ReadingParameter } from "@/lib/reading-parameters";
+const timeFormatter = new Intl.DateTimeFormat("en-IN", {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  timeZone: "Asia/Kolkata",
+});
+const formatTime = (time: number) => timeFormatter.format(new Date(time));
+export default memo(function ReadingsChart({
   readings,
   parameter = "turbidity_ntu",
 }: {
@@ -30,22 +29,19 @@ export default function ReadingsChart({
 }) {
   const id = useId().replaceAll(":", "");
   const info = parameters[parameter];
+  const data = useMemo(
+    () =>
+      [...readings]
+        .sort((a, b) => Date.parse(a.ts) - Date.parse(b.ts))
+        .map((r) => ({ ...r, time: Date.parse(r.ts) })),
+    [readings],
+  );
   if (!readings.length)
     return (
       <EmptyState title="Waiting for a reading.">
         Measurements will appear once a device or simulator sends them.
       </EmptyState>
     );
-  const data = [...readings]
-    .sort((a, b) => Date.parse(a.ts) - Date.parse(b.ts))
-    .map((r) => ({ ...r, time: Date.parse(r.ts) }));
-  const formatTime = (time: number) =>
-    new Intl.DateTimeFormat("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: "Asia/Kolkata",
-    }).format(new Date(time));
   return (
     <div
       className="readings-chart"
@@ -109,10 +105,14 @@ export default function ReadingsChart({
             strokeWidth={2.5}
             fill={`url(#${id})`}
             isAnimationActive={false}
-            dot={{ r: 4, fill: "var(--chart-line, #8bd3c6)", strokeWidth: 0 }}
+            dot={
+              data.length <= 30
+                ? { r: 4, fill: "var(--chart-line, #8bd3c6)", strokeWidth: 0 }
+                : false
+            }
           />
         </AreaChart>
       </ResponsiveContainer>
     </div>
   );
-}
+});

@@ -1,0 +1,191 @@
+.report-document {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  .report-page {
+    display: block;
+  }
+  .report-page > :not(.report-document) {
+    display: none !important;
+  }
+  .report-page > .report-document {
+    display: block;
+    color: #152c35;
+    font-family: "Geist Variable", system-ui, sans-serif;
+    font-size: 9pt;
+    line-height: 1.55;
+  }
+  .report-document .report-sheet {
+    min-height: 266mm;
+    display: flex;
+    flex-direction: column;
+    break-after: page;
+  }
+  .report-document .report-sheet:last-child {
+    break-after: auto;
+  }
+  .document-masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 5mm;
+    border-bottom: 1.5pt solid #176b79;
+    gap: 6mm;
+  }
+  .document-masthead > span {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    color: #176b79;
+    font-size: 16pt;
+    font-weight: 650;
+    letter-spacing: -0.5pt;
+  }
+  .document-masthead > small {
+    color: #526873;
+    font-size: 7pt;
+    letter-spacing: 0.6pt;
+  }
+  .document-title {
+    margin: 6mm 0 4mm;
+  }
+  .app-shell .document-title p {
+    color: #176b79;
+    font-size: 8pt;
+    letter-spacing: 1pt;
+    margin-bottom: 2mm;
+  }
+  .app-shell .document-title h1 {
+    font-size: 29pt;
+    letter-spacing: -1pt;
+    line-height: 1.15;
+    font-weight: 550;
+    color: #152c35;
+  }
+  .app-shell .document-title h2 {
+    font-size: 16pt;
+    font-weight: 400;
+    margin-top: 3mm;
+    color: #526873;
+  }
+  .document-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm 8mm;
+    padding: 5mm 0;
+    border-block: 0.5pt solid #d5e0e4;
+  }
+  .app-shell .document-meta dt {
+    color: #526873;
+    font-size: 7pt;
+    letter-spacing: 0.4pt;
+    text-transform: uppercase;
+  }
+  .app-shell .document-meta dd {
+    color: #152c35;
+    margin-top: 1mm;
+    font-size: 8pt;
+  }
+  .document-scope {
+    margin-top: 5mm;
+    padding: 4mm;
+    background: #f0f6f6;
+    border-left: 2pt solid #176b79;
+    break-inside: avoid;
+  }
+  .document-scope strong {
+    font-size: 8pt;
+  }
+  .app-shell .document-scope p {
+    font-size: 8pt;
+    color: #425b67;
+    margin-top: 1mm;
+  }
+  .document-section {
+    margin-top: 6mm;
+  }
+  .app-shell .document-section h2 {
+    font-size: 11pt;
+    line-height: 1.4;
+    font-weight: 600;
+    color: #152c35;
+    margin-bottom: 3mm;
+    display: flex;
+    gap: 3mm;
+    align-items: baseline;
+  }
+  .document-section h2 > span {
+    font-size: 8pt;
+    color: #176b79;
+  }
+  .report-document table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8pt;
+  }
+  .report-document th,
+  .report-document td {
+    padding: 1.8mm 2.5mm;
+    border-bottom: 0.5pt solid #dbe3e6;
+    text-align: left;
+    vertical-align: top;
+    color: #263f4b;
+  }
+  .report-document thead th {
+    background: #eaf2f3;
+    font-weight: 600;
+    color: #244550;
+    font-size: 7pt;
+    letter-spacing: 0.2pt;
+  }
+  .report-document tbody th {
+    font-weight: 500;
+  }
+  .report-document tbody tr:nth-child(even) {
+    background: #f8fafb;
+  }
+  .report-document tr {
+    break-inside: avoid;
+  }
+  .report-document thead {
+    display: table-header-group;
+  }
+  .report-document td small {
+    display: block;
+    color: #526873;
+    font-size: 7pt;
+    margin-top: 1mm;
+  }
+  .app-shell .document-note {
+    font-size: 7.5pt;
+    color: #526873;
+    margin-top: 2.5mm;
+  }
+  .document-columns {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 6mm;
+  }
+  .document-method {
+    list-style: decimal;
+    padding-left: 4mm;
+    color: #425b67;
+    font-size: 8pt;
+    display: grid;
+    gap: 2.5mm;
+  }
+  .document-footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 0.5pt solid #d5e0e4;
+    padding-top: 3mm;
+    margin-top: auto;
+    color: #526873;
+    font-size: 7pt;
+    gap: 4mm;
+  }
+}

@@ -4,11 +4,12 @@ import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Heart, ShieldCheck } from "lucide-react";
 import { api } from "@/lib/api";
-import { money, parseDonation } from "@/lib/format";
+import { usdMoney as money, parseDonation } from "@/lib/format";
 import { useHealth } from "@/lib/queries";
 import { Button } from "./ui/button";
 import { SignInPrompt } from "./auth-gate";
 import { useAuth } from "@/lib/auth";
+import { toast } from "@/lib/toasts";
 import { ErrorNotice, Notice, Panel, PanelTitle, Skeleton } from "./ui/shared";
 export function DonationForm() {
   const signedOut = useAuth().status === "signed-out";
@@ -50,6 +51,7 @@ export function DonationForm() {
   const capture = async (id: string) => {
     const result = await api.captureDonation(id);
     setSuccess(result.donation.amount_cents);
+    toast("Donation captured. The treasury has been updated.");
     for (const key of ["river", "donations", "payouts"])
       void cache.invalidateQueries({ queryKey: [key] });
   };
@@ -59,6 +61,10 @@ export function DonationForm() {
     try {
       await capture(await createOrder());
     } catch (e) {
+      toast(
+        e instanceof Error ? e.message : "The donation could not be completed.",
+        "error",
+      );
       setError(
         e instanceof Error ? e.message : "The donation could not be completed.",
       );

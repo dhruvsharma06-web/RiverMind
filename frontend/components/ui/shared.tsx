@@ -130,9 +130,7 @@ export function EmptyState({
     <div className="empty-state">
       <Compass size={30} strokeWidth={1} />
       <h3>{title}</h3>
-      <p>
-        {children ?? "New items will appear here."}
-      </p>
+      <p>{children ?? "New items will appear here."}</p>
       {href && (
         <Button asChild variant="secondary">
           <Link href={href}>
@@ -206,9 +204,11 @@ export function Skeleton({
 export function AsyncView<T>({
   query,
   children,
+  loading,
 }: {
   query: UseQueryResult<T, Error>;
   children: (data: T) => ReactNode;
+  loading?: ReactNode;
 }) {
   if (query.data !== undefined)
     return (
@@ -219,6 +219,6 @@ export function AsyncView<T>({
         {children(query.data)}
       </>
     );
-  if (query.isPending) return <Skeleton />;
+  if (query.isPending) return loading ?? <Skeleton />;
   return <ErrorNotice error={query.error} retry={() => void query.refetch()} />;
 }
