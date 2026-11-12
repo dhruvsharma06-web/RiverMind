@@ -17,6 +17,39 @@
 .app-shell .app-content {
   scroll-margin-top: calc(var(--workspace-header-height) + 16px);
 }
+.workspace-route-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+.workspace-page-snapshot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--dash-bg);
+}
+.workspace-page-snapshot,
+.workspace-page-snapshot * {
+  animation: none !important;
+  transition: none !important;
+}
+.auth-entry-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--dash-bg);
+}
+.auth-entry-transition * {
+  animation: none !important;
+  transition: none !important;
+}
 .app-shell .app-content :is(.panel, .metric-card, .overview-quest-card) {
   animation: none;
   translate: none;
@@ -686,6 +719,10 @@
   }
 }
 @media print {
+  .workspace-route-transition,
+  .auth-entry-transition {
+    display: none;
+  }
   .app-shell .app-topbar {
     position: static;
   }

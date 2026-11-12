@@ -8,7 +8,7 @@ export function LandingWelcome() {
     if (dismissed) return;
     const timer = window.setTimeout(
       () => setDismissed(true),
-      matchMedia("(prefers-reduced-motion: reduce)").matches ? 240 : 2400,
+      matchMedia("(prefers-reduced-motion: reduce)").matches ? 240 : 1600,
     );
     const escape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setDismissed(true);

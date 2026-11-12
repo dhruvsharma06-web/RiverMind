@@ -26,6 +26,123 @@ async function signInCouncil(page: Page) {
     .click();
   await expect(page).toHaveURL(/\/council$/);
 }
+test("successful login reveals the dashboard downward over the login view", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => {
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function (keyframes, options) {
+      const animation = animate.call(this, keyframes, options);
+      if (this.classList.contains("auth-entry-transition")) {
+        animation.pause();
+        animation.currentTime = 240;
+      }
+      return animation;
+    };
+  });
+  await page.goto("/login?next=/river");
+  await page.getByLabel("Email").fill("council@demo.rivermind");
+  await page.getByLabel("Password").fill("incorrect-pass");
+  await page
+    .getByRole("button", { name: "Sign in", exact: true })
+    .last()
+    .click();
+  await expect(page.locator(".auth-error")).toBeVisible();
+  const transition = page.locator(".auth-entry-transition");
+  await expect(transition).toHaveCount(0);
+  await page.getByLabel("Password").fill("council-demo");
+  await page
+    .getByRole("button", { name: "Sign in", exact: true })
+    .last()
+    .click();
+  await expect(page.locator("#main-content h1")).toHaveText("Overview");
+  await expect(transition.locator("h1")).toHaveText("Welcome back");
+  await expect(transition).toHaveAttribute("inert", "");
+  await expect(transition.locator('input[type="password"]')).toHaveValue("");
+  await expect(page.locator("#main-content")).toHaveCount(1);
+  const masks = await transition.evaluate((el) =>
+    (el.getAnimations()[0].effect as KeyframeEffect)
+      .getKeyframes()
+      .map((frame) => frame.clipPath),
+  );
+  expect(masks).toEqual(["inset(0px)", "inset(100% 0px 0px)"]);
+  await transition.evaluate((el) => el.getAnimations()[0].finish());
+  await expect(transition).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator("#main-content h1")).toHaveText("Overview");
+  await expect(transition).toHaveCount(0);
+
+  await page.locator(".auth-trigger").click();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page.locator("#main-content h1")).toHaveText("Welcome back");
+  await expect(transition).toHaveAttribute("data-kind", "logout");
+  await expect(transition.locator("h1")).toHaveText("Overview");
+  await expect(transition).toHaveAttribute("inert", "");
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("rivermind:session")),
+  ).toBeNull();
+  await expect(page.locator("#main-content")).toHaveCount(1);
+  await transition.evaluate((el) => el.getAnimations()[0].finish());
+  await expect(transition).toHaveCount(0);
+  await page.goto("/river");
+  await expect(page).toHaveURL(/\/login\?next=%2Friver$/);
+  await expect(page.locator(".overview-summary")).toHaveCount(0);
+});
+test("login and logout respect reduced motion", async ({ page }) => {
+  await signInCouncil(page);
+  await expect(page.locator(".app-shell")).toBeVisible();
+  await expect(page.locator(".auth-entry-transition")).toHaveCount(0);
+  await page.locator(".auth-trigger").click();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page.locator("#main-content h1")).toHaveText("Welcome back");
+  await expect(page.locator(".auth-entry-transition")).toHaveCount(0);
+});
+test("dashboard arrow reveals keep the old page visible when entering Overview and using history", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => {
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function (keyframes, options) {
+      const animation = animate.call(this, keyframes, options);
+      if (this.classList.contains("workspace-route-transition")) {
+        animation.pause();
+        animation.currentTime = 110;
+      }
+      return animation;
+    };
+  });
+  await signUp(page, "/reports");
+  await expect(page.locator("#main-content h1")).toHaveText("Monthly reports");
+  const layout = await page
+    .locator("#main-content")
+    .evaluate((el) => getComputedStyle(el).display);
+  await page.locator('.app-sidebar a[href="/river"]').click();
+  await expect(page.locator("#main-content h1")).toHaveText("Overview");
+  const oldPage = page.locator(".workspace-page-snapshot");
+  await expect(oldPage.locator("h1")).toHaveText("Monthly reports");
+  await expect(oldPage.locator(".app-content")).toHaveCSS("display", layout);
+  const transition = page.locator(".workspace-route-transition");
+  await expect(transition).toHaveAttribute("inert", "");
+  await expect(transition).toHaveAttribute("aria-hidden", "true");
+  await expect(page.locator("#main-content")).toHaveCount(1);
+  await transition.evaluate((el) => el.getAnimations()[0].finish());
+  await expect(oldPage).toHaveCount(0);
+
+  await page.goBack();
+  await expect(page.locator("#main-content h1")).toHaveText("Monthly reports");
+  await expect(oldPage.locator("h1")).toHaveText("Overview");
+  await transition.evaluate((el) => el.getAnimations()[0].finish());
+  await expect(oldPage).toHaveCount(0);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.locator('.app-sidebar a[href="/atlas"]').click();
+  await expect(page.locator("#main-content h1")).toHaveText("River atlas");
+  await expect(oldPage).toHaveCount(0);
+  await expect(transition).toHaveCSS("visibility", "hidden");
+});
 test("the landing is public and overview redirects signed-out visitors to sign in", async ({
   page,
 }) => {

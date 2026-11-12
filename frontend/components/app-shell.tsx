@@ -21,6 +21,7 @@ import {
 import { Logo } from "./ui/shared";
 import { ThemeToggle } from "./theme-toggle";
 import { AuthMenu } from "./auth-menu";
+import { WorkspacePage } from "./workspace-page";
 import { cn } from "@/lib/utils";
 const links = [
   { href: "/river", label: "Overview", icon: LayoutDashboard },
@@ -30,6 +31,7 @@ const links = [
   { href: "/reports", label: "Monthly reports", icon: FileChartColumn },
   { href: "/about", label: "How it works", icon: BookOpen },
 ];
+const routeOrder = [...links.map(({ href }) => href), "/council"];
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -207,9 +209,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
         )}
-        <main id="main-content" className="app-content">
+        <WorkspacePage pathname={pathname} routes={routeOrder}>
           {children}
-        </main>
+        </WorkspacePage>
         <footer className="app-footer">
           <span>RiverMind · PayPal AI Hackathon 2026 · Sandbox prototype</span>
           <Link href="/about">

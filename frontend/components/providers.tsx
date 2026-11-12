@@ -10,6 +10,7 @@ import { toast } from "@/lib/toasts";
 import { useState, type ReactNode } from "react";
 import { CouncilSession } from "./session";
 import { AuthProvider } from "@/lib/auth";
+import { AuthEntryTransition } from "./auth-entry-transition";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -54,7 +55,9 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CouncilSession>{children}</CouncilSession>
+        <AuthEntryTransition>
+          <CouncilSession>{children}</CouncilSession>
+        </AuthEntryTransition>
       </AuthProvider>
       <ToastRegion />
     </QueryClientProvider>
