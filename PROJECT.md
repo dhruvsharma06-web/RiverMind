@@ -12,7 +12,7 @@
   5. AI scores the cleanup and backend policy decides.
   6. PayPal Payout goes to the worker (council approval above $20).
   7. The dashboard updates.
-- Wow moment: dirty a glass tank on camera. The river posts a bounty, a teammate cleans the tank, AI verifies it, and the PayPal sandbox payout appears live. Then a reused photo gets rejected, with the reason shown.
+- Delivery: a standalone website (no live or physical demo). Key moment in the product: a cleanup is verified by AI and the PayPal sandbox payout appears on the dashboard; a reused photo is rejected with the reason shown.
 - Event: PayPal AI Hackathon (Devpost). Official deadline Thu 12 Nov 2026, 12:00 PST = Fri 13 Nov, 01:30 IST. **Our deadline: Thu 12 Nov, 22:00 IST.**
 
 ## Requirements
@@ -25,7 +25,7 @@ Team task: verify the paraphrased requirements against https://paypalaihackathon
 | R3 | Meaningfully incorporate AI | MUST | F2, F3, F4, F6 |
 | R4 | Working prototype; no mockups or static demos | MUST | all P0 live |
 | R5 | Public repo, open-source licence visible in the About section | MUST | P1 S0.1 |
-| R6 | Demo video under 3 minutes, public on YouTube | MUST | P1 S5.3 |
+| R6 | Video under 3 minutes, public on YouTube (screen recording of the website) | MUST | P1 S5.3 |
 | R7 | Hosted URL or setup instructions; list of AI tools used | MUST | P1 S3.4, S5.4 |
 | R8 | Project significantly built during the submission period; English; free judge access | MUST | repo history |
 
@@ -49,11 +49,11 @@ Team task: verify the paraphrased requirements against https://paypalaihackathon
 
 ## Architecture
 - Components:
-  - ESP32 sensor node or simulator, and the camera node script → FastAPI backend (Render).
+  - Sensor simulator (labelled) and image uploads → FastAPI backend (Render).
   - The backend imports the `rivermind_ai` package from `ai/` (mock or real), uses Postgres (Neon; SQLite locally), and calls `paypal_client` → PayPal sandbox (Orders v2, Payouts, Webhooks, Agent Toolkit invoices).
   - Next.js frontend (Vercel) with the PayPal JS SDK buttons.
 - The AI returns proposals and scores; plain backend code decides every amount and every payment.
-- Stack: Python 3.11 FastAPI + SQLAlchemy + Alembic; Next.js + TS + Tailwind + shadcn/ui; ESP32 Arduino.
+- Stack: Python 3.11 FastAPI + SQLAlchemy + Alembic; Next.js + TS + Tailwind + shadcn/ui.
 - Hosting: Vercel + Render + Neon.
 - AI: vision LLM (Claude API or Gemini, via `LLM_PROVIDER`) + YOLO detector (ONNX), with YOLO-World zero-shot as the baseline/fallback. The LLM handles flexible judgement; YOLO gives fast, countable boxes.
 - DB: Postgres, because payouts, donations and the ledger must survive restarts.
@@ -87,7 +87,7 @@ Folder boundaries are coordination aids, not exclusive authority over shared pro
 | S2 First Real Slice | Tue 13:00–Wed 11:00 | Sync 2 Wed 11:00 |
 | S3 Complete P0 | Wed 11:00–23:00 | Sync 3 Wed 23:00 |
 | S4 Harden, Secure, Polish | Thu 08:00–15:00 | Sync 4 FREEZE Thu 15:00 |
-| S5 Demo & Submit | Thu 15:00–22:00 | Final Thu 22:00 |
+| S5 Submit | Thu 15:00–22:00 | Final Thu 22:00 |
 
 ## Status   (updated collaboratively by the team at each sync)
 main: (none yet)   Last sync passed: —
@@ -101,7 +101,7 @@ Next: everyone S0.
 - A4: No project-wide lead or hierarchy is assigned. Presentation, integration and coordination tasks are shared or agreed by the team for each milestone.
 - A5: each AI teammate has a vision-capable LLM API key.
 - A6: everyone has PayPal Developer accounts.
-- A7: ESP32 is available; sensors are optional (simulator, labelled).
+- A7: No physical hardware or live demo; sensor readings come from the labelled simulator.
 - A8: Yamuna is the demo river.
 - A9: USD sandbox.
 - D1: Postgres (Neon) when deployed, because Render's free disk is wiped on restart. — Mon 9 Nov
@@ -114,7 +114,7 @@ Next: everyone S0.
 1. F13 satellite
 2. F12 Hindi
 3. F14 fundraise invoice
-4. Real ESP32 node (use the simulator, labelled)
+4. Real ESP32 node — cut: the simulator (labelled) is used
 5. F11 webhooks (keep polling)
 6. F10 diary (template only)
 7. Fine-tuned detector (ship YOLO-World zero-shot or the LLM path)
